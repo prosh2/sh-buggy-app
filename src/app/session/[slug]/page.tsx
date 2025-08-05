@@ -73,7 +73,7 @@ export default function SessionPage() {
             <ShareButton
               label="Share on WhatsApp"
               url={whatsappShareUrl}
-              color="green"
+              color="oklch(0.73 0.21 147.82)"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -89,7 +89,7 @@ export default function SessionPage() {
             <ShareButton
               label="Share on Telegram"
               url={telegramShareUrl}
-              color="blue"
+              color="oklch(0.62 0.21 259.24)"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
