@@ -1,22 +1,72 @@
+"use client";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+import { motion } from "motion/react";
 
 export default function Home() {
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const handleCreateSession = async () => {
+    const sessionId = uuidv4();
+
+    const res = await fetch("/api/create-session", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ sessionId }),
+    });
+
+    if (!res.ok) {
+      console.error("Failed to create session");
+      return;
+    }
+
+    const data = await res.json();
+    router.push(`/session/${data.sessionId}`);
+  };
+
   return (
-    <div className="bg-[url('/images/buggy-bg.jpg')] bg-no-repeat bg-center bg-cover lg:bg-[#22296f] lg:bg-contain font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <header className="flex justify-center items-center justify-between w-full max-w-3xl">
-        <h1 className="text-3xl sm:text-4xl font-bold text-center sm:text-left tracking-tight">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[red] to-[purple]">
-            by Prosh2
-          </span>
-        </h1>
-      </header>
-      <main className="h-full flex flex-col justify-end mb-20 ">
-        <div>
-          <a
+    <div className="bg-radial from-black-400 to-gray-900 font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
+      <header className="flex justify-center items-center justify-between w-full max-w-3xl" />
+      <main className="w-full h-full flex flex-col justify-center items-center rounded-lg shadow-lg p-8 sm:p-12 gap-6">
+        <motion.div
+          className="flex flex-col items-center justify-center w-full h-full bg-radial from-black-400 to-gray-900 backdrop-blur-md preserve-3d bg-white/3 shadow-2xl"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          style={{
+            perspective: 1000, // Required for 3D effect
+          }}
+        >
+          <motion.h1 className="text-3xl sm:text-4xl font-bold text-center sm:text-left tracking-tight mb-10 ">
+            <motion.div
+              className="font-typewriter mb-2 text-3xl sm:text-4xl text-center"
+              initial={{ opacity: 0, x: 200 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              Buggy
+            </motion.div>
+            <motion.div
+              className="font-typewriter text-2xl sm:text-3xl"
+              initial={{ opacity: 0, y: 200 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+            >
+              Split your bills easy
+            </motion.div>
+          </motion.h1>
+          <motion.button
             className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            onClick={handleCreateSession}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            animate={{ rotate: 360 }}
+            transition={{ type: "spring", restDelta: 0.5 }}
           >
             <Image
               className="dark:invert"
@@ -25,9 +75,9 @@ export default function Home() {
               width={20}
               height={20}
             />
-            Upload Receipt
-          </a>
-        </div>
+            {loading ? "Uploading..." : "Upload Receipt"}
+          </motion.button>
+        </motion.div>
       </main>
       <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center" />
     </div>
