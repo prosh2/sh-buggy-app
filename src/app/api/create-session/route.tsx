@@ -2,12 +2,12 @@ import { db } from "@/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
-type ResponseData = {
-  message: string;
-  sessionId?: string;
-};
+// type ResponseData = {
+//   message: string;
+//   sessionId?: string;
+// };
 
-async function handler(req: NextRequest, res: NextResponse<ResponseData>) {
+async function handler(req: NextRequest) {
   if (req.method !== "POST") {
     return NextResponse.json(
       { message: "Method not allowed" },
