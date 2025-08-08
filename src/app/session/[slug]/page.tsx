@@ -1,12 +1,14 @@
 "use client";
 import CopyToClipboardButton from "@/components/copy-to-clipboard-button";
 import ShareButton from "@/components/share-button";
+import UserListContainer from "@/components/user-list-container";
 import { db } from "@/firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 type SessionData = {
+  id: string;
   users: string[];
   items: string[];
 };
@@ -41,7 +43,11 @@ export default function SessionPage() {
     const unsubscribe = onSnapshot(sessionDocRef, (doc) => {
       if (doc.exists()) {
         const data = doc.data();
-        setSession({ users: data.users, items: data.items } as SessionData);
+        setSession({
+          id: slug.toString(),
+          users: data.users,
+          items: data.items,
+        } as SessionData);
         console.log("Usernames updated:", data.users);
         console.log("Items updated:", data.items);
       } else {
@@ -55,21 +61,14 @@ export default function SessionPage() {
 
   return (
     <div>
-      <div className="absolute w-full border p-4 rounded shadow-lg">
-        Users in session:{" "}
-        {session?.users.map((user) => (
-          <span
-            key={user}
-            className="font-bold bg-gray-200 rounded px-2 py-1 text-gray-800 mr-2 opacity-75 hover:opacity-100 transition-opacity"
-          >
-            {user}
-          </span>
-        )) || "No users yet"}
-      </div>
+      <UserListContainer
+        sessionID={session?.id || ""}
+        users={session?.users || []}
+      />
       <div className="flex flex-col items-center justify-center h-screen space-y-6">
         <div className="flex flex-col items-center justify-center text-center px-4 h-[30vh] w-full rounded shadow-lg">
           <CopyToClipboardButton url={url} />
-          <div className="flex justify-center space-x-4">
+          <div className="flex justify-center space-x-4 w-[300px]">
             <ShareButton
               label="Share on WhatsApp"
               url={whatsappShareUrl}
