@@ -30,7 +30,7 @@ export default function UserListContainer({
     <div className="flex flex-col absolute w-full h-[30vh] border p-4 rounded shadow-lg">
       <div className="flex font-bold mb-2 justify-center">Users in session</div>
       <div className="flex overflow-y-auto h-full bg-gray-100 py-2">
-        <div className="flex flex-col flex-wrap gap-1 bg-gray-100 h-full">
+        <div className="flex flex-col flex-wrap gap-1 px-2 bg-gray-100 h-full w-full">
           {(users.length > 0 &&
             users?.map((user) => (
               <User
@@ -39,7 +39,7 @@ export default function UserListContainer({
                 handleDeleteUser={handleDeleteUser}
               />
             ))) || (
-            <span className="text-black flex justify-center items-center h-full">
+            <span className="text-black flex items-center h-full w-full justify-center">
               No users are in session
             </span>
           )}
