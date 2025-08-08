@@ -27,10 +27,10 @@ export default function UserListContainer({
   };
 
   return (
-    <div className="flex flex-col absolute w-full h-[25vh] border p-4 rounded shadow-lg">
+    <div className="flex flex-col absolute w-full h-[30vh] border p-4 rounded shadow-lg">
       <div className="flex font-bold mb-2 justify-center">Users in session</div>
-      <div className="flex flex-col mb-2 overflow-y-auto h-full">
-        <div className="flex flex-wrap gap-1 justify-center bg-gray-100 py-2 h-full">
+      <div className="flex overflow-y-auto h-full bg-gray-100 py-2">
+        <div className="flex flex-col flex-wrap gap-1 bg-gray-100 h-full">
           {(users.length > 0 &&
             users?.map((user) => (
               <User
@@ -46,7 +46,7 @@ export default function UserListContainer({
         </div>
       </div>
 
-      <div className="flex shrink-3 h-full items-center">
+      <div className="flex shrink-3 h-full items-center mt-2">
         <span className="text-gray-500 text-sm">
           Total users: {users.length}
         </span>
@@ -54,7 +54,7 @@ export default function UserListContainer({
           <input
             type="text"
             placeholder="Enter your name"
-            className="border rounded px-2 py-1 mr-2"
+            className="border rounded px-2 py-1 mr-2 w-[150px]"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
