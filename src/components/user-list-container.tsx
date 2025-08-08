@@ -30,14 +30,19 @@ export default function UserListContainer({
     <div className="flex flex-col absolute w-full h-[25vh] border p-4 rounded shadow-lg">
       <div className="flex font-bold mb-2 justify-center">Users in session</div>
       <div className="flex flex-col mb-2 overflow-y-auto h-full">
-        <div className="flex flex-wrap gap-1 justify-center bg-gray-100 py-2">
-          {users?.map((user) => (
-            <User
-              key={user}
-              username={user}
-              handleDeleteUser={handleDeleteUser}
-            />
-          )) || "No users in session"}
+        <div className="flex flex-wrap gap-1 justify-center bg-gray-100 py-2 h-full">
+          {(users.length > 0 &&
+            users?.map((user) => (
+              <User
+                key={user}
+                username={user}
+                handleDeleteUser={handleDeleteUser}
+              />
+            ))) || (
+            <span className="text-black flex justify-center items-center h-full">
+              No users are in session
+            </span>
+          )}
         </div>
       </div>
 
