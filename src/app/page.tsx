@@ -4,14 +4,17 @@ import Image from "next/image";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { motion } from "motion/react";
+import { clear } from "console";
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   const router = useRouter();
 
   const handleCreateSession = async () => {
+    setSuccess(false);
+    setLoading(true);
     const sessionId = uuidv4();
-
     const res = await fetch("/api/create-session", {
       method: "POST",
       headers: {
@@ -26,7 +29,12 @@ export default function Home() {
     }
 
     const data = await res.json();
-    router.push(`/session/${data.sessionId}`);
+    setLoading(false);
+    setSuccess(true);
+
+    setTimeout(() => {
+      router.push(`/session/${data.sessionId}`);
+    }, 1000);
   };
 
   return (
@@ -65,7 +73,11 @@ export default function Home() {
             onClick={handleCreateSession}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
-            animate={{ rotate: 360 }}
+            animate={{
+              rotate: 360,
+              backgroundColor: success ? "#29d869ff" : "#fff", // green-500
+              transition: { duration: 0.4 },
+            }}
             transition={{ type: "spring", restDelta: 0.5 }}
           >
             <Image
@@ -75,7 +87,7 @@ export default function Home() {
               width={20}
               height={20}
             />
-            {loading ? "Uploading..." : "Upload Receipt"}
+            {success ? "Success!" : loading ? "Uploading..." : "Upload Receipt"}
           </motion.button>
         </motion.div>
       </main>
