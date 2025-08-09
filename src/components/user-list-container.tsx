@@ -12,12 +12,24 @@ export default function UserListContainer() {
   const handleAddUser = () => {
     // Logic to add a user can be implemented here
     console.log("your name is ", username, sessionContext.session.id);
+
+    const newUser = {
+      name: username,
+      allocatedItems: [],
+    };
+
     const usersRef = doc(db, "sessions", sessionContext.session.id);
-    setDoc(usersRef, { users: [...sessionContext.session.users, username] }, { merge: true });
+    setDoc(
+      usersRef,
+      { users: [...sessionContext.session.users, newUser] },
+      { merge: true }
+    );
   };
 
   const handleDeleteUser = (userToDelete: string) => {
-    const updatedUsers = sessionContext.session.users?.filter((user) => user !== userToDelete);
+    const updatedUsers = sessionContext.session.users?.filter(
+      (user) => user.name !== userToDelete
+    );
     const usersRef = doc(db, "sessions", sessionContext.session.id);
     setDoc(usersRef, { users: updatedUsers }, { merge: true });
   };
@@ -30,15 +42,15 @@ export default function UserListContainer() {
           {(sessionContext.session.users?.length > 0 &&
             sessionContext.session.users?.map((user) => (
               <User
-                key={user}
-                username={user}
+                key={user.name}
+                username={user.name}
                 handleDeleteUser={handleDeleteUser}
               />
             ))) || (
-              <span className="text-black flex items-center h-full w-full justify-center">
-                No users are in session
-              </span>
-            )}
+            <span className="text-black flex items-center h-full w-full justify-center">
+              No users are in session
+            </span>
+          )}
         </div>
       </div>
 
