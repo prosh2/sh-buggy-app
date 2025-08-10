@@ -1,20 +1,11 @@
 import { db } from "@/firebase";
-import {
-  addDoc,
-  arrayUnion,
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
-import { NextResponse } from "next/server";
+import { collection, doc, getDocs, setDoc } from "firebase/firestore";
+import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 
 export async function POST(
-  req: Request,
-  { params }: { params: { sessionID: string } }
+  req: NextRequest,
+  { params }: { params: Promise<{ sessionID: string }> }
 ) {
   try {
     const { name } = await req.json();
@@ -45,7 +36,14 @@ export async function POST(
   }
 }
 
-export async function GET({ params }: { params: { sessionID: string } }) {
+export async function GET(
+  req: NextRequest,
+  {
+    params,
+  }: {
+    params: Promise<{ sessionID: string }>;
+  }
+) {
   try {
     const { sessionID } = await params; // ← sessionId from the URL
     const usersRef = collection(db, "sessions", sessionID, "users");
