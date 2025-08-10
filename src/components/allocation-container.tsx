@@ -5,7 +5,7 @@ import { useState } from "react";
 // This component allows user to select items and mark themselves ready for splitting.
 export default function AllocationContainer({
   users,
-  items,
+  items, //list of items to select from, populated by OCR backend
   onReady,
 }: {
   users: User[];
@@ -13,6 +13,7 @@ export default function AllocationContainer({
   onReady: (selectedUser: string, selectedItems: string[]) => void;
 }) {
   const DUMMY_ITEMS = [
+    // Example items, replace with actual items from backend
     { id: "id1", name: "Item 1", price: 10, quantity: 1 },
     { id: "id2", name: "Item 2", price: 20, quantity: 2 },
     { id: "id3", name: "Item 3", price: 30, quantity: 3 },
