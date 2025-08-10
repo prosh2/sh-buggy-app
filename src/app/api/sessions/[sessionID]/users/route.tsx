@@ -1,10 +1,10 @@
 import { db } from "@/firebase";
 import { collection, doc, getDocs, setDoc } from "firebase/firestore";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 
 export async function POST(
-  req: Request,
+  req: NextRequest,
   { params }: { params: Promise<{ sessionID: string }> }
 ) {
   try {
@@ -36,11 +36,14 @@ export async function POST(
   }
 }
 
-export async function GET({
-  params,
-}: {
-  params: Promise<{ sessionID: string }>;
-}) {
+export async function GET(
+  req: NextRequest,
+  {
+    params,
+  }: {
+    params: Promise<{ sessionID: string }>;
+  }
+) {
   try {
     const { sessionID } = await params; // ← sessionId from the URL
     const usersRef = collection(db, "sessions", sessionID, "users");

@@ -1,9 +1,9 @@
 import { db } from "@/firebase";
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(
-  _req: Request,
+  _req: NextRequest,
   { params }: { params: Promise<{ sessionID: string; userID: string }> }
 ) {
   try {
@@ -30,7 +30,7 @@ export async function DELETE(
 }
 
 export async function PATCH(
-  req: Request,
+  req: NextRequest,
   { params }: { params: Promise<{ sessionID: string; userID: string }> }
 ) {
   try {
