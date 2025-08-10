@@ -1,18 +1,14 @@
 // show user avatars and username in session container
-import { db } from "@/firebase";
+import { useSession } from "@/app/context/session-context";
 import AddIcon from "@mui/icons-material/Add";
 import { Button } from "@mui/material";
-import { doc, setDoc } from "firebase/firestore";
 import { useState } from "react";
 import User from "./user";
-import { useSession } from "@/app/context/session-context";
-import { v4 as uuidv4 } from "uuid";
 export default function UserListContainer() {
   const [username, setUsername] = useState("");
   const sessionContext = useSession();
   const handleAddUser = async () => {
     // Logic to add a user can be implemented here
-    console.log("your name is ", username, sessionContext.session.id);
     const res = await fetch(
       `/api/sessions/${sessionContext.session.id}/users`,
       {

@@ -1,9 +1,11 @@
 "use client";
 
-import { useSession } from "@/app/context/session-context";
+import { SessionData, User, useSession } from "@/app/context/session-context";
+import { useSessionUsers } from "@/app/hooks/use-session-users";
 import AllocationContainer from "@/components/allocation-container";
-import { doc } from "firebase/firestore";
-import { useEffect } from "react";
+import { db } from "@/firebase";
+import { collection, onSnapshot, query } from "firebase/firestore";
+import { useCallback, useEffect } from "react";
 
 export default function SplitPage() {
   const sessionContext = useSession();
@@ -26,6 +28,19 @@ export default function SplitPage() {
       body: JSON.stringify({ isReady: true }),
     });
   };
+
+  const handleUsersUpdate = useCallback(
+    (users: User[]) => {
+      sessionContext.setSession((prev) => ({
+        ...prev,
+        users,
+      }));
+      console.log("Users updated:", users);
+    },
+    [sessionContext.setSession]
+  );
+
+  useSessionUsers(sessionID, handleUsersUpdate);
 
   useEffect(() => {
     if (sessionContext.session.users.every((user) => user.isReady)) {

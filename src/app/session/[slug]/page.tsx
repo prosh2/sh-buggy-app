@@ -5,6 +5,8 @@ import {
   User,
   useSession,
 } from "@/app/context/session-context";
+import { useSessionItems } from "@/app/hooks/use-session-items";
+import { useSessionUsers } from "@/app/hooks/use-session-users";
 import CopyToClipboardButton from "@/components/copy-to-clipboard-button";
 import ShareButton from "@/components/share-button";
 import UserListContainer from "@/components/user-list-container";
@@ -13,7 +15,7 @@ import { collection, doc, onSnapshot, query } from "firebase/firestore";
 import { motion } from "motion/react";
 import { pre } from "motion/react-client";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export default function SessionPage() {
   const [url, setUrl] = useState("");
@@ -35,60 +37,28 @@ export default function SessionPage() {
     url
   )}&text=${encodeURIComponent("Join my session")}`;
 
-  useEffect(() => {
-    if (!slug) {
-      console.error("Session ID is missing");
-      return;
-    }
-    const usersRef = collection(db, "sessions", slug.toString(), "users");
-    const q = query(usersRef);
-
-    const unsubscribeUsers = onSnapshot(q, (snapshot) => {
-      const usersData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as User[];
-
-      sessionContext.setSession(
-        (previousSession) =>
-          ({
-            ...previousSession,
-            id: slug.toString(),
-            users: usersData,
-            items: previousSession.items,
-          } as SessionData)
-      );
-      console.log("Users updated:", usersData);
-    });
-
-    const itemsRef = collection(db, "sessions", slug.toString(), "items");
-    const itemsQuery = query(itemsRef);
-
-    const unsubscribeItems = onSnapshot(itemsQuery, (snapshot) => {
-      const itemsData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Item[];
-
-      sessionContext.setSession(
-        (previousSession) =>
-          ({
-            ...previousSession,
-            id: slug.toString(),
-            users: previousSession.users,
-            items: itemsData,
-          } as SessionData)
-      );
-      console.log("Items updated:", itemsData);
-    });
-
-    // Cleanup subscription on unmount
-    return () => {
-      unsubscribeUsers();
-      unsubscribeItems();
-    };
-  }, []);
-
+  const handleUsersUpdate = useCallback(
+    (users: User[]) => {
+      sessionContext.setSession((prev) => ({
+        ...prev,
+        id: slug ? slug.toString() : "",
+        users,
+      }));
+      console.log("Users updated:", users);
+    },
+    [sessionContext.setSession]
+  );
+  const handleItemsUpdate = useCallback(
+    (items: Item[]) => {
+      sessionContext.setSession((prev) => ({
+        ...prev,
+        id: slug ? slug.toString() : "",
+        items,
+      }));
+      console.log("Items updated:", items);
+    },
+    [sessionContext.setSession]
+  );
   const handleReadyClick = () => {
     console.log("Ready button clicked");
     if (sessionContext.session.users.length === 0) {
@@ -97,6 +67,8 @@ export default function SessionPage() {
     }
     router.push(`/session/${sessionContext.session?.id}/split`);
   };
+  useSessionUsers(slug ? slug.toString() : "", handleUsersUpdate);
+  useSessionItems(slug ? slug.toString() : "", handleItemsUpdate);
 
   return (
     <div className="flex flex-col h-screen">
