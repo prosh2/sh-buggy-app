@@ -1,29 +1,35 @@
 // show user avatars and username in session container
-import { db } from "@/firebase";
+import { useSession } from "@/app/context/session-context";
 import AddIcon from "@mui/icons-material/Add";
 import { Button } from "@mui/material";
-import { doc, setDoc } from "firebase/firestore";
 import { useState } from "react";
 import User from "./user";
-export default function UserListContainer({
-  users,
-  sessionID,
-}: {
-  users: string[];
-  sessionID: string;
-}) {
+export default function UserListContainer() {
   const [username, setUsername] = useState("");
-  const handleAddUser = () => {
+  const { session } = useSession();
+  const handleAddUser = async () => {
     // Logic to add a user can be implemented here
-    console.log("your name is ", username, sessionID);
-    const usersRef = doc(db, "sessions", sessionID);
-    setDoc(usersRef, { users: [...users, username] }, { merge: true });
+    const res = await fetch(`/api/sessions/${session.id}/users`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name: username }),
+    });
+    if (!res.ok) {
+      console.error("Failed to create user");
+      return;
+    }
   };
 
-  const handleDeleteUser = (userToDelete: string) => {
-    const updatedUsers = users.filter((user) => user !== userToDelete);
-    const usersRef = doc(db, "sessions", sessionID);
-    setDoc(usersRef, { users: updatedUsers }, { merge: true });
+  const handleDeleteUser = async (userID: string) => {
+    const res = await fetch(`/api/sessions/${session.id}/users/${userID}`, {
+      method: "DELETE",
+    });
+    if (!res.ok) {
+      console.error("Failed to create user");
+      return;
+    }
   };
 
   return (
@@ -31,11 +37,12 @@ export default function UserListContainer({
       <div className="flex font-bold mb-2 justify-center">Users in session</div>
       <div className="flex overflow-y-auto h-full bg-gray-100 py-2">
         <div className="flex flex-col flex-wrap gap-1 px-2 bg-gray-100 h-full w-full">
-          {(users.length > 0 &&
-            users?.map((user) => (
+          {(session.users?.length > 0 &&
+            session.users?.map((user) => (
               <User
-                key={user}
-                username={user}
+                key={user.id}
+                id={user.id}
+                username={user.name}
                 handleDeleteUser={handleDeleteUser}
               />
             ))) || (
@@ -48,7 +55,7 @@ export default function UserListContainer({
 
       <div className="flex shrink-3 h-full items-center mt-2">
         <span className="text-gray-500 text-sm">
-          Total users: {users.length}
+          Total users: {session.users.length}
         </span>
         <span className="flex bg-gray-200 text-gray-800 rounded px-2 py-1 text-sm ml-auto">
           <input

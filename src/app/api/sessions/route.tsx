@@ -1,11 +1,7 @@
 import { db } from "@/firebase";
+import { create } from "domain";
 import { doc, setDoc } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
-
-// type ResponseData = {
-//   message: string;
-//   sessionId?: string;
-// };
 
 async function handler(req: NextRequest) {
   if (req.method !== "POST") {
@@ -24,10 +20,7 @@ async function handler(req: NextRequest) {
   try {
     const sessionRef = doc(db, "sessions", sessionId);
 
-    await setDoc(sessionRef, {
-      users: [],
-      items: [],
-    });
+    await setDoc(sessionRef, { createdAt: new Date().toISOString() });
 
     return NextResponse.json(
       {

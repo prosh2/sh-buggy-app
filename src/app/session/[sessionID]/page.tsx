@@ -1,22 +1,19 @@
 "use client";
+import { Item, User, useSession } from "@/app/context/session-context";
+import { useSessionItems } from "@/app/hooks/use-session-items";
+import { useSessionUsers } from "@/app/hooks/use-session-users";
 import CopyToClipboardButton from "@/components/copy-to-clipboard-button";
 import ShareButton from "@/components/share-button";
 import UserListContainer from "@/components/user-list-container";
-import { db } from "@/firebase";
-import { doc, onSnapshot } from "firebase/firestore";
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
-
-type SessionData = {
-  id: string;
-  users: string[];
-  items: string[];
-};
+import { motion } from "motion/react";
+import { useParams, useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 
 export default function SessionPage() {
   const [url, setUrl] = useState("");
-  const [session, setSession] = useState<SessionData | null>(null);
-  const { slug } = useParams();
+  const { session, setSession } = useSession();
+  const { sessionID } = useParams();
+  const router = useRouter();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -32,43 +29,46 @@ export default function SessionPage() {
     url
   )}&text=${encodeURIComponent("Join my session")}`;
 
-  useEffect(() => {
-    if (!slug) {
-      console.error("Session ID is missing");
+  const handleUsersUpdate = useCallback(
+    (users: User[]) => {
+      setSession((prev) => ({
+        ...prev,
+        id: sessionID ? sessionID.toString() : "",
+        users,
+      }));
+      console.log("Users updated:", users);
+    },
+    [setSession]
+  );
+  const handleItemsUpdate = useCallback(
+    (items: Item[]) => {
+      setSession((prev) => ({
+        ...prev,
+        id: sessionID ? sessionID.toString() : "",
+        items,
+      }));
+      console.log("Items updated:", items);
+    },
+    [setSession]
+  );
+  const handleReadyClick = () => {
+    console.log("Ready button clicked");
+    if (session.users.length === 0) {
+      console.error("No users in session"); //todo add snackbar or toast
       return;
     }
-    const sessionDocRef = doc(db, "sessions", slug.toString());
-    console.log("Listening to session updates for ID:", slug);
-    // Subscribe to session updates
-    const unsubscribe = onSnapshot(sessionDocRef, (doc) => {
-      if (doc.exists()) {
-        const data = doc.data();
-        setSession({
-          id: slug.toString(),
-          users: data.users,
-          items: data.items,
-        } as SessionData);
-        console.log("Usernames updated:", data.users);
-        console.log("Items updated:", data.items);
-      } else {
-        console.log("No such document!");
-      }
-    });
-
-    // Cleanup subscription on unmount
-    return () => unsubscribe();
-  }, []);
+    router.push(`/session/${session?.id}/split`);
+  };
+  useSessionUsers(sessionID ? sessionID.toString() : "", handleUsersUpdate);
+  useSessionItems(sessionID ? sessionID.toString() : "", handleItemsUpdate);
 
   return (
-    <div>
-      <UserListContainer
-        sessionID={session?.id || ""}
-        users={session?.users || []}
-      />
+    <div className="flex flex-col h-screen">
+      <UserListContainer />
       <div className="flex flex-col items-center justify-center h-screen space-y-6">
-        <div className="flex flex-col items-center justify-center text-center px-4 h-[30vh] w-full rounded shadow-lg">
+        <div className="flex flex-col items-center justify-center text-center px-4 w-full rounded shadow-lg">
           <CopyToClipboardButton url={url} />
-          <div className="flex justify-center space-x-4 w-[300px]">
+          <div className="flex justify-center space-x-4 w-[300px] mb-4">
             <ShareButton
               label="Share on WhatsApp"
               url={whatsappShareUrl}
@@ -101,6 +101,13 @@ export default function SessionPage() {
               </svg>
             </ShareButton>
           </div>
+          <motion.button
+            className="flex justify-center items-center w-[150px] rounded h-10"
+            style={{ backgroundColor: "rgb(35, 35, 73)", color: "white" }}
+            onClick={handleReadyClick}
+          >
+            Ready
+          </motion.button>
         </div>
       </div>
     </div>

@@ -1,10 +1,9 @@
 "use client";
-import { useRouter } from "next/navigation";
+import { motion } from "motion/react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { motion } from "motion/react";
-import { clear } from "console";
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
@@ -15,7 +14,7 @@ export default function Home() {
     setSuccess(false);
     setLoading(true);
     const sessionId = uuidv4();
-    const res = await fetch("/api/create-session", {
+    const res = await fetch("/api/sessions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -1,0 +1,64 @@
+"use client";
+
+import { User, useSession } from "@/app/context/session-context";
+import { useSessionUsers } from "@/app/hooks/use-session-users";
+import AllocationContainer from "@/components/allocation-container";
+import { useParams } from "next/navigation";
+import { useCallback, useEffect } from "react";
+
+export default function SplitPage() {
+  const { session, setSession } = useSession();
+  const { sessionID } = useParams();
+
+  const handleReadyToSplit = async (
+    selectedUser: string,
+    selectedItems: string[]
+  ) => {
+    // Logic to handle when the user is ready to split
+    console.log(
+      "User ready to split:",
+      selectedUser,
+      "with items:",
+      selectedItems
+    );
+    await fetch(`/api/sessions/${sessionID}/users/${selectedUser}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ isReady: true }),
+    });
+  };
+
+  const handleUsersUpdate = useCallback(
+    (users: User[]) => {
+      if (users.length === 0) return;
+      setSession((prev) => ({
+        ...prev,
+        id: sessionID ? sessionID.toString() : "",
+        users,
+      }));
+      console.log("Users updated:", users);
+    },
+    [setSession]
+  );
+
+  useSessionUsers(sessionID ? sessionID.toString() : "", handleUsersUpdate);
+
+  useEffect(() => {
+    if (session.users.every((user) => user.isReady)) {
+      console.log("All users are ready to split");
+      // You can add logic here to proceed with the splitting process
+    }
+  }, [session.users]);
+
+  return (
+    <div>
+      {/* Additional content can be added here */}
+      <AllocationContainer
+        users={session.users}
+        items={session.items}
+        onReady={handleReadyToSplit}
+        sessionID={sessionID?.toString() || ""}
+      />
+    </div>
+  );
+}
