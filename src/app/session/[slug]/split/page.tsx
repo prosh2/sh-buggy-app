@@ -7,8 +7,9 @@ import { useEffect } from "react";
 
 export default function SplitPage() {
   const sessionContext = useSession();
+  const { id: sessionID } = sessionContext.session;
 
-  const handleReadyToSplit = (
+  const handleReadyToSplit = async (
     selectedUser: string,
     selectedItems: string[]
   ) => {
@@ -19,13 +20,13 @@ export default function SplitPage() {
       "with items:",
       selectedItems
     );
-    // const usersRef = doc(db, "sessions", sessionContext.session.id);
-    // setDoc(
-    //   usersRef,
-    //   { users: [...sessionContext.session.users, newUser] },
-    //   { merge: true }
-    // );
+    await fetch(`/api/sessions/${sessionID}/users/${selectedUser}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ isReady: true }),
+    });
   };
+
   useEffect(() => {
     if (sessionContext.session.users.every((user) => user.isReady)) {
       console.log("All users are ready to split");
