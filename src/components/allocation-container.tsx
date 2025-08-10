@@ -1,15 +1,17 @@
 import { Item, User } from "@/app/context/session-context";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // This component allows user to select items and mark themselves ready for splitting.
 export default function AllocationContainer({
   users,
   items, //list of items to select from, populated by OCR backend
+  sessionID,
   onReady,
 }: {
   users: User[];
   items: Item[];
+  sessionID: string;
   onReady: (selectedUser: string, selectedItems: string[]) => void;
 }) {
   const DUMMY_ITEMS = [
@@ -29,9 +31,31 @@ export default function AllocationContainer({
         : [...prev, itemId]
     );
   };
+  const patchSelectedItems = async () => {
+    if (!selectedUser || selectedItems.length === 0) return;
+    const allocatedItems = DUMMY_ITEMS.filter((item) =>
+      selectedItems.includes(item.id)
+    );
+    await fetch(`/api/sessions/${sessionID}/users/${selectedUser}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ allocatedItems }),
+    });
+  };
+
+  useEffect(() => {
+    patchSelectedItems();
+  }, [selectedItems]);
 
   return (
     <div className="flex flex-col items-center p-4 max-w-md mx-auto space-y-6">
+      <div>
+        <p>
+          Allocated Items for user:{" "}
+          {users.find((u) => u.id === selectedUser)?.name}
+        </p>
+        <p>Selected Items:</p>
+      </div>
       {/* User Selection */}
       <div className="w-full">
         <h2 className="text-lg font-bold mb-3">Select Your Name</h2>

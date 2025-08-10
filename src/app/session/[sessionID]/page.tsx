@@ -11,7 +11,7 @@ import { useCallback, useEffect, useState } from "react";
 
 export default function SessionPage() {
   const [url, setUrl] = useState("");
-  const sessionContext = useSession();
+  const { session, setSession } = useSession();
   const { sessionID } = useParams();
   const router = useRouter();
 
@@ -31,33 +31,33 @@ export default function SessionPage() {
 
   const handleUsersUpdate = useCallback(
     (users: User[]) => {
-      sessionContext.setSession((prev) => ({
+      setSession((prev) => ({
         ...prev,
         id: sessionID ? sessionID.toString() : "",
         users,
       }));
       console.log("Users updated:", users);
     },
-    [sessionContext.setSession]
+    [setSession]
   );
   const handleItemsUpdate = useCallback(
     (items: Item[]) => {
-      sessionContext.setSession((prev) => ({
+      setSession((prev) => ({
         ...prev,
         id: sessionID ? sessionID.toString() : "",
         items,
       }));
       console.log("Items updated:", items);
     },
-    [sessionContext.setSession]
+    [setSession]
   );
   const handleReadyClick = () => {
     console.log("Ready button clicked");
-    if (sessionContext.session.users.length === 0) {
+    if (session.users.length === 0) {
       console.error("No users in session"); //todo add snackbar or toast
       return;
     }
-    router.push(`/session/${sessionContext.session?.id}/split`);
+    router.push(`/session/${session?.id}/split`);
   };
   useSessionUsers(sessionID ? sessionID.toString() : "", handleUsersUpdate);
   useSessionItems(sessionID ? sessionID.toString() : "", handleItemsUpdate);

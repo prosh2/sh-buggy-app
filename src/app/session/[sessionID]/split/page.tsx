@@ -3,11 +3,12 @@
 import { User, useSession } from "@/app/context/session-context";
 import { useSessionUsers } from "@/app/hooks/use-session-users";
 import AllocationContainer from "@/components/allocation-container";
+import { useParams } from "next/navigation";
 import { useCallback, useEffect } from "react";
 
 export default function SplitPage() {
-  const sessionContext = useSession();
-  const { id: sessionID } = sessionContext.session;
+  const { session, setSession } = useSession();
+  const { sessionID } = useParams();
 
   const handleReadyToSplit = async (
     selectedUser: string,
@@ -29,40 +30,40 @@ export default function SplitPage() {
 
   const handleUsersUpdate = useCallback(
     (users: User[]) => {
-      sessionContext.setSession((prev) => ({
+      if (users.length === 0) return;
+      setSession((prev) => ({
         ...prev,
         users,
       }));
       console.log("Users updated:", users);
     },
-    [sessionContext.setSession]
+    [setSession]
   );
 
-  useSessionUsers(sessionID, handleUsersUpdate);
+  useSessionUsers(sessionID ? sessionID.toString() : "", handleUsersUpdate);
 
   useEffect(() => {
-    if (sessionContext.session.users.every((user) => user.isReady)) {
+    if (session.users.every((user) => user.isReady)) {
       console.log("All users are ready to split");
       // You can add logic here to proceed with the splitting process
     }
-  }, [sessionContext.session.users]);
+  }, [session.users]);
 
   return (
     <div>
       <h1 className="text-4xl font-bold mb-4">Split Session</h1>
-      <p className="text-lg mb-2">Session ID: {sessionContext.session.id}</p>
+      <p className="text-lg mb-2">Session ID: {session.id}</p>
       <p className="text-lg mb-2">
-        Users: {sessionContext.session.users.map((user) => user.name)}
+        Users: {session.users.map((user) => user.name)}
       </p>
-      <p className="text-lg mb-2">
-        Items: {sessionContext.session.items.join(", ")}
-      </p>
+      <p className="text-lg mb-2">Items: {session.items.join(", ")}</p>
       <p className="text-2xl">This is the split page for session</p>
       {/* Additional content can be added here */}
       <AllocationContainer
-        users={sessionContext.session.users}
-        items={sessionContext.session.items}
+        users={session.users}
+        items={session.items}
         onReady={handleReadyToSplit}
+        sessionID={sessionID?.toString() || ""}
       />
     </div>
   );
