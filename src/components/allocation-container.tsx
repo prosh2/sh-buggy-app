@@ -47,6 +47,14 @@ export default function AllocationContainer({
     patchSelectedItems();
   }, [selectedItems]);
 
+  useEffect(() => {
+    setSelectedItems(
+      users
+        .find((u) => u.id === selectedUser)
+        ?.allocatedItems.map((item) => item.id) || []
+    );
+  }, [selectedUser]);
+
   return (
     <div className="flex flex-col items-center p-4 max-w-md mx-auto space-y-6">
       <div>
@@ -54,7 +62,13 @@ export default function AllocationContainer({
           Allocated Items for user:{" "}
           {users.find((u) => u.id === selectedUser)?.name}
         </p>
-        <p>Selected Items:</p>
+        <p>
+          Selected Items:{" "}
+          {users
+            .find((u) => u.id === selectedUser)
+            ?.allocatedItems.map((item) => item.name)
+            .join(", ")}{" "}
+        </p>
       </div>
       {/* User Selection */}
       <div className="w-full">

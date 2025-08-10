@@ -11,7 +11,7 @@ export type SessionData = {
 export type User = {
   id: string;
   name: string;
-  allocatedItems: string[];
+  allocatedItems: Item[];
   isReady?: boolean; // Optional property to indicate if the user is ready
 };
 
