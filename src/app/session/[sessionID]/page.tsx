@@ -1,26 +1,18 @@
 "use client";
-import {
-  Item,
-  SessionData,
-  User,
-  useSession,
-} from "@/app/context/session-context";
+import { Item, User, useSession } from "@/app/context/session-context";
 import { useSessionItems } from "@/app/hooks/use-session-items";
 import { useSessionUsers } from "@/app/hooks/use-session-users";
 import CopyToClipboardButton from "@/components/copy-to-clipboard-button";
 import ShareButton from "@/components/share-button";
 import UserListContainer from "@/components/user-list-container";
-import { db } from "@/firebase";
-import { collection, doc, onSnapshot, query } from "firebase/firestore";
 import { motion } from "motion/react";
-import { pre } from "motion/react-client";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 export default function SessionPage() {
   const [url, setUrl] = useState("");
   const sessionContext = useSession();
-  const { slug } = useParams();
+  const { sessionID } = useParams();
   const router = useRouter();
 
   useEffect(() => {
@@ -41,7 +33,7 @@ export default function SessionPage() {
     (users: User[]) => {
       sessionContext.setSession((prev) => ({
         ...prev,
-        id: slug ? slug.toString() : "",
+        id: sessionID ? sessionID.toString() : "",
         users,
       }));
       console.log("Users updated:", users);
@@ -52,7 +44,7 @@ export default function SessionPage() {
     (items: Item[]) => {
       sessionContext.setSession((prev) => ({
         ...prev,
-        id: slug ? slug.toString() : "",
+        id: sessionID ? sessionID.toString() : "",
         items,
       }));
       console.log("Items updated:", items);
@@ -67,8 +59,8 @@ export default function SessionPage() {
     }
     router.push(`/session/${sessionContext.session?.id}/split`);
   };
-  useSessionUsers(slug ? slug.toString() : "", handleUsersUpdate);
-  useSessionItems(slug ? slug.toString() : "", handleItemsUpdate);
+  useSessionUsers(sessionID ? sessionID.toString() : "", handleUsersUpdate);
+  useSessionItems(sessionID ? sessionID.toString() : "", handleItemsUpdate);
 
   return (
     <div className="flex flex-col h-screen">

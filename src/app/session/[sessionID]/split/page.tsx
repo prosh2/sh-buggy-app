@@ -1,10 +1,8 @@
 "use client";
 
-import { SessionData, User, useSession } from "@/app/context/session-context";
+import { User, useSession } from "@/app/context/session-context";
 import { useSessionUsers } from "@/app/hooks/use-session-users";
 import AllocationContainer from "@/components/allocation-container";
-import { db } from "@/firebase";
-import { collection, onSnapshot, query } from "firebase/firestore";
 import { useCallback, useEffect } from "react";
 
 export default function SplitPage() {
