@@ -14,7 +14,7 @@ export default function Home() {
     setSuccess(false);
     setLoading(true);
     const sessionId = uuidv4();
-    const res = await fetch("/api/create-session", {
+    const res = await fetch("/api/sessions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

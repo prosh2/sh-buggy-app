@@ -1,11 +1,17 @@
 "use client";
-import { SessionData, useSession } from "@/app/context/session-context";
+import {
+  Item,
+  SessionData,
+  User,
+  useSession,
+} from "@/app/context/session-context";
 import CopyToClipboardButton from "@/components/copy-to-clipboard-button";
 import ShareButton from "@/components/share-button";
 import UserListContainer from "@/components/user-list-container";
 import { db } from "@/firebase";
-import { doc, onSnapshot } from "firebase/firestore";
+import { collection, doc, onSnapshot, query } from "firebase/firestore";
 import { motion } from "motion/react";
+import { pre } from "motion/react-client";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -34,26 +40,53 @@ export default function SessionPage() {
       console.error("Session ID is missing");
       return;
     }
-    const sessionDocRef = doc(db, "sessions", slug.toString());
-    console.log("Listening to session updates for ID:", slug);
-    // Subscribe to session updates
-    const unsubscribe = onSnapshot(sessionDocRef, (doc) => {
-      if (doc.exists()) {
-        const data = doc.data();
-        sessionContext.setSession({
-          id: slug.toString(),
-          users: data.users,
-          items: data.items,
-        } as SessionData);
-        console.log("Usernames updated:", data.users);
-        console.log("Items updated:", data.items);
-      } else {
-        console.log("No such document!");
-      }
+    const usersRef = collection(db, "sessions", slug.toString(), "users");
+    const q = query(usersRef);
+
+    const unsubscribeUsers = onSnapshot(q, (snapshot) => {
+      const usersData = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as User[];
+
+      sessionContext.setSession(
+        (previousSession) =>
+          ({
+            ...previousSession,
+            id: slug.toString(),
+            users: usersData,
+            items: previousSession.items,
+          } as SessionData)
+      );
+      console.log("Users updated:", usersData);
+    });
+
+    const itemsRef = collection(db, "sessions", slug.toString(), "items");
+    const itemsQuery = query(itemsRef);
+
+    const unsubscribeItems = onSnapshot(itemsQuery, (snapshot) => {
+      const itemsData = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Item[];
+
+      sessionContext.setSession(
+        (previousSession) =>
+          ({
+            ...previousSession,
+            id: slug.toString(),
+            users: previousSession.users,
+            items: itemsData,
+          } as SessionData)
+      );
+      console.log("Items updated:", itemsData);
     });
 
     // Cleanup subscription on unmount
-    return () => unsubscribe();
+    return () => {
+      unsubscribeUsers();
+      unsubscribeItems();
+    };
   }, []);
 
   const handleReadyClick = () => {
@@ -63,12 +96,11 @@ export default function SessionPage() {
       return;
     }
     router.push(`/session/${sessionContext.session?.id}/split`);
-  }
+  };
 
   return (
     <div className="flex flex-col h-screen">
-      <UserListContainer
-      />
+      <UserListContainer />
       <div className="flex flex-col items-center justify-center h-screen space-y-6">
         <div className="flex flex-col items-center justify-center text-center px-4 w-full rounded shadow-lg">
           <CopyToClipboardButton url={url} />
@@ -108,7 +140,8 @@ export default function SessionPage() {
           <motion.button
             className="flex justify-center items-center w-[150px] rounded h-10"
             style={{ backgroundColor: "rgb(35, 35, 73)", color: "white" }}
-            onClick={handleReadyClick}>
+            onClick={handleReadyClick}
+          >
             Ready
           </motion.button>
         </div>

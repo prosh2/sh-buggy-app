@@ -6,32 +6,40 @@ import { doc, setDoc } from "firebase/firestore";
 import { useState } from "react";
 import User from "./user";
 import { useSession } from "@/app/context/session-context";
+import { v4 as uuidv4 } from "uuid";
 export default function UserListContainer() {
   const [username, setUsername] = useState("");
   const sessionContext = useSession();
-  const handleAddUser = () => {
+  const handleAddUser = async () => {
     // Logic to add a user can be implemented here
     console.log("your name is ", username, sessionContext.session.id);
-
-    const newUser = {
-      name: username,
-      allocatedItems: [],
-    };
-
-    const usersRef = doc(db, "sessions", sessionContext.session.id);
-    setDoc(
-      usersRef,
-      { users: [...sessionContext.session.users, newUser] },
-      { merge: true }
+    const res = await fetch(
+      `/api/sessions/${sessionContext.session.id}/users`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name: username }),
+      }
     );
+    if (!res.ok) {
+      console.error("Failed to create user");
+      return;
+    }
   };
 
-  const handleDeleteUser = (userToDelete: string) => {
-    const updatedUsers = sessionContext.session.users?.filter(
-      (user) => user.name !== userToDelete
+  const handleDeleteUser = async (userID: string) => {
+    const res = await fetch(
+      `/api/sessions/${sessionContext.session.id}/users/${userID}`,
+      {
+        method: "DELETE",
+      }
     );
-    const usersRef = doc(db, "sessions", sessionContext.session.id);
-    setDoc(usersRef, { users: updatedUsers }, { merge: true });
+    if (!res.ok) {
+      console.error("Failed to create user");
+      return;
+    }
   };
 
   return (
@@ -42,7 +50,8 @@ export default function UserListContainer() {
           {(sessionContext.session.users?.length > 0 &&
             sessionContext.session.users?.map((user) => (
               <User
-                key={user.name}
+                key={user.id}
+                id={user.id}
                 username={user.name}
                 handleDeleteUser={handleDeleteUser}
               />

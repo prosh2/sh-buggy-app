@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useState, useContext, ReactNode } from "react";
+import { v4 as uuidv4 } from "uuid";
 export type SessionData = {
   id: string;
   users: User[];
@@ -8,11 +9,14 @@ export type SessionData = {
 };
 
 export type User = {
+  id: string;
   name: string;
   allocatedItems: string[];
+  isReady?: boolean; // Optional property to indicate if the user is ready
 };
 
 export type Item = {
+  id: string;
   name: string;
   price: number;
   quantity: number;
