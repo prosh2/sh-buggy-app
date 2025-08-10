@@ -1,6 +1,6 @@
 import { Item, User } from "@/app/context/session-context";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // This component allows user to select items and mark themselves ready for splitting.
 export default function AllocationContainer({
@@ -23,6 +23,9 @@ export default function AllocationContainer({
   ];
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [underlineProps, setUnderlineProps] = useState({ left: 0, width: 0 });
+  const itemRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const toggleItem = (itemId: string) => {
     setSelectedItems((prev) =>
@@ -55,34 +58,41 @@ export default function AllocationContainer({
     );
   }, [selectedUser]);
 
+  useEffect(() => {
+    if (selectedUser && itemRefs.current[selectedUser]) {
+      const node = itemRefs.current[selectedUser];
+      const containerNode = containerRef.current;
+      if (!containerNode) return;
+      const containerRect = containerNode.getBoundingClientRect();
+      const nodeRect = node.getBoundingClientRect();
+
+      setUnderlineProps({
+        left: nodeRect.left - containerRect.left,
+        width: nodeRect.width,
+      });
+    }
+  }, [selectedUser]);
+
   return (
-    <div className="flex flex-col items-center p-4 max-w-md mx-auto space-y-6">
-      <div>
-        <p>
-          Allocated Items for user:{" "}
-          {users.find((u) => u.id === selectedUser)?.name}
-        </p>
-        <p>
-          Selected Items:{" "}
-          {users
-            .find((u) => u.id === selectedUser)
-            ?.allocatedItems.map((item) => item.name)
-            .join(", ")}{" "}
-        </p>
-      </div>
+    <div className="rounded shadow-lg flex flex-col items-center p-4 max-w-md mx-auto space-y-6 ">
       {/* User Selection */}
-      <div className="w-full">
+      <div className="w-fullflex justify-center">
         <h2 className="text-lg font-bold mb-3">Select Your Name</h2>
-        <div className="flex flex-wrap gap-3">
+        <div ref={containerRef} className="flex flex-wrap gap-3">
           {users.map((user) => (
             <motion.button
               key={user.id}
+              ref={(el) => {
+                itemRefs.current[user.id] = el;
+              }}
               onClick={() => setSelectedUser(user.id)}
               whileTap={{ scale: 0.95 }}
               animate={{
                 backgroundColor:
-                  selectedUser === user.id ? "#3B82F6" : "#E5E7EB",
+                  selectedUser === user.id ? "#2563EB" : "#E5E7EB",
                 color: selectedUser === user.id ? "#fff" : "#000",
+                borderBottom:
+                  selectedUser === user.id ? "none" : "1px solid #ddd",
               }}
               transition={{ duration: 0.2 }}
               className="px-4 py-2 rounded-xl font-medium shadow"
@@ -91,6 +101,19 @@ export default function AllocationContainer({
             </motion.button>
           ))}
         </div>
+        <motion.div
+          layout
+          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+          style={{
+            position: "relative",
+            bottom: 0,
+            left: underlineProps.left,
+            width: underlineProps.width,
+            height: 3,
+            borderRadius: 2,
+            backgroundColor: "#237becff",
+          }}
+        />
       </div>
 
       {/* Item Selection */}
@@ -100,7 +123,9 @@ export default function AllocationContainer({
           animate={{ opacity: 1, y: 0 }}
           className="w-full"
         >
-          <h2 className="text-lg font-bold mb-3">Select Items</h2>
+          <h2 className="flex justify-center text-lg font-bold mb-3">
+            Select Items
+          </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {DUMMY_ITEMS.map((item) => (
               <motion.div
@@ -108,8 +133,8 @@ export default function AllocationContainer({
                 whileTap={{ scale: 0.95 }}
                 animate={{
                   borderColor: selectedItems.includes(item.id)
-                    ? "#3B82F6"
-                    : "#D1D5DB",
+                    ? "#2563EB"
+                    : "#000000",
                   backgroundColor: selectedItems.includes(item.id)
                     ? "#DBEAFE"
                     : "#fff",

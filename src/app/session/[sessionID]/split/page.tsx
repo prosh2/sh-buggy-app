@@ -33,6 +33,7 @@ export default function SplitPage() {
       if (users.length === 0) return;
       setSession((prev) => ({
         ...prev,
+        id: sessionID ? sessionID.toString() : "",
         users,
       }));
       console.log("Users updated:", users);
@@ -51,13 +52,6 @@ export default function SplitPage() {
 
   return (
     <div>
-      <h1 className="text-4xl font-bold mb-4">Split Session</h1>
-      <p className="text-lg mb-2">Session ID: {session.id}</p>
-      <p className="text-lg mb-2">
-        Users: {session.users.map((user) => user.name)}
-      </p>
-      <p className="text-lg mb-2">Items: {session.items.join(", ")}</p>
-      <p className="text-2xl">This is the split page for session</p>
       {/* Additional content can be added here */}
       <AllocationContainer
         users={session.users}
