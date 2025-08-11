@@ -51,7 +51,7 @@ export default function SplitPage() {
   }, [session.users]);
 
   return (
-    <div>
+    <div className="bg-radial from-black-400 to-gray-900 h-screen">
       {/* Additional content can be added here */}
       <AllocationContainer
         users={session.users}

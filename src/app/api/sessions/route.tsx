@@ -1,5 +1,4 @@
 import { db } from "@/firebase";
-import { create } from "domain";
 import { doc, setDoc } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 

@@ -89,7 +89,7 @@ export default function AllocationContainer({
               whileTap={{ scale: 0.95 }}
               animate={{
                 backgroundColor:
-                  selectedUser === user.id ? "#2563EB" : "#E5E7EB",
+                  selectedUser === user.id ? "#0b58ccff" : "#E5E7EB",
                 color: selectedUser === user.id ? "#fff" : "#000",
                 borderBottom:
                   selectedUser === user.id ? "none" : "1px solid #ddd",
@@ -111,7 +111,7 @@ export default function AllocationContainer({
             width: underlineProps.width,
             height: 3,
             borderRadius: 2,
-            backgroundColor: "#237becff",
+            backgroundColor: "#ffffffff",
           }}
         />
       </div>
