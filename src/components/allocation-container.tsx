@@ -8,12 +8,18 @@ export default function AllocationContainer({
   users,
   items, //list of items to select from, populated by OCR backend
   sessionID,
+  readyToSplit,
   onReady,
 }: {
   users: User[];
   items: Item[];
   sessionID: string;
-  onReady: (selectedUser: string, selectedItems: string[]) => void;
+  readyToSplit: boolean;
+  onReady: (
+    isReady: boolean,
+    selectedUser: string,
+    selectedItems: string[]
+  ) => void;
 }) {
   const DUMMY_ITEMS = [
     // Example items, replace with actual items from backend
@@ -130,16 +136,38 @@ export default function AllocationContainer({
           </div>
         </motion.div>
       )}
-
       {/* Ready Button */}
-      {selectedUser && selectedItems.length > 0 && (
+      {!readyToSplit && selectedUser && selectedItems.length > 0 && (
         <motion.button
           whileTap={{ scale: 0.95 }}
           whileHover={{ scale: 1.02 }}
-          onClick={() => onReady(selectedUser, selectedItems)}
+          onClick={() => onReady(true, selectedUser, selectedItems)}
           className="mt-4 px-6 py-3 bg-green-500 text-white font-bold rounded-xl shadow-lg"
         >
           Ready
+        </motion.button>
+      )}
+
+      {readyToSplit && selectedUser && selectedItems.length > 0 && (
+        <motion.button
+          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.02 }}
+          onClick={() => onReady(false, selectedUser, selectedItems)}
+          className="mt-4 px-6 py-3 bg-red-500 text-white font-bold rounded-xl shadow-lg"
+        >
+          Not Ready
+        </motion.button>
+      )}
+
+      {/* Proceed to split bill button */}
+      {readyToSplit && (
+        <motion.button
+          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.02 }}
+          onClick={() => console.log("go to bill page")}
+          className="mt-4 px-6 py-3 bg-green-500 text-white font-bold rounded-xl shadow-lg"
+        >
+          Proceed to Split Bill
         </motion.button>
       )}
     </div>
