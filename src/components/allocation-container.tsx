@@ -1,6 +1,7 @@
 import { Item, User } from "@/app/context/session-context";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import UnderlineContainer from "./underline-container";
 
 // This component allows user to select items and mark themselves ready for splitting.
 export default function AllocationContainer({
@@ -23,9 +24,7 @@ export default function AllocationContainer({
   ];
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  const [underlineProps, setUnderlineProps] = useState({ left: 0, width: 0 });
-  const itemRefs = useRef<Record<string, HTMLButtonElement | null>>({});
-  const containerRef = useRef<HTMLDivElement>(null);
+  const userRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   const toggleItem = (itemId: string) => {
     setSelectedItems((prev) =>
@@ -58,35 +57,22 @@ export default function AllocationContainer({
     );
   }, [selectedUser]);
 
-  useEffect(() => {
-    if (selectedUser && itemRefs.current[selectedUser]) {
-      const node = itemRefs.current[selectedUser];
-      const containerNode = containerRef.current;
-      if (!containerNode) return;
-      const containerRect = containerNode.getBoundingClientRect();
-      const nodeRect = node.getBoundingClientRect();
-
-      setUnderlineProps({
-        left: nodeRect.left - containerRect.left,
-        width: nodeRect.width,
-      });
-    }
-  }, [selectedUser]);
-
   return (
     <div className="rounded shadow-lg flex flex-col items-center p-4 max-w-md mx-auto space-y-6 ">
       {/* User Selection */}
       <div className="w-full justify-center">
-        <h2 className="text-lg font-bold mb-3">Select Your Name</h2>
-        <div
-          ref={containerRef}
-          className="flex gap-3 overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing"
+        <h2 className="flex justify-center text-lg font-bold mb-3">
+          Select Your Name
+        </h2>
+        <UnderlineContainer
+          itemRefs={userRefs}
+          selectedItem={selectedUser ? selectedUser : ""}
         >
           {users.map((user) => (
             <motion.button
               key={user.id}
               ref={(el) => {
-                itemRefs.current[user.id] = el;
+                userRefs.current[user.id] = el;
               }}
               onClick={() => setSelectedUser(user.id)}
               whileTap={{ scale: 0.95 }}
@@ -103,20 +89,7 @@ export default function AllocationContainer({
               {user.name}
             </motion.button>
           ))}
-        </div>
-        <motion.div
-          layout
-          transition={{ type: "spring", stiffness: 500, damping: 30 }}
-          style={{
-            position: "relative",
-            bottom: 0,
-            left: underlineProps.left,
-            width: underlineProps.width,
-            height: 3,
-            borderRadius: 2,
-            backgroundColor: "#ffffffff",
-          }}
-        />
+        </UnderlineContainer>
       </div>
 
       {/* Item Selection */}
