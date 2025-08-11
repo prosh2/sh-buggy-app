@@ -1,7 +1,6 @@
 "use client";
 
-import React, { createContext, useState, useContext, ReactNode } from "react";
-import { v4 as uuidv4 } from "uuid";
+import React, { createContext, ReactNode, useContext, useState } from "react";
 export type SessionData = {
   id: string;
   users: User[];
