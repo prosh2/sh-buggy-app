@@ -76,9 +76,12 @@ export default function AllocationContainer({
   return (
     <div className="rounded shadow-lg flex flex-col items-center p-4 max-w-md mx-auto space-y-6 ">
       {/* User Selection */}
-      <div className="w-fullflex justify-center">
+      <div className="w-full justify-center">
         <h2 className="text-lg font-bold mb-3">Select Your Name</h2>
-        <div ref={containerRef} className="flex flex-wrap gap-3">
+        <div
+          ref={containerRef}
+          className="flex gap-3 overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing"
+        >
           {users.map((user) => (
             <motion.button
               key={user.id}
