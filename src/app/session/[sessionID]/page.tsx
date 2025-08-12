@@ -63,7 +63,7 @@ export default function SessionPage() {
   useSessionItems(sessionID ? sessionID.toString() : "", handleItemsUpdate);
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="bg-radial from-black-400 to-gray-900 flex flex-col h-screen">
       <UserListContainer />
       <div className="flex flex-col items-center justify-center h-screen space-y-6">
         <div className="flex flex-col items-center justify-center text-center px-4 w-full rounded shadow-lg">
@@ -102,9 +102,13 @@ export default function SessionPage() {
             </ShareButton>
           </div>
           <motion.button
-            className="flex justify-center items-center w-[150px] rounded h-10"
-            style={{ backgroundColor: "rgb(35, 35, 73)", color: "white" }}
+            className="flex justify-center items-center w-[150px] rounded h-10 shadow-lg border-black border-r-1 shadow-black bg-gray-900"
+            style={{
+              color: "white",
+            }}
             onClick={handleReadyClick}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
           >
             Ready
           </motion.button>
