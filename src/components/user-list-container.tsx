@@ -1,7 +1,7 @@
 // show user avatars and username in session container
 import { useSession } from "@/app/context/session-context";
 import AddIcon from "@mui/icons-material/Add";
-import { Button } from "@mui/material";
+import { motion } from "framer-motion";
 import { useState } from "react";
 import User from "./user";
 export default function UserListContainer() {
@@ -46,7 +46,7 @@ export default function UserListContainer() {
                 handleDeleteUser={handleDeleteUser}
               />
             ))) || (
-            <span className="text-black flex items-center h-full w-full justify-center">
+            <span className="text-gray-200 flex items-center h-full w-full justify-center">
               No users are in session
             </span>
           )}
@@ -65,15 +65,19 @@ export default function UserListContainer() {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
-          <Button
-            variant="contained"
-            color="primary"
-            size="small"
+          <motion.button
             onClick={handleAddUser}
             disabled={!username.trim()}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            className={
+              !username.trim()
+                ? "cursor-not-allowed bg-[#0e1523] w-[60px] rounded"
+                : "bg-blue-500 w-[60px] rounded"
+            }
           >
             <AddIcon className="text-white" />
-          </Button>
+          </motion.button>
         </span>
       </div>
     </div>
