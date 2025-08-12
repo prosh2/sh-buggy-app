@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import UnderlineContainer from "./underline-container";
 import { Chip } from "@mui/material";
+import { on } from "events";
 
 // This component allows user to select items and mark themselves ready for splitting.
 export default function AllocationContainer({
@@ -33,6 +34,7 @@ export default function AllocationContainer({
   const [selectedItems, setSelectedItems] = useState<Record<string, string[]>>(
     {}
   );
+  const [isReadyMap, setIsReadyMap] = useState<Record<string, boolean>>({});
   const userRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   const toggleItem = (itemId: string) => {
@@ -67,6 +69,15 @@ export default function AllocationContainer({
       if (items.includes(itemID)) count += 1;
     });
     return count;
+  };
+
+  const handlePlayerIsReady = (isReady: boolean) => {
+    if (!selectedUser) return;
+    setIsReadyMap((prev) => ({
+      ...prev,
+      [selectedUser]: isReady,
+    }));
+    onReady(isReady, selectedUser, selectedItems[selectedUser]);
   };
 
   useEffect(() => {
@@ -150,7 +161,7 @@ export default function AllocationContainer({
                 className="flex  flex-col space-y-2 p-4 border-2 rounded-xl shadow-sm cursor-pointer select-none"
               >
                 <p className="text-gray-700 font-medium">{item.name}</p>
-                <p className="text-sm text-gray-500">
+                <div className="text-sm text-gray-500">
                   Price: ${item.price}
                   <br />
                   <span className="flex w-full items-center">
@@ -161,37 +172,33 @@ export default function AllocationContainer({
                       className="flex w-fit ml-auto"
                     />
                   </span>
-                </p>
+                </div>
               </motion.div>
             ))}
           </div>
         </motion.div>
       )}
       {/* Ready Button */}
-      {!readyToSplit &&
-        selectedUser &&
+      {selectedUser &&
+        !isReadyMap[selectedUser] &&
         selectedItems[selectedUser]?.length > 0 && (
           <motion.button
             whileTap={{ scale: 0.95 }}
             whileHover={{ scale: 1.02 }}
-            onClick={() =>
-              onReady(true, selectedUser, selectedItems[selectedUser])
-            }
+            onClick={() => handlePlayerIsReady(true)}
             className="mt-4 px-6 py-3 bg-green-500 text-white font-bold rounded-xl shadow-lg"
           >
             Ready
           </motion.button>
         )}
 
-      {readyToSplit &&
-        selectedUser &&
+      {selectedUser &&
+        isReadyMap[selectedUser] &&
         selectedItems[selectedUser]?.length > 0 && (
           <motion.button
             whileTap={{ scale: 0.95 }}
             whileHover={{ scale: 1.02 }}
-            onClick={() =>
-              onReady(false, selectedUser, selectedItems[selectedUser])
-            }
+            onClick={() => handlePlayerIsReady(false)}
             className="mt-4 px-6 py-3 bg-red-500 text-white font-bold rounded-xl shadow-lg"
           >
             Not Ready
