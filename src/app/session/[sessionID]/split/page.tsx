@@ -1,5 +1,5 @@
 "use client";
-
+//user able to see how many ppl has selected that item in real time
 import { User, useSession } from "@/app/context/session-context";
 import { useSessionUsers } from "@/app/hooks/use-session-users";
 import AllocationContainer from "@/components/allocation-container";
