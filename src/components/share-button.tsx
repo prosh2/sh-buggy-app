@@ -1,3 +1,5 @@
+import { motion } from "framer-motion";
+
 export default function ShareButton({
   url,
   children,
@@ -10,15 +12,17 @@ export default function ShareButton({
   color?: string;
 }) {
   return (
-    <a
+    <motion.a
       href={url}
       target="_blank"
       rel="noopener noreferrer"
       className={`flex items-center space-x-2 px-2 text-white rounded w-[35vw]`}
       style={{ backgroundColor: `${color}` }}
+      whileTap={{ scale: 0.9 }}
+      whileHover={{ scale: 1.1 }}
     >
       {children}
       <span className="text-sm">{label}</span>
-    </a>
+    </motion.a>
   );
 }
