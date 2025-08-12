@@ -2,6 +2,7 @@ import { Item, User } from "@/app/context/session-context";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import UnderlineContainer from "./underline-container";
+import { Chip } from "@mui/material";
 
 // This component allows user to select items and mark themselves ready for splitting.
 export default function AllocationContainer({
@@ -29,20 +30,29 @@ export default function AllocationContainer({
     { id: "id4", name: "Item 4", price: 40, quantity: 4 },
   ];
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [selectedItems, setSelectedItems] = useState<Record<string, string[]>>(
+    {}
+  );
   const userRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   const toggleItem = (itemId: string) => {
-    setSelectedItems((prev) =>
-      prev.includes(itemId)
-        ? prev.filter((id) => id !== itemId)
-        : [...prev, itemId]
-    );
+    if (selectedUser === null) return;
+
+    setSelectedItems((prev) => {
+      const prevItems = prev[selectedUser] || [];
+      return {
+        ...prev,
+        [selectedUser]: prevItems.includes(itemId)
+          ? prevItems.filter((id) => id !== itemId)
+          : [...prevItems, itemId],
+      };
+    });
   };
+
   const patchSelectedItems = async () => {
-    if (!selectedUser || selectedItems.length === 0) return;
+    if (!selectedUser || selectedItems[selectedUser].length === 0) return;
     const allocatedItems = DUMMY_ITEMS.filter((item) =>
-      selectedItems.includes(item.id)
+      selectedItems[selectedUser].includes(item.id)
     );
     await fetch(`/api/sessions/${sessionID}/users/${selectedUser}`, {
       method: "PATCH",
@@ -51,16 +61,28 @@ export default function AllocationContainer({
     });
   };
 
+  const getTotalSelectionCount = (itemID: string) => {
+    let count = 0;
+    Object.values(selectedItems).forEach((items) => {
+      if (items.includes(itemID)) count += 1;
+    });
+    return count;
+  };
+
   useEffect(() => {
     patchSelectedItems();
   }, [selectedItems]);
 
   useEffect(() => {
-    setSelectedItems(
-      users
-        .find((u) => u.id === selectedUser)
-        ?.allocatedItems.map((item) => item.id) || []
-    );
+    if (!selectedUser) return;
+
+    setSelectedItems((prev) => ({
+      ...prev,
+      [selectedUser]:
+        users
+          .find((u) => u.id === selectedUser)
+          ?.allocatedItems.map((item) => item.id) || [],
+    }));
   }, [selectedUser]);
 
   return (
@@ -114,22 +136,31 @@ export default function AllocationContainer({
                 key={item.id}
                 whileTap={{ scale: 0.95 }}
                 animate={{
-                  borderColor: selectedItems.includes(item.id)
+                  borderColor: selectedItems[selectedUser]?.includes(item.id)
                     ? "#2563EB"
                     : "#000000",
-                  backgroundColor: selectedItems.includes(item.id)
+                  backgroundColor: selectedItems[selectedUser]?.includes(
+                    item.id
+                  )
                     ? "#DBEAFE"
                     : "#fff",
                 }}
                 transition={{ duration: 0.2 }}
                 onClick={() => toggleItem(item.id)}
-                className="p-4 border-2 rounded-xl shadow-sm cursor-pointer select-none"
+                className="flex  flex-col space-y-2 p-4 border-2 rounded-xl shadow-sm cursor-pointer select-none"
               >
                 <p className="text-gray-700 font-medium">{item.name}</p>
                 <p className="text-sm text-gray-500">
                   Price: ${item.price}
                   <br />
-                  Qty: {item.quantity}
+                  <span className="flex w-full items-center">
+                    Qty: {item.quantity}
+                    <Chip
+                      label={getTotalSelectionCount(item.id)}
+                      color="info"
+                      className="flex w-fit ml-auto"
+                    />
+                  </span>
                 </p>
               </motion.div>
             ))}
@@ -137,27 +168,35 @@ export default function AllocationContainer({
         </motion.div>
       )}
       {/* Ready Button */}
-      {!readyToSplit && selectedUser && selectedItems.length > 0 && (
-        <motion.button
-          whileTap={{ scale: 0.95 }}
-          whileHover={{ scale: 1.02 }}
-          onClick={() => onReady(true, selectedUser, selectedItems)}
-          className="mt-4 px-6 py-3 bg-green-500 text-white font-bold rounded-xl shadow-lg"
-        >
-          Ready
-        </motion.button>
-      )}
+      {!readyToSplit &&
+        selectedUser &&
+        selectedItems[selectedUser]?.length > 0 && (
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.02 }}
+            onClick={() =>
+              onReady(true, selectedUser, selectedItems[selectedUser])
+            }
+            className="mt-4 px-6 py-3 bg-green-500 text-white font-bold rounded-xl shadow-lg"
+          >
+            Ready
+          </motion.button>
+        )}
 
-      {readyToSplit && selectedUser && selectedItems.length > 0 && (
-        <motion.button
-          whileTap={{ scale: 0.95 }}
-          whileHover={{ scale: 1.02 }}
-          onClick={() => onReady(false, selectedUser, selectedItems)}
-          className="mt-4 px-6 py-3 bg-red-500 text-white font-bold rounded-xl shadow-lg"
-        >
-          Not Ready
-        </motion.button>
-      )}
+      {readyToSplit &&
+        selectedUser &&
+        selectedItems[selectedUser]?.length > 0 && (
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.02 }}
+            onClick={() =>
+              onReady(false, selectedUser, selectedItems[selectedUser])
+            }
+            className="mt-4 px-6 py-3 bg-red-500 text-white font-bold rounded-xl shadow-lg"
+          >
+            Not Ready
+          </motion.button>
+        )}
 
       {/* Proceed to split bill button */}
       {readyToSplit && (
