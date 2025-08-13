@@ -66,7 +66,7 @@ export default function SessionPage() {
     <div className="bg-radial from-black-400 to-gray-900 flex flex-col h-screen">
       <UserListContainer />
       <div className="flex flex-col items-center justify-center h-screen space-y-6">
-        <div className="flex flex-col items-center justify-center text-center px-4 w-full rounded shadow-lg">
+        <div className="flex flex-col items-center justify-center text-center px-4 w-full rounded">
           <CopyToClipboardButton url={url} />
           <div className="flex justify-center space-x-4 w-[300px] mb-4">
             <ShareButton

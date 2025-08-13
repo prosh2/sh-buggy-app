@@ -1,9 +1,8 @@
 import { Item, User } from "@/app/context/session-context";
+import { Chip } from "@mui/material";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import UnderlineContainer from "./underline-container";
-import { Chip } from "@mui/material";
-import { on } from "events";
+import UserSelection from "./user-selection";
 
 // This component allows user to select items and mark themselves ready for splitting.
 export default function AllocationContainer({
@@ -11,12 +10,14 @@ export default function AllocationContainer({
   items, //list of items to select from, populated by OCR backend
   sessionID,
   readyToSplit,
+  onBillSVP,
   onReady,
 }: {
   users: User[];
   items: Item[];
   sessionID: string;
   readyToSplit: boolean;
+  onBillSVP: () => void;
   onReady: (
     isReady: boolean,
     selectedUser: string,
@@ -34,6 +35,7 @@ export default function AllocationContainer({
   const [selectedItems, setSelectedItems] = useState<Record<string, string[]>>(
     {}
   );
+  const [itemCounts, setItemCounts] = useState<Record<string, number>>({});
   const [isReadyMap, setIsReadyMap] = useState<Record<string, boolean>>({});
   const userRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
@@ -52,7 +54,7 @@ export default function AllocationContainer({
   };
 
   const patchSelectedItems = async () => {
-    if (!selectedUser || selectedItems[selectedUser].length === 0) return;
+    if (!selectedUser) return;
     const allocatedItems = DUMMY_ITEMS.filter((item) =>
       selectedItems[selectedUser].includes(item.id)
     );
@@ -63,12 +65,14 @@ export default function AllocationContainer({
     });
   };
 
-  const getTotalSelectionCount = (itemID: string) => {
-    let count = 0;
-    Object.values(selectedItems).forEach((items) => {
-      if (items.includes(itemID)) count += 1;
-    });
-    return count;
+  const updateItemSelectionCount = () => {
+    const counts: Record<string, number> = {};
+    for (const user of users) {
+      for (const item of user.allocatedItems) {
+        counts[item.id] = (counts[item.id] || 0) + 1;
+      }
+    }
+    setItemCounts(counts);
   };
 
   const handlePlayerIsReady = (isReady: boolean) => {
@@ -94,42 +98,21 @@ export default function AllocationContainer({
           .find((u) => u.id === selectedUser)
           ?.allocatedItems.map((item) => item.id) || [],
     }));
-  }, [selectedUser]);
+  }, [users, selectedUser]);
+
+  useEffect(() => {
+    updateItemSelectionCount();
+  }, [users]);
 
   return (
-    <div className="rounded shadow-lg flex flex-col items-center p-4 max-w-md mx-auto space-y-6 ">
+    <div className="rounded shadow-lg flex flex-col justify-center items-center p-4 space-y-6">
       {/* User Selection */}
-      <div className="w-full justify-center">
-        <h2 className="flex justify-center text-lg font-bold mb-3">
-          Select Your Name
-        </h2>
-        <UnderlineContainer
-          itemRefs={userRefs}
-          selectedItem={selectedUser ? selectedUser : ""}
-        >
-          {users.map((user) => (
-            <motion.button
-              key={user.id}
-              ref={(el) => {
-                userRefs.current[user.id] = el;
-              }}
-              onClick={() => setSelectedUser(user.id)}
-              whileTap={{ scale: 0.95 }}
-              animate={{
-                backgroundColor:
-                  selectedUser === user.id ? "#0b58ccff" : "#E5E7EB",
-                color: selectedUser === user.id ? "#fff" : "#000",
-                borderBottom:
-                  selectedUser === user.id ? "none" : "1px solid #ddd",
-              }}
-              transition={{ duration: 0.2 }}
-              className="px-4 py-2 rounded-xl font-medium shadow"
-            >
-              {user.name}
-            </motion.button>
-          ))}
-        </UnderlineContainer>
-      </div>
+      <UserSelection
+        userRefs={userRefs}
+        users={users}
+        selectedUser={selectedUser || ""}
+        setSelectedUser={setSelectedUser}
+      />
 
       {/* Item Selection */}
       {selectedUser && (
@@ -167,7 +150,7 @@ export default function AllocationContainer({
                   <span className="flex w-full items-center">
                     Qty: {item.quantity}
                     <Chip
-                      label={getTotalSelectionCount(item.id)}
+                      label={itemCounts[item.id] || 0}
                       color="info"
                       className="flex w-fit ml-auto"
                     />
@@ -210,7 +193,7 @@ export default function AllocationContainer({
         <motion.button
           whileTap={{ scale: 0.95 }}
           whileHover={{ scale: 1.02 }}
-          onClick={() => console.log("go to bill page")}
+          onClick={onBillSVP}
           className="mt-4 px-6 py-3 bg-green-500 text-white font-bold rounded-xl shadow-lg"
         >
           Proceed to Split Bill
