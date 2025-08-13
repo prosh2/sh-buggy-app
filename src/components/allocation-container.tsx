@@ -102,6 +102,13 @@ export default function AllocationContainer({
 
   useEffect(() => {
     updateItemSelectionCount();
+    for (const user of users) {
+      if (!user) return;
+      setIsReadyMap((prev) => ({
+        ...prev,
+        [user.id]: user?.isReady || false,
+      }));
+    }
   }, [users]);
 
   return (
