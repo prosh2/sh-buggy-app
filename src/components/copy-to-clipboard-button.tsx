@@ -1,13 +1,18 @@
 import { useState } from "react";
 import ShareIcon from "@mui/icons-material/Share";
 import { motion } from "framer-motion";
-export default function CopyToClipboardButton({ url }: { url: string }) {
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+export default function CopyToClipboardButton({
+  textToCopy,
+}: {
+  textToCopy: string;
+}) {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = async () => {
-    if (!url) return;
+    if (!textToCopy) return;
     try {
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(textToCopy);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000); // Reset after 2 seconds
     } catch (error) {
@@ -18,7 +23,7 @@ export default function CopyToClipboardButton({ url }: { url: string }) {
   return (
     <div className="bg-gray-900 px-4 py-2 rounded mb-4 break-words text-gray-100 w-[300px] shadow-lg border-black border-r-1 shadow-black">
       <div className="flex flex-col items-center">
-        <div className="text-sm">{url}</div>
+        <div className="text-sm">{textToCopy}</div>
         <motion.button
           className="flex items-center space-x-2 mt-5 mb-2 shadow-lg border-black border-r-1 shadow-black rounded px-3 py-1"
           onClick={copyToClipboard}
@@ -28,9 +33,8 @@ export default function CopyToClipboardButton({ url }: { url: string }) {
           {copied ? (
             <span className="text-green-400">Copied!</span>
           ) : (
-            <span className="text-gray-200">Copy URL</span>
+            <ContentCopyIcon />
           )}
-          <ShareIcon />
         </motion.button>
       </div>
     </div>

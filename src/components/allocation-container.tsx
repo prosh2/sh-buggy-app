@@ -10,13 +10,17 @@ export default function AllocationContainer({
   items, //list of items to select from, populated by OCR backend
   sessionID,
   readyToSplit,
+  itemCounts,
   onBillSVP,
   onReady,
+  setItemCounts,
 }: {
   users: User[];
   items: Item[];
   sessionID: string;
   readyToSplit: boolean;
+  itemCounts: Record<string, number>;
+  setItemCounts: React.Dispatch<React.SetStateAction<Record<string, number>>>;
   onBillSVP: () => void;
   onReady: (
     isReady: boolean,
@@ -35,7 +39,7 @@ export default function AllocationContainer({
   const [selectedItems, setSelectedItems] = useState<Record<string, string[]>>(
     {}
   );
-  const [itemCounts, setItemCounts] = useState<Record<string, number>>({});
+  // const [itemCounts, setItemCounts] = useState<Record<string, number>>({});
   const [isReadyMap, setIsReadyMap] = useState<Record<string, boolean>>({});
   const userRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 

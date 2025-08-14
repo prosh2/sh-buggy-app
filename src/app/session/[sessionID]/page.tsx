@@ -67,7 +67,7 @@ export default function SessionPage() {
       <UserListContainer />
       <div className="flex flex-col items-center justify-center h-screen space-y-6">
         <div className="flex flex-col items-center justify-center text-center px-4 w-full rounded">
-          <CopyToClipboardButton url={url} />
+          <CopyToClipboardButton textToCopy={url} />
           <div className="flex justify-center space-x-4 w-[300px] mb-4">
             <ShareButton
               label="Share on WhatsApp"

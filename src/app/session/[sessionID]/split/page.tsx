@@ -15,6 +15,9 @@ export default function SplitPage() {
   const [numberOfReadyUsers, setNumberOfReadyUsers] = useState(0);
   const [showBillSummary, setShowBillSummary] = useState(false);
 
+  //to track the number of shares for each item
+  const [itemCounts, setItemCounts] = useState<Record<string, number>>({});
+
   const handleReadyToSplit = async (
     isReady: boolean,
     selectedUser: string,
@@ -83,14 +86,17 @@ export default function SplitPage() {
       {showBillSummary ? (
         <BillContainer
           users={session.users}
+          itemCounts={itemCounts}
           goBack={() => setShowBillSummary(false)}
         />
       ) : (
         <AllocationContainer
           users={session.users}
           items={session.items}
-          onReady={handleReadyToSplit}
           readyToSplit={readyToSplit}
+          itemCounts={itemCounts}
+          onReady={handleReadyToSplit}
+          setItemCounts={setItemCounts}
           onBillSVP={() => setShowBillSummary(true)}
           sessionID={sessionID?.toString() || ""}
         />
