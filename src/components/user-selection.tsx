@@ -14,7 +14,7 @@ export default function UserSelection({
   setSelectedUser: React.Dispatch<React.SetStateAction<string | null>>;
 }) {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-full">
       <h2 className="flex justify-center text-lg font-bold mb-5">
         Select Your Name
       </h2>

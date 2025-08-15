@@ -11,6 +11,7 @@ export default function AllocationContainer({
   sessionID,
   readyToSplit,
   itemSelectionCounts,
+  isHidden,
   onBillSVP,
   onReady,
   setItemSelectionCounts,
@@ -19,6 +20,7 @@ export default function AllocationContainer({
   items: Item[];
   sessionID: string;
   readyToSplit: boolean;
+  isHidden: boolean;
   itemSelectionCounts: Record<string, number>;
   setItemSelectionCounts: React.Dispatch<
     React.SetStateAction<Record<string, number>>
@@ -117,100 +119,110 @@ export default function AllocationContainer({
   }, [users]);
 
   return (
-    <div className="rounded shadow-lg flex flex-col justify-center items-center p-4 space-y-6">
-      {/* User Selection */}
-      <UserSelection
-        userRefs={userRefs}
-        users={users}
-        selectedUser={selectedUser || ""}
-        setSelectedUser={setSelectedUser}
-      />
-
-      {/* Item Selection */}
-      {selectedUser && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="w-full"
-        >
-          <h2 className="flex justify-center text-lg font-bold mb-3">
-            Select Items
-          </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            {DUMMY_ITEMS.map((item) => (
-              <motion.div
-                key={item.id}
-                whileTap={{ scale: 0.95 }}
-                animate={{
-                  borderColor: selectedItems[selectedUser]?.includes(item.id)
-                    ? "#2563EB"
-                    : "#000000",
-                  backgroundColor: selectedItems[selectedUser]?.includes(
-                    item.id
-                  )
-                    ? "#DBEAFE"
-                    : "#fff",
-                }}
-                transition={{ duration: 0.2 }}
-                onClick={() => toggleItem(item.id)}
-                className="flex  flex-col space-y-2 p-4 border-2 rounded-xl shadow-sm cursor-pointer select-none"
-              >
-                <p className="text-gray-700 font-medium">{item.name}</p>
-                <div className="text-sm text-gray-500">
-                  Price: ${item.price}
-                  <br />
-                  <span className="flex w-full items-center">
-                    Qty: {item.quantity}
-                    <Chip
-                      label={itemSelectionCounts[item.id] || 0}
-                      color="info"
-                      className="flex w-fit ml-auto"
-                    />
-                  </span>
-                </div>
-              </motion.div>
-            ))}
+    <>
+      {isHidden && (
+        <div className="rounded shadow-lg flex flex-col items-center p-4 h-full">
+          {/* User Selection */}
+          <div className="flex flex-col w-full h-50 justify-center">
+            <UserSelection
+              userRefs={userRefs}
+              users={users}
+              selectedUser={selectedUser || ""}
+              setSelectedUser={setSelectedUser}
+            />
           </div>
-        </motion.div>
-      )}
-      {/* Ready Button */}
-      {selectedUser &&
-        !isReadyMap[selectedUser] &&
-        selectedItems[selectedUser]?.length > 0 && (
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            whileHover={{ scale: 1.02 }}
-            onClick={() => handlePlayerIsReady(true)}
-            className="mt-4 px-6 py-3 bg-green-500 text-white font-bold rounded-xl shadow-lg"
-          >
-            Ready
-          </motion.button>
-        )}
+          {/* Item Selection */}
+          {selectedUser && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="w-full"
+            >
+              <h2 className="flex justify-center text-lg font-bold mb-3">
+                Select Items
+              </h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                {DUMMY_ITEMS.map((item) => (
+                  <motion.div
+                    key={item.id}
+                    whileTap={{ scale: 0.95 }}
+                    animate={{
+                      borderColor: selectedItems[selectedUser]?.includes(
+                        item.id
+                      )
+                        ? "#2563EB"
+                        : "#000000",
+                      backgroundColor: selectedItems[selectedUser]?.includes(
+                        item.id
+                      )
+                        ? "#DBEAFE"
+                        : "#fff",
+                    }}
+                    transition={{ duration: 0.2 }}
+                    onClick={() => toggleItem(item.id)}
+                    className="flex  flex-col space-y-2 p-4 border-2 rounded-xl shadow-sm cursor-pointer select-none"
+                  >
+                    <p className="text-gray-700 font-medium">{item.name}</p>
+                    <div className="text-sm text-gray-500">
+                      Price: ${item.price}
+                      <br />
+                      <span className="flex w-full items-center">
+                        Qty: {item.quantity}
+                        <Chip
+                          label={itemSelectionCounts[item.id] || 0}
+                          color="info"
+                          className="flex w-fit ml-auto"
+                        />
+                      </span>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+          {/* Ready Button */}
+          {selectedUser && (
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.02 }}
+              onClick={() => handlePlayerIsReady(true)}
+              className={
+                selectedItems[selectedUser]?.length <= 0
+                  ? "bg-gray-900 mt-8 px-6 py-3 text-gray-800 font-bold rounded-xl shadow-lg mouse-not-allowed cursor-not-allowed"
+                  : "bg-green-500 mt-8 px-6 py-3 text-white font-bold rounded-xl shadow-lg"
+              }
+              hidden={isReadyMap[selectedUser]}
+              disabled={selectedItems[selectedUser]?.length <= 0}
+            >
+              Ready
+            </motion.button>
+          )}
 
-      {selectedUser &&
-        isReadyMap[selectedUser] &&
-        selectedItems[selectedUser]?.length > 0 && (
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            whileHover={{ scale: 1.02 }}
-            onClick={() => handlePlayerIsReady(false)}
-            className="mt-4 px-6 py-3 bg-red-500 text-white font-bold rounded-xl shadow-lg"
-          >
-            Not Ready
-          </motion.button>
-        )}
+          {selectedUser && (
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.02 }}
+              onClick={() => handlePlayerIsReady(false)}
+              className="mt-8 px-6 py-3 bg-red-500 text-white font-bold rounded-xl shadow-lg"
+              hidden={!isReadyMap[selectedUser]}
+            >
+              Not Ready
+            </motion.button>
+          )}
 
-      {/* Proceed to split bill button */}
-      {readyToSplit && (
-        <motion.button
-          whileTap={{ scale: 0.95 }}
-          whileHover={{ scale: 1.02 }}
-          onClick={onBillSVP}
-          className="mt-4 px-6 py-3 bg-green-500 text-white font-bold rounded-xl shadow-lg"
-        >
-          Proceed to Split Bill
-        </motion.button>
+          {/* Proceed to split bill button */}
+          {readyToSplit && (
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.02 }}
+              onClick={onBillSVP}
+              className="mt-8 px-6 py-3 bg-green-500 text-white font-bold rounded-xl shadow-lg"
+            >
+              Proceed to Split Bill
+            </motion.button>
+          )}
+        </div>
       )}
-    </div>
+    </>
   );
 }
