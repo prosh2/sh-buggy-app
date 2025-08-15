@@ -68,7 +68,7 @@ export default function SplitPage() {
   }, [session.users]);
 
   return (
-    <div className="bg-radial from-black-400 to-gray-900 h-screen">
+    <div className="bg-radial from-black-400 to-gray-900 h-screen flex flex-col justify-center">
       <Chip
         color="success"
         sx={{
@@ -85,24 +85,25 @@ export default function SplitPage() {
         label={`Ready: ${numberOfReadyUsers}/${session.users.length}`}
       />
       {/* Additional content can be added here */}
-      {showBillSummary ? (
-        <BillContainer
-          users={session.users}
-          itemSelectionCounts={itemSelectionCounts}
-          goBack={() => setShowBillSummary(false)}
-        />
-      ) : (
-        <AllocationContainer
-          users={session.users}
-          items={session.items}
-          readyToSplit={readyToSplit}
-          itemSelectionCounts={itemSelectionCounts}
-          onReady={handleReadyToSplit}
-          setItemSelectionCounts={setItemSelectionCounts}
-          onBillSVP={() => setShowBillSummary(true)}
-          sessionID={sessionID?.toString() || ""}
-        />
-      )}
+
+      <BillContainer
+        isHidden={showBillSummary}
+        users={session.users}
+        itemSelectionCounts={itemSelectionCounts}
+        goBack={() => setShowBillSummary(false)}
+      />
+
+      <AllocationContainer
+        isHidden={!showBillSummary}
+        users={session.users}
+        items={session.items}
+        readyToSplit={readyToSplit}
+        itemSelectionCounts={itemSelectionCounts}
+        onReady={handleReadyToSplit}
+        setItemSelectionCounts={setItemSelectionCounts}
+        onBillSVP={() => setShowBillSummary(true)}
+        sessionID={sessionID?.toString() || ""}
+      />
     </div>
   );
 }
