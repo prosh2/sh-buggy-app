@@ -23,7 +23,7 @@ export default function CopyToClipboardButton({
   return (
     <div className="bg-gray-900 px-4 py-2 rounded mb-4 break-words text-gray-100 w-[300px] shadow-lg border-black border-r-1 shadow-black">
       <div className="flex flex-col items-center">
-        <div className="text-sm py-2 shadow-lg border-gray-700 border-1 text-gray-200">
+        <div className="text-sm p-2 shadow-lg border-gray-700 border-1 text-gray-200">
           {textToCopy}
         </div>
         <motion.button
