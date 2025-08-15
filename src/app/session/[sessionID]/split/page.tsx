@@ -3,6 +3,8 @@
 import { User, useSession } from "@/app/context/session-context";
 import { useSessionUsers } from "@/app/hooks/use-session-users";
 import AllocationContainer from "@/components/allocation-container";
+import BillContainer from "@/components/bill-container";
+import { Chip } from "@mui/material";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
@@ -11,6 +13,12 @@ export default function SplitPage() {
   const { sessionID } = useParams();
   const [readyToSplit, setReadyToSplit] = useState(false);
   const [numberOfReadyUsers, setNumberOfReadyUsers] = useState(0);
+  const [showBillSummary, setShowBillSummary] = useState(false);
+
+  //to track the number of shares for each item
+  const [itemSelectionCounts, setItemSelectionCounts] = useState<
+    Record<string, number>
+  >({});
 
   const handleReadyToSplit = async (
     isReady: boolean,
@@ -54,23 +62,47 @@ export default function SplitPage() {
       // You can add logic here to proceed with the splitting process
     } else {
       setReadyToSplit(false);
+      setShowBillSummary(false);
     }
     setNumberOfReadyUsers(session.users.filter((user) => user.isReady).length);
   }, [session.users]);
 
   return (
     <div className="bg-radial from-black-400 to-gray-900 h-screen">
-      <div>
-        Ready: {numberOfReadyUsers} / {session.users.length}
-      </div>
-      {/* Additional content can be added here */}
-      <AllocationContainer
-        users={session.users}
-        items={session.items}
-        onReady={handleReadyToSplit}
-        readyToSplit={readyToSplit}
-        sessionID={sessionID?.toString() || ""}
+      <Chip
+        color="success"
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          color: "white",
+          m: 2,
+          borderLeft: 1,
+          borderRight: 1,
+          borderColor: "black",
+          fontFamily: "monospace",
+        }}
+        label={`Ready: ${numberOfReadyUsers}/${session.users.length}`}
       />
+      {/* Additional content can be added here */}
+      {showBillSummary ? (
+        <BillContainer
+          users={session.users}
+          itemSelectionCounts={itemSelectionCounts}
+          goBack={() => setShowBillSummary(false)}
+        />
+      ) : (
+        <AllocationContainer
+          users={session.users}
+          items={session.items}
+          readyToSplit={readyToSplit}
+          itemSelectionCounts={itemSelectionCounts}
+          onReady={handleReadyToSplit}
+          setItemSelectionCounts={setItemSelectionCounts}
+          onBillSVP={() => setShowBillSummary(true)}
+          sessionID={sessionID?.toString() || ""}
+        />
+      )}
     </div>
   );
 }
