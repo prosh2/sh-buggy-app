@@ -10,17 +10,19 @@ export default function AllocationContainer({
   items, //list of items to select from, populated by OCR backend
   sessionID,
   readyToSplit,
-  itemCounts,
+  itemSelectionCounts,
   onBillSVP,
   onReady,
-  setItemCounts,
+  setItemSelectionCounts,
 }: {
   users: User[];
   items: Item[];
   sessionID: string;
   readyToSplit: boolean;
-  itemCounts: Record<string, number>;
-  setItemCounts: React.Dispatch<React.SetStateAction<Record<string, number>>>;
+  itemSelectionCounts: Record<string, number>;
+  setItemSelectionCounts: React.Dispatch<
+    React.SetStateAction<Record<string, number>>
+  >;
   onBillSVP: () => void;
   onReady: (
     isReady: boolean,
@@ -39,7 +41,6 @@ export default function AllocationContainer({
   const [selectedItems, setSelectedItems] = useState<Record<string, string[]>>(
     {}
   );
-  // const [itemCounts, setItemCounts] = useState<Record<string, number>>({});
   const [isReadyMap, setIsReadyMap] = useState<Record<string, boolean>>({});
   const userRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
@@ -76,7 +77,7 @@ export default function AllocationContainer({
         counts[item.id] = (counts[item.id] || 0) + 1;
       }
     }
-    setItemCounts(counts);
+    setItemSelectionCounts(counts);
   };
 
   const handlePlayerIsReady = (isReady: boolean) => {
@@ -161,7 +162,7 @@ export default function AllocationContainer({
                   <span className="flex w-full items-center">
                     Qty: {item.quantity}
                     <Chip
-                      label={itemCounts[item.id] || 0}
+                      label={itemSelectionCounts[item.id] || 0}
                       color="info"
                       className="flex w-fit ml-auto"
                     />

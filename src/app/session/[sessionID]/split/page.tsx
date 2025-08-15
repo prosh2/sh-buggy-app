@@ -16,7 +16,9 @@ export default function SplitPage() {
   const [showBillSummary, setShowBillSummary] = useState(false);
 
   //to track the number of shares for each item
-  const [itemCounts, setItemCounts] = useState<Record<string, number>>({});
+  const [itemSelectionCounts, setItemSelectionCounts] = useState<
+    Record<string, number>
+  >({});
 
   const handleReadyToSplit = async (
     isReady: boolean,
@@ -86,7 +88,7 @@ export default function SplitPage() {
       {showBillSummary ? (
         <BillContainer
           users={session.users}
-          itemCounts={itemCounts}
+          itemSelectionCounts={itemSelectionCounts}
           goBack={() => setShowBillSummary(false)}
         />
       ) : (
@@ -94,9 +96,9 @@ export default function SplitPage() {
           users={session.users}
           items={session.items}
           readyToSplit={readyToSplit}
-          itemCounts={itemCounts}
+          itemSelectionCounts={itemSelectionCounts}
           onReady={handleReadyToSplit}
-          setItemCounts={setItemCounts}
+          setItemSelectionCounts={setItemSelectionCounts}
           onBillSVP={() => setShowBillSummary(true)}
           sessionID={sessionID?.toString() || ""}
         />

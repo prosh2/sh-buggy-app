@@ -7,11 +7,11 @@ import CopyToClipboardButton from "./copy-to-clipboard-button";
 
 export default function BillContainer({
   users,
-  itemCounts,
+  itemSelectionCounts,
   goBack,
 }: {
   users: User[];
-  itemCounts: Record<string, number>;
+  itemSelectionCounts: Record<string, number>;
   goBack: () => void;
 }) {
   const userRefs = useRef<Record<string, HTMLButtonElement | null>>({});
@@ -21,7 +21,8 @@ export default function BillContainer({
     const user = users.find((user) => user.id === selectedUser);
     const amount = user?.allocatedItems.reduce(
       (acc, item) =>
-        acc + ((item.price * item.quantity) / itemCounts[item.id] || 1),
+        acc +
+        ((item.price * item.quantity) / itemSelectionCounts[item.id] || 1),
       0
     );
 
@@ -50,7 +51,7 @@ export default function BillContainer({
             <Receipt
               users={users}
               selectedUser={selectedUser}
-              itemCounts={itemCounts}
+              itemCounts={itemSelectionCounts}
             />
             <div
               key={selectedUser}
