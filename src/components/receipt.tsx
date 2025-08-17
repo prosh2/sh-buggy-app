@@ -1,5 +1,5 @@
 import { User } from "@/app/context/session-context";
-import { motion } from "framer-motion";
+import { motion } from "motion/react"
 export default function Receipt({
   users,
   selectedUser,

@@ -1,7 +1,6 @@
-import { useState } from "react";
-import ShareIcon from "@mui/icons-material/Share";
-import { motion } from "framer-motion";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import { motion } from "motion/react";
+import { useState } from "react";
 export default function CopyToClipboardButton({
   textToCopy,
 }: {
