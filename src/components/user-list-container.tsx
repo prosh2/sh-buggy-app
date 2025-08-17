@@ -1,7 +1,7 @@
 // show user avatars and username in session container
 import { useSession } from "@/app/context/session-context";
 import AddIcon from "@mui/icons-material/Add";
-import { motion } from "framer-motion";
+import { motion } from "motion/react"
 import { useState } from "react";
 import User from "./user";
 export default function UserListContainer() {
@@ -46,10 +46,10 @@ export default function UserListContainer() {
                 handleDeleteUser={handleDeleteUser}
               />
             ))) || (
-            <span className="text-gray-200 flex items-center h-full w-full justify-center">
-              No users are in session
-            </span>
-          )}
+              <span className="text-gray-200 flex items-center h-full w-full justify-center">
+                No users are in session
+              </span>
+            )}
         </div>
       </div>
 
