@@ -5,12 +5,14 @@ import { useSessionUsers } from "@/app/hooks/use-session-users";
 import CopyToClipboardButton from "@/components/copy-to-clipboard-button";
 import ShareButton from "@/components/share-button";
 import UserListContainer from "@/components/user-list-container";
+import { Alert } from "@mui/material";
 import { motion } from "motion/react";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 export default function SessionPage() {
   const [url, setUrl] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
   const { session, setSession } = useSession();
   const { sessionID } = useParams();
   const router = useRouter();
@@ -52,9 +54,8 @@ export default function SessionPage() {
     [setSession]
   );
   const handleReadyClick = () => {
-    console.log("Ready button clicked");
     if (session.users.length === 0) {
-      console.error("No users in session"); //todo add snackbar or toast
+      setShowAlert(true);
       return;
     }
     router.push(`/session/${session?.id}/split`);
@@ -64,6 +65,18 @@ export default function SessionPage() {
 
   return (
     <div className="bg-radial from-black-400 to-gray-900 flex flex-col h-screen">
+      {showAlert && (
+        <Alert
+          className="absolute top-4 right-4 z-10"
+          severity="warning"
+          onClose={() => {
+            setShowAlert(false);
+            console.log("Alert closed");
+          }}
+        >
+          Session must contain at least 1 user!
+        </Alert>
+      )}
       <UserListContainer />
       <div className="flex flex-col items-center justify-center h-screen space-y-6">
         <div className="flex flex-col items-center justify-center text-center px-4 w-full rounded">
@@ -110,7 +123,7 @@ export default function SessionPage() {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
-            Ready
+            Continue
           </motion.button>
         </div>
       </div>
