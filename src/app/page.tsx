@@ -80,7 +80,7 @@ export default function Home() {
             transition={{ type: "spring", restDelta: 0.5 }}
           >
             <Image
-              className="dark:invert"
+              className="invert"
               src="/vercel.svg"
               alt="Vercel logomark"
               width={20}
