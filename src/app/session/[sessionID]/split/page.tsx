@@ -2,9 +2,11 @@
 //user able to see how many ppl has selected that item in real time
 import { User, useSession } from "@/app/context/session-context";
 import { useSessionUsers } from "@/app/hooks/use-session-users";
-import AllocationContainer from "@/components/allocation-container";
+import AllocationContainer, {
+  DUMMY_ITEMS,
+} from "@/components/allocation-container";
 import BillContainer from "@/components/bill-container";
-import { Chip } from "@mui/material";
+import { Alert, Chip } from "@mui/material";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
@@ -14,11 +16,22 @@ export default function SplitPage() {
   const [readyToSplit, setReadyToSplit] = useState(false);
   const [numberOfReadyUsers, setNumberOfReadyUsers] = useState(0);
   const [showBillSummary, setShowBillSummary] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
 
   //to track the number of shares for each item
   const [itemSelectionCounts, setItemSelectionCounts] = useState<
     Record<string, number>
   >({});
+
+  const isValidAllocation = () => {
+    for (const item of DUMMY_ITEMS) {
+      if ((itemSelectionCounts[item.id] || 0) < 1) {
+        setShowAlert(true);
+        return false;
+      }
+    }
+    return true;
+  };
 
   const handleReadyToSplit = async (
     isReady: boolean,
@@ -32,11 +45,19 @@ export default function SplitPage() {
       "with items:",
       selectedItems
     );
+
     await fetch(`/api/sessions/${sessionID}/users/${selectedUser}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ isReady }),
     });
+  };
+
+  const handleShowBillSummary = () => {
+    console.log("handle svp");
+    if (!isValidAllocation()) return;
+
+    setShowBillSummary(true);
   };
 
   const handleUsersUpdate = useCallback(
@@ -69,6 +90,18 @@ export default function SplitPage() {
 
   return (
     <div className="bg-radial from-black-400 to-gray-900 h-screen flex flex-col justify-center">
+      {showAlert && (
+        <Alert
+          className="absolute top-4 right-4 z-10"
+          severity="warning"
+          onClose={() => {
+            setShowAlert(false);
+            console.log("Alert closed");
+          }}
+        >
+          Each item must have be selected by at least 1 user!
+        </Alert>
+      )}
       <Chip
         color="success"
         sx={{
@@ -101,7 +134,7 @@ export default function SplitPage() {
         itemSelectionCounts={itemSelectionCounts}
         onReady={handleReadyToSplit}
         setItemSelectionCounts={setItemSelectionCounts}
-        onBillSVP={() => setShowBillSummary(true)}
+        onBillSVP={() => handleShowBillSummary()}
         sessionID={sessionID?.toString() || ""}
       />
     </div>
