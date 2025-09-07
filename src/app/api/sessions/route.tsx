@@ -1,4 +1,4 @@
-import { db } from "@/firebase";
+import { db } from "@/lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -17,6 +17,8 @@ async function handler(req: NextRequest) {
   }
 
   try {
+    // throw new Error("Simulated server error");
+
     const sessionRef = doc(db, "sessions", sessionId);
 
     await setDoc(sessionRef, { createdAt: new Date().toISOString() });
