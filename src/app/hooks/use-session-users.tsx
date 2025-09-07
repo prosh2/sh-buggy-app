@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { User } from "../context/session-context";
 import { collection, onSnapshot, query } from "firebase/firestore";
-import { db } from "@/firebase";
+import { db } from "@/lib/firebase";
 
 export function useSessionUsers(
   sessionID: string,
