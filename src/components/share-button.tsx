@@ -1,4 +1,4 @@
-import { motion } from "motion/react"
+import { motion } from "motion/react";
 export default function ShareButton({
   url,
   children,
@@ -21,7 +21,7 @@ export default function ShareButton({
       whileHover={{ scale: 1.1 }}
     >
       {children}
-      <span className="text-sm">{label}</span>
+      <i className="bi">{label}</i>
     </motion.a>
   );
 }
