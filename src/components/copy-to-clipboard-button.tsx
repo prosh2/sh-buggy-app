@@ -20,24 +20,19 @@ export default function CopyToClipboardButton({
   };
 
   return (
-    <div className="bg-gray-900 px-4 py-2 rounded mb-4 break-words text-gray-100 w-[300px] shadow-lg border-black border-r-1 shadow-black">
-      <div className="flex flex-col items-center">
-        <div className="text-sm p-2 shadow-lg border-gray-700 border-1 text-gray-200">
-          {textToCopy}
-        </div>
-        <motion.button
-          className="flex items-center space-x-2 mt-5 mb-2 shadow-lg border-black border-r-1 shadow-black rounded px-3 py-1"
-          onClick={copyToClipboard}
-          whileTap={{ scale: 0.9 }}
-          whileHover={{ scale: 1.1 }}
-        >
-          {copied ? (
-            <span className="text-green-400">Copied!</span>
-          ) : (
-            <ContentCopyIcon />
-          )}
-        </motion.button>
-      </div>
-    </div>
+    <>
+      <span className="truncate text-sm">{textToCopy}</span>
+      <motion.button
+        onClick={copyToClipboard}
+        whileTap={{ scale: 0.9 }}
+        whileHover={{ scale: 1.1 }}
+      >
+        {copied ? (
+          <span className="text-sm text-green-400">Copied!</span>
+        ) : (
+          <span>📋</span>
+        )}
+      </motion.button>
+    </>
   );
 }

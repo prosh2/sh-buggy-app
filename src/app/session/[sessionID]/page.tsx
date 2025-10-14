@@ -64,7 +64,7 @@ export default function SessionPage() {
   useSessionItems(sessionID ? sessionID.toString() : "", handleItemsUpdate);
 
   return (
-    <div className="bg-radial from-black-400 to-gray-900 flex flex-col h-screen">
+    <div className="min-h-screen bg-gradient-to-b from-[#0e1117] to-[#1f2937] text-gray-200 flex flex-col items-center p-4">
       {showAlert && (
         <Alert
           className="absolute top-4 right-4 z-10"
@@ -77,11 +77,17 @@ export default function SessionPage() {
           Session must contain at least 1 user!
         </Alert>
       )}
-      <UserListContainer />
-      <div className="flex flex-col items-center justify-center h-screen space-y-6">
-        <div className="flex flex-col items-center justify-center text-center px-4 w-full rounded">
-          <CopyToClipboardButton textToCopy={url} />
-          <div className="flex justify-center space-x-4 w-[300px] mb-4">
+      <header className="flex flex-col items-center space-y-6 w-full max-w-md">
+        <h1 className="text-2xl font-semibold mb-1">Users in Session</h1>
+        <p className="text-sm text-gray-400">
+          Total users: {session.users.length}
+        </p>
+        <div className="bg-gray-800 rounded-2xl p-6 w-full text-center shadow-lg">
+          <p className="text-gray-400 mb-2">Session Link</p>
+          <div className="flex items-center justify-between bg-gray-900 rounded-xl p-2">
+            <CopyToClipboardButton textToCopy={url} />
+          </div>
+          <div className="flex justify-center gap-3 mt-4">
             <ShareButton
               label="Share on WhatsApp"
               url={whatsappShareUrl}
@@ -114,19 +120,24 @@ export default function SessionPage() {
               </svg>
             </ShareButton>
           </div>
-          <motion.button
-            className="flex justify-center items-center w-[150px] rounded h-10 shadow-lg border-black border-r-1 shadow-black bg-gray-900"
-            style={{
-              color: "white",
-            }}
-            onClick={handleReadyClick}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            Continue
-          </motion.button>
         </div>
-      </div>
+      </header>
+      <main className="flex h-full flex-col items-center justify-center mt-5 w-full max-w-md">
+        <UserListContainer />
+      </main>
+      <footer className="fixed bottom-0 right-0">
+        <motion.button
+          className="flex justify-center items-center w-[100px] rounded h-10 shadow-lg border-black border-r-1 shadow-black bg-green-500"
+          style={{
+            color: "white",
+          }}
+          onClick={handleReadyClick}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+        >
+          Next
+        </motion.button>
+      </footer>
     </div>
   );
 }
