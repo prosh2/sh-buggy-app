@@ -9,13 +9,13 @@ import { useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 export default function Home() {
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">(
-    "idle"
-  );
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
   const router = useRouter();
   const [progress, setProgress] = useState(0);
   const [buffer, setBuffer] = useState(10);
-  const progressRef = useRef(() => { });
+  const progressRef = useRef(() => {});
 
   const handleCreateSession = async () => {
     try {
@@ -52,12 +52,11 @@ export default function Home() {
   useEffect(() => {
     progressRef.current = () => {
       if (progress > 100 && status === "loading") {
-        return
+        return;
       } else if (progress < 100 && status === "success") {
         setProgress(100);
         setBuffer(100);
-      } else
-        setProgress(progress + 1);
+      } else setProgress(progress + 1);
       if (buffer < 100 && progress % 5 === 0) {
         const newBuffer = buffer + 1 + Math.random() * 10;
         setBuffer(newBuffer > 100 ? 100 : newBuffer);
@@ -79,7 +78,6 @@ export default function Home() {
       };
     }
   }, [status]);
-
 
   return (
     <div className="bg-radial from-black-400 to-gray-900 font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
@@ -113,17 +111,23 @@ export default function Home() {
             </motion.div>
           </motion.h1>
           <motion.div
-            className="text-gray-200 border-1 rounded-full transition-colors flex flex-col items-center justify-center gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-12 sm:h-14 sm:w-auto"
+            className="rounded-full transition-colors flex flex-col items-center justify-center gap-2 font-medium text-sm sm:text-base h-12 sm:h-14 sm:w-auto dark:hover:bg-white dark:hover:border-1"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             animate={{
               rotate: 360,
-              borderColor: status === "success" ? "#29d869ff" : status === "error" ? "#ff0000ff" : "inherit",
+              borderColor:
+                status === "success"
+                  ? "#29d869ff"
+                  : status === "error"
+                  ? "#ff0000ff"
+                  : "inherit",
               transition: { duration: 0.4 },
             }}
             transition={{ type: "spring", restDelta: 0.5 }}
           >
-            <EyeCatchingButton className="flex flex-col items-center justify-center w-full h-full px-4"
+            <EyeCatchingButton
+              className="flex flex-col items-center justify-center w-full h-full px-4"
               onClick={handleCreateSession}
             >
               <motion.div className="flex h-12 w-full items-center justify-center gap-2">
@@ -138,15 +142,24 @@ export default function Home() {
                 {status === "success" && <TypingEffect text="Success!" />}
                 {status === "error" && <TypingEffect text="Error!" />}
               </motion.div>
-              <motion.div className="w-full h-full" animate={{ display: status === "loading" ? "block" : "none", transition: { duration: 0.4 } }}>
-                <LinearProgress variant="buffer" value={progress} valueBuffer={buffer} />
+              <motion.div
+                className="w-full h-full"
+                animate={{
+                  display: status === "loading" ? "block" : "none",
+                  transition: { duration: 0.4 },
+                }}
+              >
+                <LinearProgress
+                  variant="buffer"
+                  value={progress}
+                  valueBuffer={buffer}
+                />
               </motion.div>
             </EyeCatchingButton>
-
           </motion.div>
         </motion.div>
       </main>
       <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center" />
-    </div >
+    </div>
   );
 }
