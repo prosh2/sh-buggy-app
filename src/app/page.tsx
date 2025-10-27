@@ -1,5 +1,6 @@
 "use client";
-import { EyeCatchingButton } from "@/components/eye-catching-btn";
+import { EyeCatchingButton } from "@/components/buttons/eye-catching-btn";
+import UploadReceiptDialog from "@/components/dialogs/UploadReceiptDialog";
 import { TypingEffect } from "@/components/typing-effect";
 import { LinearProgress } from "@mui/material";
 import { motion } from "motion/react";
@@ -16,7 +17,17 @@ export default function Home() {
   const [progress, setProgress] = useState(0);
   const [buffer, setBuffer] = useState(10);
   const progressRef = useRef(() => {});
+  const [openUploadDialog, setOpenUploadDialog] = useState(false);
 
+  const handleUploadReceipt = () => {
+    console.log("Opening upload dialog");
+    setOpenUploadDialog(true);
+  };
+
+  const handleCloseUploadDialog = () => {
+    console.log("Dialog closed");
+    setOpenUploadDialog(false);
+  };
   const handleCreateSession = async () => {
     try {
       setStatus("loading");
@@ -79,6 +90,10 @@ export default function Home() {
     }
   }, [status]);
 
+  useEffect(() => {
+    console.log(openUploadDialog);
+  }, [openUploadDialog]);
+
   return (
     <div className="bg-radial from-black-400 to-gray-900 font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <header className="flex items-center justify-between w-full max-w-3xl" />
@@ -128,7 +143,7 @@ export default function Home() {
           >
             <EyeCatchingButton
               className="flex flex-col items-center justify-center w-full h-full px-4"
-              onClick={handleCreateSession}
+              onClick={handleUploadReceipt}
             >
               <motion.div className="flex h-12 w-full items-center justify-center gap-2">
                 <Image
@@ -156,6 +171,10 @@ export default function Home() {
                 />
               </motion.div>
             </EyeCatchingButton>
+            <UploadReceiptDialog
+              open={openUploadDialog}
+              onClose={handleCloseUploadDialog}
+            />
           </motion.div>
         </motion.div>
       </main>
