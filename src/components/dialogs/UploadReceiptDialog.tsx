@@ -4,6 +4,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { useState } from "react";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import ClearIcon from "@mui/icons-material/Clear";
+import DeleteIcon from "@mui/icons-material/Delete";
 export interface DialogProps {
   open: boolean;
   onClose: () => void;
@@ -23,25 +24,38 @@ export default function UploadReceiptDialog(props: DialogProps) {
     setSelectedImage(event.target.files[0]);
   };
 
+  const handleTextExtraction = () => {
+    console.log("Extracting text from image:", selectedImage);
+    // Implement text extraction logic here
+  };
+
   return (
     <Dialog onClose={handleClose} open={open}>
       <DialogTitle>Upload Receipt</DialogTitle>
-      <div className="flex flex-col items-center justify-center w-full p-4 gap-4">
+      <div className="flex flex-col items-center justify-center w-full h-full p-4 gap-4 overflow-hidden">
         {selectedImage ? (
-          <div>
+          <div className="w-full h-full sm:w-[420px] flex items-center justify-center relative">
             <img
-              className="max-w-full max-h-full object-contain"
+              className="w-full max-w-full max-h-[236px] object-contain border-solid border-1 py-1"
               alt="not found"
               src={URL.createObjectURL(selectedImage)}
             />
+            {selectedImage && (
+              <IconButton
+                onClick={() => setSelectedImage(null)}
+                style={{ position: "absolute", right: 0, top: 10 }}
+              >
+                <DeleteIcon />
+              </IconButton>
+            )}
           </div>
         ) : (
           <>
-            <Skeleton variant="rectangular" width={210} height={118} />
+            <Skeleton variant="rectangular" width={420} height={236} />
             <IconButton
               aria-label="upload"
               component="label"
-              style={{ zIndex: 10, position: "fixed" }}
+              style={{ zIndex: 10, position: "absolute" }}
             >
               <FileUploadIcon />
               <input
@@ -56,12 +70,20 @@ export default function UploadReceiptDialog(props: DialogProps) {
         )}
 
         {selectedImage && (
-          <IconButton onClick={() => setSelectedImage(null)}>
-            <ClearIcon />
-          </IconButton>
+          <button
+            className=" bg-gray-800 hover:bg-gray-300 text-white py-2 px-2 rounded"
+            onClick={handleTextExtraction}
+          >
+            Extract Text
+          </button>
         )}
       </div>
-      <Button onClick={handleClose}>Close</Button>
+      <button
+        onClick={handleClose}
+        className="absolute right-0 top-0 w-[36px] h-[36px] bg-red-500 text-white rounded hover:bg-red-300"
+      >
+        <ClearIcon />
+      </button>
     </Dialog>
   );
 }
