@@ -31,7 +31,12 @@ export default function UploadReceiptDialog(props: DialogProps) {
 
   return (
     <Dialog onClose={handleClose} open={open}>
-      <DialogTitle>Upload Receipt</DialogTitle>
+      <DialogTitle
+        className="bg-gray-900 text-gray-200"
+        style={{ fontFamily: "monospace" }}
+      >
+        Upload Receipt
+      </DialogTitle>
       <div className="flex flex-col items-center justify-center w-full h-full p-4 gap-4 overflow-hidden">
         {selectedImage ? (
           <div className="w-full h-full sm:w-[420px] flex items-center justify-center relative">
@@ -68,19 +73,21 @@ export default function UploadReceiptDialog(props: DialogProps) {
             </IconButton>
           </>
         )}
-
+      </div>
+      <div className="flex items-center justify-center bg-gray-900 p-2">
         {selectedImage && (
           <button
-            className=" bg-gray-800 hover:bg-gray-300 text-white py-2 px-2 rounded"
+            className=" bg-green-500 hover:bg-green-300 text-white py-2 px-2 rounded text-sm font-mono"
             onClick={handleTextExtraction}
           >
             Extract Text
           </button>
         )}
       </div>
+
       <button
         onClick={handleClose}
-        className="absolute right-0 top-0 w-[36px] h-[36px] bg-red-500 text-white rounded hover:bg-red-300"
+        className="absolute right-0 top-0 w-[24px] h-[24px] bg-red-500 text-white rounded hover:bg-red-300"
       >
         <ClearIcon />
       </button>
