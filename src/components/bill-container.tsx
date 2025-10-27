@@ -1,7 +1,7 @@
 import { User } from "@/app/context/session-context";
 import { motion } from "motion/react";
 import { useRef, useState } from "react";
-import CopyToClipboardButton from "./copy-to-clipboard-button";
+import CopyToClipboardButton from "./buttons/copy-to-clipboard-button";
 import Receipt from "./receipt";
 import UserSelection from "./user-selection";
 
