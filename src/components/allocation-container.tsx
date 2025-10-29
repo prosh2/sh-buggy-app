@@ -2,7 +2,7 @@ import { Item, User } from "@/app/context/session-context";
 import { Chip } from "@mui/material";
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import UserSelection from "./user-selection";
+import UserSelection from "./user/user-selection";
 
 export const DUMMY_ITEMS = [
   // Example items, replace with actual items from backend

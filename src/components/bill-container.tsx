@@ -2,8 +2,8 @@ import { User } from "@/app/context/session-context";
 import { motion } from "motion/react";
 import { useRef, useState } from "react";
 import CopyToClipboardButton from "./buttons/copy-to-clipboard-button";
-import Receipt from "./receipt";
-import UserSelection from "./user-selection";
+import Receipt from "./receipt/receipt";
+import UserSelection from "./user/user-selection";
 
 export default function BillContainer({
   users,

@@ -1,6 +1,6 @@
 import { RefObject } from "react";
-import UnderlineContainer from "./underline-container";
-import { motion } from "motion/react"
+import UnderlineContainer from "../underline-container";
+import { motion } from "motion/react";
 import { User } from "@/app/context/session-context";
 export default function UserSelection({
   userRefs,
