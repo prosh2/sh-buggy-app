@@ -77,7 +77,7 @@ export default function UploadReceipt(props: Props) {
               />
             )}
             <img
-              className="w-full max-w-full max-h-[236px] object-contain border-solid border-1 py-1"
+              className="w-full max-w-full max-h-[236px] object-contain border-gray-300 border py-1"
               alt="not found"
               src={URL.createObjectURL(selectedImage)}
             />
