@@ -4,7 +4,10 @@ import FileUploadIcon from "@mui/icons-material/FileUpload";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 interface Props {
-  setShowTextPreview: React.Dispatch<React.SetStateAction<string>>;
+  selectedImage: File | null;
+  setExtractedText: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedImage: React.Dispatch<React.SetStateAction<File | null>>;
+  setOpenSB: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const DUMMY_EXTRACTED_RESULT = {
@@ -38,8 +41,8 @@ const DUMMY_EXTRACTED_RESULT = {
 } as const;
 
 export default function UploadReceipt(props: Props) {
-  const { setShowTextPreview } = props;
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const { selectedImage, setSelectedImage, setExtractedText, setOpenSB } =
+    props;
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle");
@@ -50,7 +53,8 @@ export default function UploadReceipt(props: Props) {
     setStatus("loading");
     setTimeout(() => {
       setStatus("success");
-      setShowTextPreview(JSON.stringify(DUMMY_EXTRACTED_RESULT));
+      setExtractedText(JSON.stringify(DUMMY_EXTRACTED_RESULT));
+      setOpenSB(true);
     }, 1000);
   };
 
@@ -107,16 +111,16 @@ export default function UploadReceipt(props: Props) {
           </>
         )}
       </div>
-      <div className="flex items-center justify-center bg-gray-900 p-2">
-        {selectedImage && (
+      {selectedImage && (
+        <div className="flex items-center justify-center">
           <button
             className=" bg-green-500 hover:bg-green-300 text-white py-2 px-2 rounded text-sm font-mono cursor-pointer"
             onClick={handleTextExtraction}
           >
             Extract Text
           </button>
-        )}
-      </div>
+        </div>
+      )}
     </>
   );
 }
