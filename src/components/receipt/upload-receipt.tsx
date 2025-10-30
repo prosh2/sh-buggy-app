@@ -2,10 +2,11 @@ import { Button, CircularProgress, IconButton, Skeleton } from "@mui/material";
 import { useState } from "react";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { Item } from "@/app/context/session-context";
 
 interface Props {
   selectedImage: File | null;
-  setExtractedItems: React.Dispatch<React.SetStateAction<object[]>>;
+  setExtractedItems: React.Dispatch<React.SetStateAction<Item[]>>;
   setSelectedImage: React.Dispatch<React.SetStateAction<File | null>>;
   setOpenSB: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -21,14 +22,14 @@ const DUMMY_EXTRACTED_RESULT = {
     cashier: "Admin",
   },
   items: [
-    { name: "GRANCHIO", price: 19.0, quantity: 1 },
-    { name: "VONGOLE", price: 18.0, quantity: 1 },
-    { name: "ARUGULA PESTO", price: 19.0, quantity: 1 },
-    { name: "FOC Discount", price: -16.0, quantity: 1 },
-    { name: "PIZZA ORTOLANA", price: 18.0, quantity: 1 },
-    { name: "FOC Discount", price: -18.0, quantity: 1 },
-    { name: "LATTE", price: 5.0, quantity: 1 },
-    { name: "THE ENTERTAINER", price: 0.0, quantity: 2 },
+    { id: "1", name: "GRANCHIO", price: 19.0, quantity: 1 },
+    { id: "2", name: "VONGOLE", price: 18.0, quantity: 1 },
+    { id: "3", name: "ARUGULA PESTO", price: 19.0, quantity: 1 },
+    { id: "4", name: "FOC Discount", price: -16.0, quantity: 1 },
+    { id: "5", name: "PIZZA ORTOLANA", price: 18.0, quantity: 1 },
+    { id: "6", name: "FOC Discount", price: -18.0, quantity: 1 },
+    { id: "7", name: "LATTE", price: 5.0, quantity: 1 },
+    { id: "8", name: "THE ENTERTAINER", price: 0.0, quantity: 2 },
   ],
   summary: {
     sub_total: 45.0,

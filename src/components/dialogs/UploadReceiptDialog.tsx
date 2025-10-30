@@ -11,6 +11,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useState } from "react";
 import UploadReceipt from "../receipt/upload-receipt";
+import { Item } from "@/app/context/session-context";
 
 interface DialogProps {
   open: boolean;
@@ -49,7 +50,7 @@ function a11yProps(index: number) {
 export default function UploadReceiptDialog(props: DialogProps) {
   const { onClose, open: openDialog } = props;
   const [selectedTab, setSelectedTab] = useState<number>(0);
-  const [extractedItems, setExtractedItems] = useState<object[]>([]);
+  const [extractedItems, setExtractedItems] = useState<Item[]>([]);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [openSB, setOpenSB] = useState<boolean>(false);
 
@@ -65,32 +66,32 @@ export default function UploadReceiptDialog(props: DialogProps) {
     setOpenSB(false);
   };
 
-  const handleQuantityChange = (item: any, newQuantity: string) => {
+  const handleQuantityChange = (item: Item, newQuantity: string) => {
     if (isNaN(Number(newQuantity))) return;
-    const updatedItems = extractedItems.map((it: any) =>
-      it === item ? { ...it, quantity: newQuantity } : it
+    const updatedItems = extractedItems.map((it: Item) =>
+      it === item ? { ...it, quantity: Number(newQuantity) } : it
     );
     setExtractedItems(updatedItems);
   };
 
-  const handleNameChange = (item: any, newName: string) => {
-    const updatedItems = extractedItems.map((it: any) =>
+  const handleNameChange = (item: Item, newName: string) => {
+    const updatedItems = extractedItems.map((it: Item) =>
       it === item ? { ...it, name: newName } : it
     );
     setExtractedItems(updatedItems);
   };
 
-  const handlePriceChange = (item: any, newPrice: string) => {
+  const handlePriceChange = (item: Item, newPrice: string) => {
     if (isNaN(Number(newPrice))) return;
-    const updatedItems = extractedItems.map((it: any) =>
-      it === item ? { ...it, price: newPrice } : it
+    const updatedItems = extractedItems.map((it: Item) =>
+      it === item ? { ...it, price: Number(newPrice) } : it
     );
     setExtractedItems(updatedItems);
   };
 
-  const showItemized = (items: object[]) => {
+  const showItemized = (items: Item[]) => {
     try {
-      return items.map((item: any) => (
+      return items.map((item: Item) => (
         <>
           <TextField
             id="item-quantity-input"
