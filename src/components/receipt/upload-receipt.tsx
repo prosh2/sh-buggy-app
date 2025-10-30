@@ -5,7 +5,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 interface Props {
   selectedImage: File | null;
-  setExtractedText: React.Dispatch<React.SetStateAction<string>>;
+  setExtractedItems: React.Dispatch<React.SetStateAction<object[]>>;
   setSelectedImage: React.Dispatch<React.SetStateAction<File | null>>;
   setOpenSB: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -21,14 +21,14 @@ const DUMMY_EXTRACTED_RESULT = {
     cashier: "Admin",
   },
   items: [
-    { name: "GRANCHIO", price: 19.0 },
-    { name: "VONGOLE", price: 18.0 },
-    { name: "ARUGULA PESTO", price: 19.0 },
-    { name: "FOC Discount", price: -16.0 },
-    { name: "PIZZA ORTOLANA", price: 18.0 },
-    { name: "FOC Discount", price: -18.0 },
-    { name: "LATTE", price: 5.0 },
-    { name: "THE ENTERTAINER", price: 0.0 },
+    { name: "GRANCHIO", price: 19.0, quantity: 1 },
+    { name: "VONGOLE", price: 18.0, quantity: 1 },
+    { name: "ARUGULA PESTO", price: 19.0, quantity: 1 },
+    { name: "FOC Discount", price: -16.0, quantity: 1 },
+    { name: "PIZZA ORTOLANA", price: 18.0, quantity: 1 },
+    { name: "FOC Discount", price: -18.0, quantity: 1 },
+    { name: "LATTE", price: 5.0, quantity: 1 },
+    { name: "THE ENTERTAINER", price: 0.0, quantity: 2 },
   ],
   summary: {
     sub_total: 45.0,
@@ -38,10 +38,10 @@ const DUMMY_EXTRACTED_RESULT = {
     service_charge: null,
     time: "13:33",
   },
-} as const;
+};
 
 export default function UploadReceipt(props: Props) {
-  const { selectedImage, setSelectedImage, setExtractedText, setOpenSB } =
+  const { selectedImage, setSelectedImage, setExtractedItems, setOpenSB } =
     props;
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
@@ -53,7 +53,7 @@ export default function UploadReceipt(props: Props) {
     setStatus("loading");
     setTimeout(() => {
       setStatus("success");
-      setExtractedText(JSON.stringify(DUMMY_EXTRACTED_RESULT));
+      setExtractedItems(DUMMY_EXTRACTED_RESULT.items);
       setOpenSB(true);
     }, 1000);
   };
@@ -65,7 +65,7 @@ export default function UploadReceipt(props: Props) {
   };
   return (
     <>
-      <div className="flex flex-col items-center justify-center w-full h-full p-4 gap-4 overflow-hidden">
+      <div className="flex flex-col items-center justify-center w-full h-full p-4 overflow-hidden">
         {selectedImage ? (
           <div className="w-full h-full sm:w-[420px] flex items-center justify-center relative">
             {status === "loading" && (
@@ -77,7 +77,7 @@ export default function UploadReceipt(props: Props) {
               />
             )}
             <img
-              className="w-full max-w-full max-h-[236px] object-contain border-gray-300 border py-1"
+              className="w-full sm:w-[420px] max-h-[236px] object-contain border-gray-300 border py-1"
               alt="not found"
               src={URL.createObjectURL(selectedImage)}
             />

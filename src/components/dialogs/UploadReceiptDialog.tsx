@@ -1,5 +1,12 @@
 import ClearIcon from "@mui/icons-material/Clear";
-import { Box, Snackbar, SnackbarOrigin, Tab, Tabs } from "@mui/material";
+import {
+  Box,
+  Snackbar,
+  SnackbarOrigin,
+  Tab,
+  Tabs,
+  TextField,
+} from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useState } from "react";
@@ -27,7 +34,7 @@ function CustomTabPanel(props: TabPanelProps) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+      {value === index && <Box sx={{ px: 1, py: 2 }}>{children}</Box>}
     </div>
   );
 }
@@ -42,7 +49,7 @@ function a11yProps(index: number) {
 export default function UploadReceiptDialog(props: DialogProps) {
   const { onClose, open: openDialog } = props;
   const [selectedTab, setSelectedTab] = useState<number>(0);
-  const [extractedText, setExtractedText] = useState<string>("");
+  const [extractedItems, setExtractedItems] = useState<object[]>([]);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [openSB, setOpenSB] = useState<boolean>(false);
 
@@ -58,8 +65,63 @@ export default function UploadReceiptDialog(props: DialogProps) {
     setOpenSB(false);
   };
 
+  const handleQuantityChange = (item: any, newQuantity: string) => {
+    if (isNaN(Number(newQuantity))) return;
+    const updatedItems = extractedItems.map((it: any) =>
+      it === item ? { ...it, quantity: newQuantity } : it
+    );
+    setExtractedItems(updatedItems);
+  };
+
+  const handleNameChange = (item: any, newName: string) => {
+    const updatedItems = extractedItems.map((it: any) =>
+      it === item ? { ...it, name: newName } : it
+    );
+    setExtractedItems(updatedItems);
+  };
+
+  const handlePriceChange = (item: any, newPrice: string) => {
+    if (isNaN(Number(newPrice))) return;
+    const updatedItems = extractedItems.map((it: any) =>
+      it === item ? { ...it, price: newPrice } : it
+    );
+    setExtractedItems(updatedItems);
+  };
+
+  const showItemized = (items: object[]) => {
+    try {
+      return items.map((item: any) => (
+        <>
+          <TextField
+            id="item-quantity-input"
+            label="Qty"
+            variant="filled"
+            value={item.quantity}
+            onChange={(e) => handleQuantityChange(item, e.target.value)}
+            style={{ width: "5ch" }}
+          />
+          <TextField
+            id="item-name-input"
+            label="Name"
+            variant="filled"
+            value={item.name}
+            onChange={(e) => handleNameChange(item, e.target.value)}
+          />
+          <TextField
+            id="item-price-input"
+            label="$"
+            variant="filled"
+            value={item.price}
+            onChange={(e) => handlePriceChange(item, e.target.value)}
+          />
+        </>
+      ));
+    } catch (error) {
+      return "Error parsing extracted text.";
+    }
+  };
   return (
-    <Dialog onClose={handleCloseDialog} open={openDialog}>
+    <Dialog onClose={handleCloseDialog} open={openDialog} fullWidth>
       <Snackbar
         open={openSB}
         autoHideDuration={3000}
@@ -86,7 +148,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
             <Tab
               label="Text"
               {...a11yProps(1)}
-              disabled={extractedText === ""}
+              disabled={extractedItems.length === 0}
             />
           </Tabs>
         </Box>
@@ -94,16 +156,18 @@ export default function UploadReceiptDialog(props: DialogProps) {
           <UploadReceipt
             selectedImage={selectedImage}
             setSelectedImage={setSelectedImage}
-            setExtractedText={setExtractedText}
+            setExtractedItems={setExtractedItems}
             setOpenSB={setOpenSB}
           />
         </CustomTabPanel>
         <CustomTabPanel value={selectedTab} index={1}>
-          <div className="flex flex-col items-center justify-center w-full h-full p-4 gap-4 overflow-hidden">
-            <h2 className="text-lg font-medium">Extracted Text Preview</h2>
-            <div className="w-full h-64 p-4 border border-gray-300 rounded overflow-auto bg-white text-left">
+          <div className="flex flex-col items-center justify-center w-full h-full p-0 gap-4 overflow-hidden">
+            <h2 className="text-lg font-medium">Extracted Items Preview</h2>
+            <div className="w-full h-64 p-2 border border-gray-300 rounded overflow-auto bg-white text-center">
               <pre className="whitespace-pre-wrap break-words">
-                {extractedText}
+                <div className="grid grid-cols-[50px_minmax(80px,1fr)_50px] gap-2 font-mono font-bold border-b pb-2 mb-2">
+                  {showItemized(extractedItems)}
+                </div>
               </pre>
             </div>
           </div>
