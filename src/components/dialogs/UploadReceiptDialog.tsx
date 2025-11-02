@@ -213,11 +213,9 @@ export default function UploadReceiptDialog(props: DialogProps) {
           <div className="flex flex-col items-center justify-center w-full h-full p-0 gap-4 overflow-hidden">
             <h2 className="text-lg font-medium">Extracted Items Preview</h2>
             <div className="w-full h-64 p-2 border border-gray-300 rounded overflow-auto bg-white text-center">
-              <pre className="whitespace-pre-wrap break-words">
-                <div className="grid grid-cols-[50px_minmax(80px,1fr)_50px] gap-2 font-mono font-bold border-b pb-2 mb-2">
-                  {showItemized(extractedItems)}
-                </div>
-              </pre>
+              <div className="grid grid-cols-[50px_minmax(80px,1fr)_50px] gap-2 font-mono font-bold p-1">
+                {showItemized(extractedItems)}
+              </div>
             </div>
           </div>
         </CustomTabPanel>
