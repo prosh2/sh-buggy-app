@@ -90,10 +90,6 @@ export default function Home() {
     }
   }, [status]);
 
-  useEffect(() => {
-    console.log(openUploadDialog);
-  }, [openUploadDialog]);
-
   return (
     <div className="bg-radial from-black-400 to-gray-900 font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <header className="flex items-center justify-between w-full max-w-3xl" />

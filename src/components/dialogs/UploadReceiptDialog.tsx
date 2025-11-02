@@ -1,3 +1,4 @@
+import { Item } from "@/app/context/session-context";
 import ClearIcon from "@mui/icons-material/Clear";
 import {
   Box,
@@ -9,9 +10,9 @@ import {
 } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
+import { randomUUID } from "crypto";
 import { useState } from "react";
 import UploadReceipt from "../receipt/upload-receipt";
-import { Item } from "@/app/context/session-context";
 
 interface DialogProps {
   open: boolean;
@@ -24,35 +25,10 @@ interface TabPanelProps {
   value: number;
 }
 
-const DUMMY_EXTRACTED_RESULT = {
-  store: {
-    name: "STRONG FLOUR",
-    address: "30 EAST COAST ROAD, KATONG V., SINGAPORE #01-01",
-    telephone: "6440 0457",
-    receipt_no: "00011677",
-    table: "13",
-    date_time: "05-05-18 13:31",
-    cashier: "Admin",
-  },
-  items: [
-    { id: "1", name: "GRANCHIO", price: 19.0, quantity: 1 },
-    { id: "2", name: "VONGOLE", price: 18.0, quantity: 1 },
-    { id: "3", name: "ARUGULA PESTO", price: 19.0, quantity: 1 },
-    { id: "4", name: "FOC Discount", price: -16.0, quantity: 1 },
-    { id: "5", name: "PIZZA ORTOLANA", price: 18.0, quantity: 1 },
-    { id: "6", name: "FOC Discount", price: -18.0, quantity: 1 },
-    { id: "7", name: "LATTE", price: 5.0, quantity: 1 },
-    { id: "8", name: "THE ENTERTAINER", price: 0.0, quantity: 2 },
-  ],
-  summary: {
-    sub_total: 45.0,
-    gst_7_percent: 3.15,
-    total: 48.15,
-    payment_method: "VISA",
-    service_charge: null,
-    time: "13:33",
-  },
-};
+interface SnackBarState {
+  open: boolean;
+  message: string;
+}
 
 function CustomTabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -82,7 +58,10 @@ export default function UploadReceiptDialog(props: DialogProps) {
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [extractedItems, setExtractedItems] = useState<Item[]>([]);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [openSB, setOpenSB] = useState<boolean>(false);
+  const [sbState, setSBState] = useState<SnackBarState>({
+    open: false,
+    message: "",
+  });
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle");
@@ -96,7 +75,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
   };
 
   const handleCloseSB = () => {
-    setOpenSB(false);
+    setSBState({ ...sbState, open: false });
   };
 
   const handleQuantityChange = (item: Item, newQuantity: string) => {
@@ -122,16 +101,61 @@ export default function UploadReceiptDialog(props: DialogProps) {
     setExtractedItems(updatedItems);
   };
 
-  const handleTextExtraction = () => {
+  //Assuming receipts usually have this pattern: quantity, item name, price
+  const processOCRResponse = (data: []) => {
+    const items: Item[] = [];
+    for (let i = 0; i < data.length; i++) {
+      if (/^\d+$/.test(data[i]) && parseInt(data[i]) < 50) {
+        // looks like a quantity
+        const quantity = parseInt(data[i]);
+        const nameParts: string[] = [];
+        let j = i + 1;
+        // collect item name until a price or keyword eg "19.00", "TOTAL" is found
+        while (
+          j < data.length &&
+          !/^-?\d+\.\d{2}$/.test(data[j]) &&
+          !["Sub-Total", "TOTAL", "FOC"].includes(data[j])
+        ) {
+          nameParts.push(data[j]);
+          j++;
+        }
+        const name = nameParts.join(" ");
+        const price = parseFloat(data[j]);
+        if (!isNaN(price)) {
+          items.push({ id: randomUUID(), quantity, name, price });
+        }
+        i = j;
+      }
+    }
+    return items;
+  };
+
+  const handleTextExtraction = async () => {
     console.log("Extracting text from image:", selectedImage);
-    // Call api here and save result to state
     setStatus("loading");
-    setTimeout(() => {
+    // Call api here and save result to state
+    const formData = new FormData();
+    formData.append("image", selectedImage as File);
+
+    const res = await fetch("/api/ocr", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to extract text from image");
+    }
+    try {
+      const { result } = await res.json();
       setStatus("success");
-      setExtractedItems(DUMMY_EXTRACTED_RESULT.items);
-      setOpenSB(true);
+      console.log("Extracted data:", processOCRResponse(result));
+      setExtractedItems(processOCRResponse(result));
+      setSBState({ open: true, message: "Text extracted successfully" });
       setSelectedTab(1);
-    }, 1000);
+    } catch (error) {
+      setStatus("error");
+      setSBState({ open: true, message: "Failed to extract text" });
+    }
   };
 
   const showItemized = (items: Item[]) => {
@@ -166,16 +190,16 @@ export default function UploadReceiptDialog(props: DialogProps) {
         </>
       ));
     } catch (error) {
-      return "Error parsing extracted text.";
+      return "Error parsing extracted text." + error;
     }
   };
   return (
     <Dialog onClose={handleCloseDialog} open={openDialog} fullWidth>
       <Snackbar
-        open={openSB}
+        open={sbState.open}
         autoHideDuration={3000}
         onClose={handleCloseSB}
-        message="Text extracted successfully"
+        message={sbState.message}
         anchorOrigin={
           { vertical: "bottom", horizontal: "center" } as SnackbarOrigin
         }

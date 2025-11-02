@@ -1,6 +1,7 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import { CircularProgress, IconButton, Skeleton } from "@mui/material";
+import Image from "next/image";
 
 interface Props {
   selectedImage: File | null;
@@ -31,10 +32,12 @@ export default function UploadReceipt(props: Props) {
                 }}
               />
             )}
-            <img
+            <Image
               className="w-full sm:w-[420px] max-h-[236px] object-contain border-gray-300 border py-1"
               alt="not found"
               src={URL.createObjectURL(selectedImage)}
+              width={420}
+              height={236}
             />
 
             {selectedImage && (
