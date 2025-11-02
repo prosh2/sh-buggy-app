@@ -11,7 +11,7 @@ import {
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import { randomUUID } from "crypto";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import UploadReceipt from "../receipt/upload-receipt";
 
 interface DialogProps {
@@ -161,7 +161,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
   const showItemized = (items: Item[]) => {
     try {
       return items.map((item: Item, idx) => (
-        <>
+        <Fragment key={"item-row-" + idx}>
           <TextField
             id="item-quantity-input"
             key={"item-quantity-input-" + idx}
@@ -187,12 +187,13 @@ export default function UploadReceiptDialog(props: DialogProps) {
             value={item.price}
             onChange={(e) => handlePriceChange(item, e.target.value)}
           />
-        </>
+        </Fragment>
       ));
     } catch (error) {
       return "Error parsing extracted text." + error;
     }
   };
+
   return (
     <Dialog onClose={handleCloseDialog} open={openDialog} fullWidth>
       <Snackbar
@@ -239,6 +240,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
             <div className="w-full h-64 p-2 border border-gray-300 rounded overflow-auto bg-white text-center">
               <div className="grid grid-cols-[50px_minmax(80px,1fr)_50px] gap-2 font-mono font-bold p-1">
                 {showItemized(extractedItems)}
+                <div>Subtotal: </div>
               </div>
             </div>
           </div>

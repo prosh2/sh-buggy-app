@@ -33,7 +33,7 @@ export default function UploadReceipt(props: Props) {
               />
             )}
             <Image
-              className="w-full sm:w-[420px] max-h-[236px] object-contain border-gray-300 border py-1"
+              className="w-full sm:w-[420px] max-h-[300px] object-contain border-gray-300 border py-1"
               alt="not found"
               src={URL.createObjectURL(selectedImage)}
               width={420}
