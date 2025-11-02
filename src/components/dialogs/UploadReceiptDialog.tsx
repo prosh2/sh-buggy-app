@@ -24,6 +24,36 @@ interface TabPanelProps {
   value: number;
 }
 
+const DUMMY_EXTRACTED_RESULT = {
+  store: {
+    name: "STRONG FLOUR",
+    address: "30 EAST COAST ROAD, KATONG V., SINGAPORE #01-01",
+    telephone: "6440 0457",
+    receipt_no: "00011677",
+    table: "13",
+    date_time: "05-05-18 13:31",
+    cashier: "Admin",
+  },
+  items: [
+    { id: "1", name: "GRANCHIO", price: 19.0, quantity: 1 },
+    { id: "2", name: "VONGOLE", price: 18.0, quantity: 1 },
+    { id: "3", name: "ARUGULA PESTO", price: 19.0, quantity: 1 },
+    { id: "4", name: "FOC Discount", price: -16.0, quantity: 1 },
+    { id: "5", name: "PIZZA ORTOLANA", price: 18.0, quantity: 1 },
+    { id: "6", name: "FOC Discount", price: -18.0, quantity: 1 },
+    { id: "7", name: "LATTE", price: 5.0, quantity: 1 },
+    { id: "8", name: "THE ENTERTAINER", price: 0.0, quantity: 2 },
+  ],
+  summary: {
+    sub_total: 45.0,
+    gst_7_percent: 3.15,
+    total: 48.15,
+    payment_method: "VISA",
+    service_charge: null,
+    time: "13:33",
+  },
+};
+
 function CustomTabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
 
@@ -53,6 +83,9 @@ export default function UploadReceiptDialog(props: DialogProps) {
   const [extractedItems, setExtractedItems] = useState<Item[]>([]);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [openSB, setOpenSB] = useState<boolean>(false);
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setSelectedTab(newValue);
@@ -89,12 +122,25 @@ export default function UploadReceiptDialog(props: DialogProps) {
     setExtractedItems(updatedItems);
   };
 
+  const handleTextExtraction = () => {
+    console.log("Extracting text from image:", selectedImage);
+    // Call api here and save result to state
+    setStatus("loading");
+    setTimeout(() => {
+      setStatus("success");
+      setExtractedItems(DUMMY_EXTRACTED_RESULT.items);
+      setOpenSB(true);
+      setSelectedTab(1);
+    }, 1000);
+  };
+
   const showItemized = (items: Item[]) => {
     try {
-      return items.map((item: Item) => (
+      return items.map((item: Item, idx) => (
         <>
           <TextField
             id="item-quantity-input"
+            key={"item-quantity-input-" + idx}
             label="Qty"
             variant="filled"
             value={item.quantity}
@@ -103,6 +149,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
           />
           <TextField
             id="item-name-input"
+            key={"item-name-input-" + idx}
             label="Name"
             variant="filled"
             value={item.name}
@@ -110,6 +157,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
           />
           <TextField
             id="item-price-input"
+            key={"item-price-input-" + idx}
             label="$"
             variant="filled"
             value={item.price}
@@ -155,10 +203,10 @@ export default function UploadReceiptDialog(props: DialogProps) {
         </Box>
         <CustomTabPanel value={selectedTab} index={0}>
           <UploadReceipt
+            status={status}
             selectedImage={selectedImage}
             setSelectedImage={setSelectedImage}
-            setExtractedItems={setExtractedItems}
-            setOpenSB={setOpenSB}
+            handleTextExtraction={handleTextExtraction}
           />
         </CustomTabPanel>
         <CustomTabPanel value={selectedTab} index={1}>

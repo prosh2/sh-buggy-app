@@ -1,63 +1,17 @@
-import { Button, CircularProgress, IconButton, Skeleton } from "@mui/material";
-import { useState } from "react";
-import FileUploadIcon from "@mui/icons-material/FileUpload";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Item } from "@/app/context/session-context";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
+import { CircularProgress, IconButton, Skeleton } from "@mui/material";
 
 interface Props {
   selectedImage: File | null;
-  setExtractedItems: React.Dispatch<React.SetStateAction<Item[]>>;
+  status: "idle" | "loading" | "success" | "error";
   setSelectedImage: React.Dispatch<React.SetStateAction<File | null>>;
-  setOpenSB: React.Dispatch<React.SetStateAction<boolean>>;
+  handleTextExtraction: () => void;
 }
 
-const DUMMY_EXTRACTED_RESULT = {
-  store: {
-    name: "STRONG FLOUR",
-    address: "30 EAST COAST ROAD, KATONG V., SINGAPORE #01-01",
-    telephone: "6440 0457",
-    receipt_no: "00011677",
-    table: "13",
-    date_time: "05-05-18 13:31",
-    cashier: "Admin",
-  },
-  items: [
-    { id: "1", name: "GRANCHIO", price: 19.0, quantity: 1 },
-    { id: "2", name: "VONGOLE", price: 18.0, quantity: 1 },
-    { id: "3", name: "ARUGULA PESTO", price: 19.0, quantity: 1 },
-    { id: "4", name: "FOC Discount", price: -16.0, quantity: 1 },
-    { id: "5", name: "PIZZA ORTOLANA", price: 18.0, quantity: 1 },
-    { id: "6", name: "FOC Discount", price: -18.0, quantity: 1 },
-    { id: "7", name: "LATTE", price: 5.0, quantity: 1 },
-    { id: "8", name: "THE ENTERTAINER", price: 0.0, quantity: 2 },
-  ],
-  summary: {
-    sub_total: 45.0,
-    gst_7_percent: 3.15,
-    total: 48.15,
-    payment_method: "VISA",
-    service_charge: null,
-    time: "13:33",
-  },
-};
-
 export default function UploadReceipt(props: Props) {
-  const { selectedImage, setSelectedImage, setExtractedItems, setOpenSB } =
+  const { status, selectedImage, setSelectedImage, handleTextExtraction } =
     props;
-  const [status, setStatus] = useState<
-    "idle" | "loading" | "success" | "error"
-  >("idle");
-
-  const handleTextExtraction = () => {
-    console.log("Extracting text from image:", selectedImage);
-    // Call api here and save result to state
-    setStatus("loading");
-    setTimeout(() => {
-      setStatus("success");
-      setExtractedItems(DUMMY_EXTRACTED_RESULT.items);
-      setOpenSB(true);
-    }, 1000);
-  };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
