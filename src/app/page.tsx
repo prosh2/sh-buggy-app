@@ -1,6 +1,6 @@
 "use client";
 import { EyeCatchingButton } from "@/components/buttons/eye-catching-btn";
-import UploadReceiptDialog from "@/components/dialogs/UploadReceiptDialog";
+import UploadReceiptDialog from "@/components/dialogs/upload-receipt-dialog";
 import { TypingEffect } from "@/components/typing-effect";
 import { LinearProgress } from "@mui/material";
 import { motion } from "motion/react";

@@ -2,6 +2,7 @@ import { Item } from "@/app/context/session-context";
 import ClearIcon from "@mui/icons-material/Clear";
 import {
   Box,
+  Button,
   Snackbar,
   SnackbarOrigin,
   Tab,
@@ -10,10 +11,9 @@ import {
 } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
-import { randomUUID } from "crypto";
-import { Fragment, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import UploadReceipt from "../receipt/upload-receipt";
-
+import ExtractedItemsTable from "../receipt/extracted-items-table";
 interface DialogProps {
   open: boolean;
   onClose: () => void;
@@ -163,6 +163,11 @@ export default function UploadReceiptDialog(props: DialogProps) {
     }
   };
 
+  const handleDeleteItem = (item: Item) => {
+    const updatedItems = extractedItems.filter((it: Item) => it !== item);
+    setExtractedItems(updatedItems);
+  };
+
   const showItemized = (items: Item[]) => {
     try {
       return items.map((item: Item, idx) => (
@@ -192,12 +197,27 @@ export default function UploadReceiptDialog(props: DialogProps) {
             value={item.price}
             onChange={(e) => handlePriceChange(item, e.target.value)}
           />
+          <Button
+            key={"item-delete-button-" + idx}
+            variant="contained"
+            color="error"
+            style={{ minWidth: "24px" }}
+            onClick={() => handleDeleteItem(item)}
+          >
+            <ClearIcon />
+          </Button>
         </Fragment>
       ));
     } catch (error) {
       return "Error parsing extracted text." + error;
     }
   };
+
+  const subtotal = useMemo(
+    () =>
+      extractedItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
+    [extractedItems]
+  );
 
   return (
     <Dialog onClose={handleCloseDialog} open={openDialog} fullWidth>
@@ -243,10 +263,12 @@ export default function UploadReceiptDialog(props: DialogProps) {
           <div className="flex flex-col items-center justify-center w-full h-full p-0 gap-4 overflow-hidden">
             <h2 className="text-lg font-medium">Extracted Items Preview</h2>
             <div className="w-full h-64 p-2 border border-gray-300 rounded overflow-auto bg-white text-center">
-              <div className="grid grid-cols-[50px_minmax(80px,1fr)_50px] gap-2 font-mono font-bold p-1">
-                {showItemized(extractedItems)}
-                <div>Subtotal: </div>
-              </div>
+              <ExtractedItemsTable
+                items={extractedItems}
+                showItemized={showItemized}
+                subtotal={subtotal}
+                setExtractedItems={setExtractedItems}
+              />
             </div>
           </div>
         </CustomTabPanel>
