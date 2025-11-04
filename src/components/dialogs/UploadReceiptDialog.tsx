@@ -101,60 +101,65 @@ export default function UploadReceiptDialog(props: DialogProps) {
     setExtractedItems(updatedItems);
   };
 
+  //TODO: export to new api pipeline
   //Assuming receipts usually have this pattern: quantity, item name, price
   const processOCRResponse = (data: []) => {
-    const items: Item[] = [];
-    for (let i = 0; i < data.length; i++) {
-      if (/^\d+$/.test(data[i]) && parseInt(data[i]) < 50) {
-        // looks like a quantity
-        const quantity = parseInt(data[i]);
-        const nameParts: string[] = [];
-        let j = i + 1;
-        // collect item name until a price or keyword eg "19.00", "TOTAL" is found
-        while (
-          j < data.length &&
-          !/^-?\d+\.\d{2}$/.test(data[j]) &&
-          !["Sub-Total", "TOTAL", "FOC"].includes(data[j])
-        ) {
-          nameParts.push(data[j]);
-          j++;
+    try {
+      const items: Item[] = [];
+      for (let i = 0; i < data.length; i++) {
+        if (/^\d+$/.test(data[i]) && parseInt(data[i]) < 50) {
+          // looks like a quantity
+          const quantity = parseInt(data[i]);
+          const nameParts: string[] = [];
+          let j = i + 1;
+          // collect item name until a price or keyword eg "19.00", "TOTAL" is found
+          while (
+            j < data.length &&
+            !/^-?\d+\.\d{2}$/.test(data[j]) &&
+            !["Sub-Total", "TOTAL", "FOC"].includes(data[j])
+          ) {
+            nameParts.push(data[j]);
+            j++;
+          }
+          const name = nameParts.join(" ");
+          const price = parseFloat(data[j]);
+          if (!isNaN(price)) {
+            items.push({ id: crypto.randomUUID(), quantity, name, price });
+          }
+          i = j;
         }
-        const name = nameParts.join(" ");
-        const price = parseFloat(data[j]);
-        if (!isNaN(price)) {
-          items.push({ id: randomUUID(), quantity, name, price });
-        }
-        i = j;
       }
+      return items;
+    } catch (error) {
+      throw new Error("Error processing OCR response");
     }
-    return items;
   };
 
   const handleTextExtraction = async () => {
-    console.log("Extracting text from image:", selectedImage);
-    setStatus("loading");
-    // Call api here and save result to state
-    const formData = new FormData();
-    formData.append("image", selectedImage as File);
-
-    const res = await fetch("/api/ocr", {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!res.ok) {
-      throw new Error("Failed to extract text from image");
-    }
     try {
+      setStatus("loading");
+      // Call api here and save result to state
+      const formData = new FormData();
+      formData.append("image", selectedImage as File);
+
+      const res = await fetch("/api/ocr", {
+        method: "POST",
+        body: formData,
+      });
+      if (!res.ok) {
+        throw new Error("Failed to extract text from image");
+      }
+
       const { result } = await res.json();
       setStatus("success");
-      console.log("Extracted data:", processOCRResponse(result));
       setExtractedItems(processOCRResponse(result));
       setSBState({ open: true, message: "Text extracted successfully" });
       setSelectedTab(1);
-    } catch (error) {
-      setStatus("error");
-      setSBState({ open: true, message: "Failed to extract text" });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setStatus("error");
+        setSBState({ open: true, message: "Error: " + error.message });
+      }
     }
   };
 

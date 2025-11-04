@@ -16,7 +16,6 @@ export default function UploadReceipt(props: Props) {
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
-    console.log(event.target.files[0]);
     setSelectedImage(event.target.files[0]);
   };
   return (
