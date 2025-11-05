@@ -41,7 +41,7 @@ export default function SplitPage() {
   };
 
   const handleShowBillSummary = () => {
-    console.log("handle svp");
+    // console.log("handle svp");
     if (!isValidAllocation()) return;
 
     setShowBillSummary(true);
@@ -55,7 +55,7 @@ export default function SplitPage() {
         id: sessionID ? sessionID.toString() : "",
         users,
       }));
-      console.log("Users updated:", users);
+      // console.log("Users updated:", users);
       // You can add logic here to proceed with the splitting process
     },
     [setSession]
@@ -67,7 +67,7 @@ export default function SplitPage() {
         id: sessionID ? sessionID.toString() : "",
         items,
       }));
-      console.log("Items updated:", items);
+      // console.log("Items updated:", items);
     },
     [setSession]
   );
@@ -77,7 +77,7 @@ export default function SplitPage() {
 
   useEffect(() => {
     if (session.users.every((user) => user.isReady)) {
-      console.log("All users are ready to split");
+      // console.log("All users are ready to split");
       setReadyToSplit(true);
       // You can add logic here to proceed with the splitting process
     } else {
@@ -95,7 +95,7 @@ export default function SplitPage() {
           severity="warning"
           onClose={() => {
             setShowAlert(false);
-            console.log("Alert closed");
+            // console.log("Alert closed");
           }}
         >
           Each item must have be selected by at least 1 user!

@@ -1,11 +1,10 @@
 import { db } from "@/lib/firebase";
-import { collection, doc, getDocs, setDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
-import { v4 as uuidv4 } from "uuid";
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { sessionID: string } }
+  { params }: { params: Promise<{ sessionID: string }> }
 ) {
   try {
     const { items } = await req.json();
