@@ -2,9 +2,9 @@
 import { Item, User, useSession } from "@/app/context/session-context";
 import { useSessionItems } from "@/app/hooks/use-session-items";
 import { useSessionUsers } from "@/app/hooks/use-session-users";
-import CopyToClipboardButton from "@/components/copy-to-clipboard-button";
-import ShareButton from "@/components/share-button";
-import UserListContainer from "@/components/user-list-container";
+import CopyToClipboardButton from "@/components/buttons/copy-to-clipboard-button";
+import ShareButton from "@/components/buttons/share-button";
+import UserListContainer from "@/components/user/user-list-container";
 import { Alert } from "@mui/material";
 import { motion } from "motion/react";
 import { useParams, useRouter } from "next/navigation";

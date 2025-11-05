@@ -2,15 +2,8 @@ import { Item, User } from "@/app/context/session-context";
 import { Chip } from "@mui/material";
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import UserSelection from "./user-selection";
+import UserSelection from "./user/user-selection";
 
-export const DUMMY_ITEMS = [
-  // Example items, replace with actual items from backend
-  { id: "id1", name: "Item 1", price: 10, quantity: 1 },
-  { id: "id2", name: "Item 2", price: 20, quantity: 2 },
-  { id: "id3", name: "Item 3", price: 30, quantity: 3 },
-  { id: "id4", name: "Item 4", price: 40, quantity: 4 },
-];
 // This component allows user to select items and mark themselves ready for splitting.
 export default function AllocationContainer({
   users,
@@ -33,11 +26,7 @@ export default function AllocationContainer({
     React.SetStateAction<Record<string, number>>
   >;
   onBillSVP: () => void;
-  onReady: (
-    isReady: boolean,
-    selectedUser: string,
-    selectedItems: string[]
-  ) => void;
+  onReady: (isReady: boolean, selectedUser: string) => void;
 }) {
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [selectedItems, setSelectedItems] = useState<Record<string, string[]>>(
@@ -62,7 +51,7 @@ export default function AllocationContainer({
 
   const patchSelectedItems = async () => {
     if (!selectedUser) return;
-    const allocatedItems = DUMMY_ITEMS.filter((item) =>
+    const allocatedItems = items.filter((item) =>
       selectedItems[selectedUser].includes(item.id)
     );
     await fetch(`/api/sessions/${sessionID}/users/${selectedUser}`, {
@@ -88,7 +77,7 @@ export default function AllocationContainer({
       ...prev,
       [selectedUser]: isReady,
     }));
-    onReady(isReady, selectedUser, selectedItems[selectedUser]);
+    onReady(isReady, selectedUser);
   };
 
   useEffect(() => {
@@ -142,7 +131,7 @@ export default function AllocationContainer({
                 Select Items
               </h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {DUMMY_ITEMS.map((item) => (
+                {items.map((item) => (
                   <motion.div
                     key={item.id}
                     whileTap={{ scale: 0.95 }}

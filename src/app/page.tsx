@@ -1,5 +1,6 @@
 "use client";
-import { EyeCatchingButton } from "@/components/eye-catching-btn";
+import { EyeCatchingButton } from "@/components/buttons/eye-catching-btn";
+import UploadReceiptDialog from "@/components/dialogs/upload-receipt-dialog";
 import { TypingEffect } from "@/components/typing-effect";
 import { LinearProgress } from "@mui/material";
 import { motion } from "motion/react";
@@ -7,6 +8,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { Item, useSession } from "./context/session-context";
 
 export default function Home() {
   const [status, setStatus] = useState<
@@ -16,8 +18,18 @@ export default function Home() {
   const [progress, setProgress] = useState(0);
   const [buffer, setBuffer] = useState(10);
   const progressRef = useRef(() => {});
+  const [openUploadDialog, setOpenUploadDialog] = useState(false);
 
-  const handleCreateSession = async () => {
+  const handleUploadReceipt = () => {
+    console.log("Opening upload dialog");
+    setOpenUploadDialog(true);
+  };
+
+  const handleCloseUploadDialog = () => {
+    console.log("Dialog closed");
+    setOpenUploadDialog(false);
+  };
+  const handleCreateSession = async (items: Item[]) => {
     try {
       setStatus("loading");
       const sessionId = uuidv4();
@@ -31,6 +43,18 @@ export default function Home() {
 
       if (!res.ok) {
         throw new Error("Failed to create session");
+      }
+
+      const res2 = await fetch(`/api/sessions/${sessionId}/items`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ items }),
+      });
+
+      if (!res2.ok) {
+        throw new Error("Failed to upload items");
       }
 
       const data = await res.json();
@@ -128,7 +152,7 @@ export default function Home() {
           >
             <EyeCatchingButton
               className="flex flex-col items-center justify-center w-full h-full px-4"
-              onClick={handleCreateSession}
+              onClick={handleUploadReceipt}
             >
               <motion.div className="flex h-12 w-full items-center justify-center gap-2">
                 <Image
@@ -156,6 +180,11 @@ export default function Home() {
                 />
               </motion.div>
             </EyeCatchingButton>
+            <UploadReceiptDialog
+              open={openUploadDialog}
+              onClose={handleCloseUploadDialog}
+              handleCreateSession={handleCreateSession}
+            />
           </motion.div>
         </motion.div>
       </main>
