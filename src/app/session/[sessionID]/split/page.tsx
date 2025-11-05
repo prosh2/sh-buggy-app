@@ -1,10 +1,9 @@
 "use client";
 //user able to see how many ppl has selected that item in real time
-import { User, useSession } from "@/app/context/session-context";
+import { Item, User, useSession } from "@/app/context/session-context";
+import { useSessionItems } from "@/app/hooks/use-session-items";
 import { useSessionUsers } from "@/app/hooks/use-session-users";
-import AllocationContainer, {
-  DUMMY_ITEMS,
-} from "@/components/allocation-container";
+import AllocationContainer from "@/components/allocation-container";
 import BillContainer from "@/components/bill-container";
 import { Alert, Chip } from "@mui/material";
 import { useParams } from "next/navigation";
@@ -24,7 +23,7 @@ export default function SplitPage() {
   >({});
 
   const isValidAllocation = () => {
-    for (const item of DUMMY_ITEMS) {
+    for (const item of session.items) {
       if ((itemSelectionCounts[item.id] || 0) < 1) {
         setShowAlert(true);
         return false;
@@ -33,19 +32,7 @@ export default function SplitPage() {
     return true;
   };
 
-  const handleReadyToSplit = async (
-    isReady: boolean,
-    selectedUser: string,
-    selectedItems: string[]
-  ) => {
-    // Logic to handle when the user is ready to split
-    console.log(
-      "User ready to split:",
-      selectedUser,
-      "with items:",
-      selectedItems
-    );
-
+  const handleReadyToSplit = async (isReady: boolean, selectedUser: string) => {
     await fetch(`/api/sessions/${sessionID}/users/${selectedUser}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -73,8 +60,20 @@ export default function SplitPage() {
     },
     [setSession]
   );
+  const handleItemsUpdate = useCallback(
+    (items: Item[]) => {
+      setSession((prev) => ({
+        ...prev,
+        id: sessionID ? sessionID.toString() : "",
+        items,
+      }));
+      console.log("Items updated:", items);
+    },
+    [setSession]
+  );
 
   useSessionUsers(sessionID ? sessionID.toString() : "", handleUsersUpdate);
+  useSessionItems(sessionID ? sessionID.toString() : "", handleItemsUpdate);
 
   useEffect(() => {
     if (session.users.every((user) => user.isReady)) {

@@ -1,4 +1,4 @@
-import { Item } from "@/app/context/session-context";
+import { Item, useSession } from "@/app/context/session-context";
 import ClearIcon from "@mui/icons-material/Clear";
 import {
   Box,
@@ -17,6 +17,7 @@ import ExtractedItemsTable from "../receipt/extracted-items-table";
 interface DialogProps {
   open: boolean;
   onClose: () => void;
+  handleCreateSession: (items: Item[]) => Promise<void>;
 }
 
 interface TabPanelProps {
@@ -54,7 +55,7 @@ function a11yProps(index: number) {
 }
 
 export default function UploadReceiptDialog(props: DialogProps) {
-  const { onClose, open: openDialog } = props;
+  const { onClose, handleCreateSession, open: openDialog } = props;
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [extractedItems, setExtractedItems] = useState<Item[]>([]);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -72,6 +73,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
 
   const handleCloseDialog = () => {
     onClose();
+    handleCreateSession(extractedItems);
   };
 
   const handleCloseSB = () => {
@@ -270,6 +272,13 @@ export default function UploadReceiptDialog(props: DialogProps) {
                 setExtractedItems={setExtractedItems}
               />
             </div>
+            <Button
+              variant="contained"
+              style={{ backgroundColor: "var(--color-gray-900)" }}
+              onClick={handleCloseDialog}
+            >
+              Create Session
+            </Button>
           </div>
         </CustomTabPanel>
       </Box>

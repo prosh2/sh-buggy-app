@@ -8,6 +8,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { Item, useSession } from "./context/session-context";
 
 export default function Home() {
   const [status, setStatus] = useState<
@@ -28,7 +29,7 @@ export default function Home() {
     console.log("Dialog closed");
     setOpenUploadDialog(false);
   };
-  const handleCreateSession = async () => {
+  const handleCreateSession = async (items: Item[]) => {
     try {
       setStatus("loading");
       const sessionId = uuidv4();
@@ -42,6 +43,18 @@ export default function Home() {
 
       if (!res.ok) {
         throw new Error("Failed to create session");
+      }
+
+      const res2 = await fetch(`/api/sessions/${sessionId}/items`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ items }),
+      });
+
+      if (!res2.ok) {
+        throw new Error("Failed to upload items");
       }
 
       const data = await res.json();
@@ -170,6 +183,7 @@ export default function Home() {
             <UploadReceiptDialog
               open={openUploadDialog}
               onClose={handleCloseUploadDialog}
+              handleCreateSession={handleCreateSession}
             />
           </motion.div>
         </motion.div>

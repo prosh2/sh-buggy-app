@@ -1,5 +1,5 @@
 import { db } from "@/lib/firebase";
-import { collection, onSnapshot, query } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 import { useEffect } from "react";
 import { Item } from "../context/session-context";
 
@@ -10,14 +10,8 @@ export function useSessionItems(
   useEffect(() => {
     if (!sessionID) return;
 
-    const itemsRef = collection(db, "sessions", sessionID, "items");
-    const q = query(itemsRef);
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const itemsData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Item[];
+    const unsubscribe = onSnapshot(doc(db, "sessions", sessionID), (doc) => {
+      const itemsData = doc.data()?.items as Item[];
 
       onItemsUpdate(itemsData);
     });
