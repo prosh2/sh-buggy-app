@@ -71,7 +71,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
     setSelectedTab(newValue);
   };
 
-  const handleCloseDialog = () => {
+  const createSession = () => {
     onClose();
     handleCreateSession(extractedItems);
   };
@@ -222,7 +222,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
   );
 
   return (
-    <Dialog onClose={handleCloseDialog} open={openDialog} fullWidth>
+    <Dialog onClose={onClose} open={openDialog} fullWidth>
       <Snackbar
         open={sbState.open}
         autoHideDuration={3000}
@@ -275,7 +275,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
             <Button
               variant="contained"
               style={{ backgroundColor: "var(--color-gray-900)" }}
-              onClick={handleCloseDialog}
+              onClick={createSession}
             >
               Create Session
             </Button>
@@ -283,7 +283,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
         </CustomTabPanel>
       </Box>
       <button
-        onClick={handleCloseDialog}
+        onClick={onClose}
         className="absolute right-0 top-0 w-[24px] h-[24px] bg-red-500 text-white rounded hover:bg-red-300 cursor-pointer"
       >
         <ClearIcon />

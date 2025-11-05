@@ -21,16 +21,20 @@ export default function Home() {
   const [openUploadDialog, setOpenUploadDialog] = useState(false);
 
   const handleUploadReceipt = () => {
-    console.log("Opening upload dialog");
+    // console.log("Opening upload dialog");
     setOpenUploadDialog(true);
   };
 
   const handleCloseUploadDialog = () => {
-    console.log("Dialog closed");
+    // console.log("Dialog closed");
     setOpenUploadDialog(false);
   };
   const handleCreateSession = async (items: Item[]) => {
     try {
+      if (items.length === 0) {
+        throw new Error("No items to create session");
+      }
+
       setStatus("loading");
       const sessionId = uuidv4();
       const res = await fetch("/api/sessions", {
@@ -63,7 +67,7 @@ export default function Home() {
         router.push(`/session/${data.sessionId}`);
       }, 1000);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       setTimeout(() => {
         setStatus("error");
         setTimeout(() => {
