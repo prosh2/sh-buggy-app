@@ -38,7 +38,7 @@ export default function SessionPage() {
         id: sessionID ? sessionID.toString() : "",
         users,
       }));
-      console.log("Users updated:", users);
+      // console.log("Users updated:", users);
     },
     [setSession]
   );
@@ -49,7 +49,7 @@ export default function SessionPage() {
         id: sessionID ? sessionID.toString() : "",
         items,
       }));
-      console.log("Items updated:", items);
+      // console.log("Items updated:", items);
     },
     [setSession]
   );
@@ -71,7 +71,7 @@ export default function SessionPage() {
           severity="warning"
           onClose={() => {
             setShowAlert(false);
-            console.log("Alert closed");
+            // console.log("Alert closed");
           }}
         >
           Session must contain at least 1 user!

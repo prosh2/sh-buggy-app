@@ -106,7 +106,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
 
   //TODO: export to new api pipeline
   //Assuming receipts usually have this pattern: quantity, item name, price
-  const processOCRResponse = async (data: string) => {
+  const processOCRResponse = async (data: { result: Item[] }) => {
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -117,10 +117,9 @@ export default function UploadReceiptDialog(props: DialogProps) {
         throw new Error("Failed to extract text from image");
       }
 
-      const { result } = await res.json();
-      console.log("Processed OCR Result:", result);
+      const result = await res.json();
       const items: Item[] = [];
-      for (const _ of result as Item[]) {
+      for (const _ of JSON.parse(result) as Item[]) {
         const quantity = isNaN(Number(_.quantity)) ? 1 : Number(_.quantity);
         const price = isNaN(Number(_.price)) ? 0 : Number(_.price);
         items.push({
@@ -152,7 +151,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
       }
 
       const result = await res.json();
-      const extractedItems = await processOCRResponse(JSON.stringify(result));
+      const extractedItems = await processOCRResponse(result);
       setStatus("success");
       setExtractedItems(extractedItems);
       setSBState({ open: true, message: "Text extracted successfully" });
@@ -169,10 +168,6 @@ export default function UploadReceiptDialog(props: DialogProps) {
     const updatedItems = extractedItems.filter((it: Item) => it !== item);
     setExtractedItems(updatedItems);
   };
-
-  useEffect(() => {
-    console.log(openDialog);
-  }, [openDialog]);
 
   const showItemized = (items: Item[]) => {
     try {
@@ -294,10 +289,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
             </CustomTabPanel>
           </Box>
           <button
-            onClick={() => {
-              console.log("Closing dialog");
-              onClose();
-            }}
+            onClick={() => onClose()}
             className="absolute right-0 top-0 w-[24px] h-[24px] bg-red-500 text-white rounded hover:bg-red-300 cursor-pointer"
           >
             <ClearIcon />
