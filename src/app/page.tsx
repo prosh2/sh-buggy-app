@@ -184,12 +184,12 @@ export default function Home() {
                 />
               </motion.div>
             </EyeCatchingButton>
-            <UploadReceiptDialog
-              open={openUploadDialog}
-              onClose={handleCloseUploadDialog}
-              handleCreateSession={handleCreateSession}
-            />
           </motion.div>
+          <UploadReceiptDialog
+            open={openUploadDialog}
+            onClose={handleCloseUploadDialog}
+            handleCreateSession={handleCreateSession}
+          />
         </motion.div>
       </main>
       <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center" />

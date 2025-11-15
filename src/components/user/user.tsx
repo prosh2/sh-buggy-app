@@ -1,4 +1,5 @@
 import ClearIcon from "@mui/icons-material/Clear";
+import { Tooltip } from "@mui/material";
 export default function User({
   id,
   username,
@@ -11,11 +12,15 @@ export default function User({
   return (
     <div
       key={id}
-      className="bg-gray-900 text-gray-200 rounded h-8 mt-1 px-2 py-1 flex items-center justify-between border-black border-l-1 border-r-1 shadow-md shadow-black"
+      className="flex bg-gray-900 text-gray-200 rounded-lg h-8 my-1 mx-1 px-1 py-1  border-black border-l-1 border-r-1 shadow-md shadow-black"
     >
-      {username}
+      <Tooltip title={username}>
+        <span className="flex mx-auto overflow-hidden text-ellipsis whitespace-nowrap">
+          {username}
+        </span>
+      </Tooltip>
       <button
-        className="ml-2 text-red-700 hover:text-red-700"
+        className="flex ml-auto text-red-700 hover:text-red-700"
         onClick={() => handleDeleteUser(id)}
       >
         <ClearIcon />
