@@ -232,8 +232,8 @@ export default function UploadReceiptDialog(props: DialogProps) {
           className="flex flex-col absolute bg-white text-gray-200 w-[90vw] rounded-lg"
           initial={{ transform: "translateY(100vh)" }}
           animate={{ transform: "translateY(0px)" }}
-          transition={{ type: "spring", stiffness: 60, damping: 10 }}
-          exit={{ transform: "translateY(100vh)", opacity: 0.5 }}
+          transition={{ type: "spring", stiffness: 100, damping: 20 }}
+          exit={{ transform: "translateY(100vh)", opacity: 0.75 }}
         >
           <Snackbar
             open={sbState.open}

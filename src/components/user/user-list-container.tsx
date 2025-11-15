@@ -33,8 +33,8 @@ export default function UserListContainer() {
   };
 
   return (
-    <div className="bg-gray-800  backdrop-blur-lg rounded-2xl p-6 w-full text-center shadow-lg">
-      <div className="flex flex-col overflow-y-auto max-h-[30vh] p-2 rounded">
+    <div className="bg-gray-800 backdrop-blur-lg rounded-2xl p-6 w-full text-center shadow-lg">
+      <div className="grid grid-cols-4 max-h-[30vh] p-2 rounded">
         {(session.users?.length > 0 &&
           session.users?.map((user) => (
             <User
