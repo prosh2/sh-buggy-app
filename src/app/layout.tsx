@@ -33,7 +33,6 @@ export default function RootLayout({
           {children}
           <Analytics />
         </SessionProvider>
-
       </body>
     </html>
   );
