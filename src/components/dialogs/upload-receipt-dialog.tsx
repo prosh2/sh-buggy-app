@@ -1,4 +1,4 @@
-import { Item, useSession } from "@/app/context/session-context";
+import { Item } from "@/app/context/session-context";
 import ClearIcon from "@mui/icons-material/Clear";
 import {
   Box,
@@ -9,11 +9,12 @@ import {
   Tabs,
   TextField,
 } from "@mui/material";
-import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Fragment, useMemo, useState } from "react";
-import UploadReceipt from "../receipt/upload-receipt";
+import { AnimatePresence, motion } from "motion/react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import ExtractedItemsTable from "../receipt/extracted-items-table";
+import UploadReceipt from "../receipt/upload-receipt";
+
 interface DialogProps {
   open: boolean;
   onClose: () => void;
@@ -105,31 +106,29 @@ export default function UploadReceiptDialog(props: DialogProps) {
 
   //TODO: export to new api pipeline
   //Assuming receipts usually have this pattern: quantity, item name, price
-  const processOCRResponse = (data: []) => {
+  const processOCRResponse = async (data: string) => {
     try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        throw new Error("Failed to extract text from image");
+      }
+
+      const { result } = await res.json();
+      console.log("Processed OCR Result:", result);
       const items: Item[] = [];
-      for (let i = 0; i < data.length; i++) {
-        if (/^\d+$/.test(data[i]) && parseInt(data[i]) < 50) {
-          // looks like a quantity
-          const quantity = parseInt(data[i]);
-          const nameParts: string[] = [];
-          let j = i + 1;
-          // collect item name until a price or keyword eg "19.00", "TOTAL" is found
-          while (
-            j < data.length &&
-            !/^-?\d+\.\d{2}$/.test(data[j]) &&
-            !["Sub-Total", "TOTAL", "FOC"].includes(data[j])
-          ) {
-            nameParts.push(data[j]);
-            j++;
-          }
-          const name = nameParts.join(" ");
-          const price = parseFloat(data[j]);
-          if (!isNaN(price)) {
-            items.push({ id: crypto.randomUUID(), quantity, name, price });
-          }
-          i = j;
-        }
+      for (const _ of result as Item[]) {
+        const quantity = isNaN(Number(_.quantity)) ? 1 : Number(_.quantity);
+        const price = isNaN(Number(_.price)) ? 0 : Number(_.price);
+        items.push({
+          id: crypto.randomUUID(),
+          quantity,
+          name: _.name,
+          price,
+        });
       }
       return items;
     } catch (error) {
@@ -152,9 +151,10 @@ export default function UploadReceiptDialog(props: DialogProps) {
         throw new Error("Failed to extract text from image");
       }
 
-      const { result } = await res.json();
+      const result = await res.json();
+      const extractedItems = await processOCRResponse(JSON.stringify(result));
       setStatus("success");
-      setExtractedItems(processOCRResponse(result));
+      setExtractedItems(extractedItems);
       setSBState({ open: true, message: "Text extracted successfully" });
       setSelectedTab(1);
     } catch (error: unknown) {
@@ -169,6 +169,10 @@ export default function UploadReceiptDialog(props: DialogProps) {
     const updatedItems = extractedItems.filter((it: Item) => it !== item);
     setExtractedItems(updatedItems);
   };
+
+  useEffect(() => {
+    console.log(openDialog);
+  }, [openDialog]);
 
   const showItemized = (items: Item[]) => {
     try {
@@ -222,72 +226,84 @@ export default function UploadReceiptDialog(props: DialogProps) {
   );
 
   return (
-    <Dialog onClose={onClose} open={openDialog} fullWidth>
-      <Snackbar
-        open={sbState.open}
-        autoHideDuration={3000}
-        onClose={handleCloseSB}
-        message={sbState.message}
-        anchorOrigin={
-          { vertical: "bottom", horizontal: "center" } as SnackbarOrigin
-        }
-      />
-      <DialogTitle
-        className="bg-gray-900 text-gray-200"
-        style={{ fontFamily: "monospace" }}
-      >
-        Upload Receipt
-      </DialogTitle>
-      <Box sx={{ width: "100%" }}>
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-          <Tabs
-            value={selectedTab}
-            onChange={handleTabChange}
-            aria-label="basic tabs example"
-          >
-            <Tab label="Receipt" {...a11yProps(0)} />
-            <Tab
-              label="Text"
-              {...a11yProps(1)}
-              disabled={extractedItems.length === 0}
-            />
-          </Tabs>
-        </Box>
-        <CustomTabPanel value={selectedTab} index={0}>
-          <UploadReceipt
-            status={status}
-            selectedImage={selectedImage}
-            setSelectedImage={setSelectedImage}
-            handleTextExtraction={handleTextExtraction}
+    <AnimatePresence>
+      {openDialog && (
+        <motion.div
+          className="flex flex-col absolute bg-white text-gray-200 w-[90vw] rounded-lg"
+          initial={{ transform: "translateY(100vh)" }}
+          animate={{ transform: "translateY(0px)" }}
+          transition={{ type: "spring", stiffness: 60, damping: 10 }}
+          exit={{ transform: "translateY(100vh)", opacity: 0.5 }}
+        >
+          <Snackbar
+            open={sbState.open}
+            autoHideDuration={3000}
+            onClose={handleCloseSB}
+            message={sbState.message}
+            anchorOrigin={
+              { vertical: "bottom", horizontal: "center" } as SnackbarOrigin
+            }
           />
-        </CustomTabPanel>
-        <CustomTabPanel value={selectedTab} index={1}>
-          <div className="flex flex-col items-center justify-center w-full h-full p-0 gap-4 overflow-hidden">
-            <h2 className="text-lg font-medium">Extracted Items Preview</h2>
-            <div className="w-full h-64 p-2 border border-gray-300 rounded overflow-auto bg-white text-center">
-              <ExtractedItemsTable
-                items={extractedItems}
-                showItemized={showItemized}
-                subtotal={subtotal}
-                setExtractedItems={setExtractedItems}
+          <DialogTitle
+            className="bg-gray-800 text-gray-200 text-center"
+            style={{ fontFamily: "monospace" }}
+          >
+            Upload Receipt
+          </DialogTitle>
+          <Box sx={{ width: "100%" }}>
+            <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+              <Tabs
+                value={selectedTab}
+                onChange={handleTabChange}
+                aria-label="basic tabs example"
+              >
+                <Tab label="Receipt" {...a11yProps(0)} />
+                <Tab
+                  label="Items"
+                  {...a11yProps(1)}
+                  disabled={extractedItems.length === 0}
+                />
+              </Tabs>
+            </Box>
+            <CustomTabPanel value={selectedTab} index={0}>
+              <UploadReceipt
+                status={status}
+                selectedImage={selectedImage}
+                setSelectedImage={setSelectedImage}
+                handleTextExtraction={handleTextExtraction}
               />
-            </div>
-            <Button
-              variant="contained"
-              style={{ backgroundColor: "var(--color-gray-900)" }}
-              onClick={createSession}
-            >
-              Create Session
-            </Button>
-          </div>
-        </CustomTabPanel>
-      </Box>
-      <button
-        onClick={onClose}
-        className="absolute right-0 top-0 w-[24px] h-[24px] bg-red-500 text-white rounded hover:bg-red-300 cursor-pointer"
-      >
-        <ClearIcon />
-      </button>
-    </Dialog>
+            </CustomTabPanel>
+            <CustomTabPanel value={selectedTab} index={1}>
+              <div className="flex flex-col items-center justify-center w-full h-full p-0 gap-4 overflow-hidden">
+                <div className="w-full h-64 p-2 rounded overflow-auto bg- text-center">
+                  <ExtractedItemsTable
+                    items={extractedItems}
+                    showItemized={showItemized}
+                    subtotal={subtotal}
+                    setExtractedItems={setExtractedItems}
+                  />
+                </div>
+                <Button
+                  variant="contained"
+                  style={{ backgroundColor: "var(--color-gray-900)" }}
+                  onClick={createSession}
+                >
+                  Create Session
+                </Button>
+              </div>
+            </CustomTabPanel>
+          </Box>
+          <button
+            onClick={() => {
+              console.log("Closing dialog");
+              onClose();
+            }}
+            className="absolute right-0 top-0 w-[24px] h-[24px] bg-red-500 text-white rounded hover:bg-red-300 cursor-pointer"
+          >
+            <ClearIcon />
+          </button>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

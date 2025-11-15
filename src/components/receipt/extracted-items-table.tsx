@@ -16,7 +16,7 @@ export default function ExtractedItemsTable({
 }) {
   function SubtotalComponent({ subtotal }: { subtotal: number }) {
     return (
-      <div className="flex justify-end items-center gap-2 font-bold pt-2 border-t col-span-4">
+      <div className="flex justify-end items-center gap-2 font-bold pt-2 border-t col-span-4 text-black">
         <span>Subtotal:</span>
         <span>{subtotal.toFixed(2)}</span>
       </div>

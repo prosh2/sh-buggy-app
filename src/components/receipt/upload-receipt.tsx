@@ -50,7 +50,12 @@ export default function UploadReceipt(props: Props) {
           </div>
         ) : (
           <>
-            <Skeleton variant="rectangular" width={420} height={236} />
+            <Skeleton
+              variant="rectangular"
+              width={420}
+              height={236}
+              animation={false}
+            />
             <IconButton
               aria-label="upload"
               component="label"
