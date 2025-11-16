@@ -139,47 +139,52 @@ export default function AllocationContainer({
               />
             </motion.div>
           )}
-          {/* Ready Button */}
-          {selectedUser && (
-            <motion.button
-              whileTap={{ scale: 0.95 }}
-              whileHover={{ scale: 1.02 }}
-              onClick={() => handlePlayerIsReady(true)}
-              className={
-                selectedItems[selectedUser]?.length <= 0
-                  ? "bg-gray-900 mt-8 px-6 py-3 text-gray-800 font-bold rounded-xl shadow-lg mouse-not-allowed cursor-not-allowed"
-                  : "bg-green-500 mt-8 px-6 py-3 text-white font-bold rounded-xl shadow-lg"
-              }
-              hidden={isReadyMap[selectedUser]}
-              disabled={selectedItems[selectedUser]?.length <= 0}
-            >
-              Ready
-            </motion.button>
-          )}
 
-          {selectedUser && (
-            <motion.button
-              whileTap={{ scale: 0.95 }}
-              whileHover={{ scale: 1.02 }}
-              onClick={() => handlePlayerIsReady(false)}
-              className="mt-8 px-6 py-3 bg-red-500 text-white font-bold rounded-xl shadow-lg"
-              hidden={!isReadyMap[selectedUser]}
-            >
-              Not Ready
-            </motion.button>
-          )}
+          <footer className="fixed bottom-10">
+            {/* Ready Button */}
+            {selectedUser && (
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.02 }}
+                onClick={() => handlePlayerIsReady(true)}
+                // className="flex justify-center items-center w-[100vw] h-10 shadow-lg border-black border-r-1 shadow-black bg-gray-900 font-sans"
 
-          {/* Proceed to split bill button */}
-          {readyToSplit && (
-            <motion.button
-              whileTap={{ scale: 0.95 }}
-              whileHover={{ scale: 1.02 }}
-              onClick={onBillSVP}
-              className="mt-8 px-6 py-3 bg-green-500 text-white font-bold rounded-xl shadow-lg"
-            >
-              Proceed to Split Bill
-            </motion.button>
-          )}
+                className={
+                  selectedItems[selectedUser]?.length <= 0
+                    ? "bg-gray-900 mt-8 px-6 py-3 text-gray-800 font-bold rounded shadow-lg mouse-not-allowed cursor-not-allowed w-[100vw] h-10 flex justify-center items-center font-sans"
+                    : "bg-green-500 mt-8 px-6 py-3 text-white font-bold rounded shadow-lg w-[100vw] h-10 flex justify-center items-center font-sans"
+                }
+                hidden={isReadyMap[selectedUser]}
+                disabled={selectedItems[selectedUser]?.length <= 0}
+              >
+                Ready
+              </motion.button>
+            )}
+
+            {selectedUser && (
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.02 }}
+                onClick={() => handlePlayerIsReady(false)}
+                className="mt-8 px-6 py-3 bg-red-500 text-white font-bold rounded shadow-lg w-[100vw] h-10 flex justify-center items-center font-sans"
+                hidden={!isReadyMap[selectedUser]}
+              >
+                Not Ready
+              </motion.button>
+            )}
+
+            {/* Proceed to split bill button */}
+            {readyToSplit && (
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.02 }}
+                onClick={onBillSVP}
+                className="mt-8 px-6 py-3 bg-green-500 text-white font-bold rounded shadow-lg w-[100vw] h-10 flex justify-center items-center font-sans"
+              >
+                Proceed to Split Bill
+              </motion.button>
+            )}
+          </footer>
         </div>
       )}
     </>
