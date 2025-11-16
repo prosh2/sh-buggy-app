@@ -4,18 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import UserSelection from "./user/user-selection";
 import ItemListContainer from "./item-list-container";
 
-// This component allows user to select items and mark themselves ready for splitting.
-export default function AllocationContainer({
-  users,
-  items, //list of items to select from, populated by OCR backend
-  sessionID,
-  readyToSplit,
-  itemSelectionCounts,
-  isHidden,
-  onBillSVP,
-  onReady,
-  setItemSelectionCounts,
-}: {
+interface Props {
   users: User[];
   items: Item[];
   sessionID: string;
@@ -27,7 +16,20 @@ export default function AllocationContainer({
   >;
   onBillSVP: () => void;
   onReady: (isReady: boolean, selectedUser: string) => void;
-}) {
+}
+
+// This component allows user to select items and mark themselves ready for splitting.
+export default function AllocationContainer({
+  users,
+  items, //list of items to select from, populated by OCR backend
+  sessionID,
+  readyToSplit,
+  itemSelectionCounts,
+  isHidden,
+  onBillSVP,
+  onReady,
+  setItemSelectionCounts,
+}: Props) {
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [selectedItems, setSelectedItems] = useState<Record<string, string[]>>(
     {}
