@@ -46,6 +46,7 @@ export default function UserListContainer() {
       console.error("Failed to create user");
       return;
     }
+    setUsername("");
   };
 
   const handleDeleteUser = async (userID: string) => {
