@@ -68,7 +68,7 @@ export default function UserListContainer() {
       <input
         type="text"
         placeholder="Enter your name to join..."
-        className="w-full mt-3 px-4 py-2 rounded-xl bg-gray-900 text-gray-200 focus:ring-2 focus:ring-blue-500 outline-none font-sans"
+        className="w-full mt-3 px-4 py-2 rounded-xl bg-gray-900 text-gray-200 focus:ring-1 focus:ring-gray-500 outline-none font-sans"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
       />
@@ -76,8 +76,8 @@ export default function UserListContainer() {
       <button
         className={
           !username.trim()
-            ? "cursor-not-allowed bg-blue-600 rounded mt-4 w-25 text-grey-400 py-2 rounded-xl transition text-sm font-sans"
-            : "mt-4 w-25 bg-blue-600 hover:bg-blue-500 text-white py-2 rounded-xl transition text-sm font-sans"
+            ? "cursor-not-allowed bg-gray-700 rounded mt-4 w-25 text-gray-500 py-2 transition text-sm font-sans"
+            : "mt-4 w-25 bg-white hover:bg-gray-500 text-black py-2 rounded  transition text-sm font-sans"
         }
         onClick={handleAddUser}
         disabled={!username.trim()}

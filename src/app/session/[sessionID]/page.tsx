@@ -8,6 +8,7 @@ import { Alert } from "@mui/material";
 import { motion } from "motion/react";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 
 export default function SessionPage() {
   const [url, setUrl] = useState("");
@@ -92,9 +93,9 @@ export default function SessionPage() {
         <UserListContainer />
       </main>
 
-      <footer className="fixed bottom-0">
+      <footer className="fixed bottom-10">
         <motion.button
-          className="flex justify-center items-center w-40 rounded-xl h-10 shadow-lg border-black border-r-1 shadow-black bg-blue-600 font-sans"
+          className="flex justify-center items-center w-[100vw] h-10 shadow-lg border-black border-r-1 shadow-black bg-gray-900 font-sans"
           style={{
             color: "white",
           }}
@@ -102,7 +103,7 @@ export default function SessionPage() {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
         >
-          Next
+          Continue
         </motion.button>
       </footer>
     </div>
