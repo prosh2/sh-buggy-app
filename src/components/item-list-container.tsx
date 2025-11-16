@@ -24,7 +24,7 @@ export default function ItemListContainer({
       </p>
     );
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 gap-4 h-[50vh] overflow-y-scroll">
       {items?.map((item) => (
         <motion.div
           key={item.id}
@@ -47,11 +47,13 @@ export default function ItemListContainer({
             <br />
             <span className="flex w-full items-center">
               Qty: {item.quantity}
-              <Chip
-                label={itemSelectionCounts[item.id] || 0}
-                color="info"
-                className="flex w-fit ml-auto"
-              />
+              <span className="flex flex-col w-fit ml-auto font-sans">
+                Shares:
+                <Chip
+                  label={itemSelectionCounts[item.id] || 0}
+                  className="font-bold"
+                />
+              </span>
             </span>
           </div>
         </motion.div>
