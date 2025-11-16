@@ -1,8 +1,8 @@
 import { Item, User } from "@/app/context/session-context";
-import { Chip } from "@mui/material";
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import UserSelection from "./user/user-selection";
+import ItemListContainer from "./item-list-container";
 
 // This component allows user to select items and mark themselves ready for splitting.
 export default function AllocationContainer({
@@ -51,7 +51,7 @@ export default function AllocationContainer({
 
   const patchSelectedItems = async () => {
     if (!selectedUser) return;
-    const allocatedItems = items.filter((item) =>
+    const allocatedItems = items?.filter((item) =>
       selectedItems[selectedUser].includes(item.id)
     );
     await fetch(`/api/sessions/${sessionID}/users/${selectedUser}`, {
@@ -92,7 +92,7 @@ export default function AllocationContainer({
       [selectedUser]:
         users
           .find((u) => u.id === selectedUser)
-          ?.allocatedItems.map((item) => item.id) || [],
+          ?.allocatedItems?.map((item) => item.id) || [],
     }));
   }, [users, selectedUser]);
 
@@ -130,43 +130,13 @@ export default function AllocationContainer({
               <h2 className="flex justify-center text-lg font-bold mb-3">
                 Select Items
               </h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {items.map((item) => (
-                  <motion.div
-                    key={item.id}
-                    whileTap={{ scale: 0.95 }}
-                    animate={{
-                      borderColor: selectedItems[selectedUser]?.includes(
-                        item.id
-                      )
-                        ? "#2563EB"
-                        : "#000000",
-                      backgroundColor: selectedItems[selectedUser]?.includes(
-                        item.id
-                      )
-                        ? "#DBEAFE"
-                        : "#fff",
-                    }}
-                    transition={{ duration: 0.2 }}
-                    onClick={() => toggleItem(item.id)}
-                    className="flex  flex-col space-y-2 p-4 border-2 rounded-xl shadow-sm cursor-pointer select-none"
-                  >
-                    <p className="text-gray-700 font-medium">{item.name}</p>
-                    <div className="text-sm text-gray-500">
-                      Price: ${item.price}
-                      <br />
-                      <span className="flex w-full items-center">
-                        Qty: {item.quantity}
-                        <Chip
-                          label={itemSelectionCounts[item.id] || 0}
-                          color="info"
-                          className="flex w-fit ml-auto"
-                        />
-                      </span>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
+              <ItemListContainer
+                items={items}
+                selectedItems={selectedItems}
+                selectedUser={selectedUser}
+                toggleItem={toggleItem}
+                itemSelectionCounts={itemSelectionCounts}
+              />
             </motion.div>
           )}
           {/* Ready Button */}
