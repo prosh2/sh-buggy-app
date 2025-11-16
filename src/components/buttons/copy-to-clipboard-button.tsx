@@ -1,11 +1,13 @@
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { motion } from "motion/react";
 import { useState } from "react";
+
+interface CopyToClipboardButtonProps {
+  textToCopy: string;
+}
 export default function CopyToClipboardButton({
   textToCopy,
-}: {
-  textToCopy: string;
-}) {
+}: CopyToClipboardButtonProps) {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = async () => {
@@ -20,19 +22,19 @@ export default function CopyToClipboardButton({
   };
 
   return (
-    <>
-      <span className="truncate text-sm">{textToCopy}</span>
+    <div className="flex items-center justify-between bg-gray-900 rounded-xl p-2">
+      <span className="truncate text-sm font-sans">{textToCopy}</span>
       <motion.button
         onClick={copyToClipboard}
         whileTap={{ scale: 0.9 }}
         whileHover={{ scale: 1.1 }}
       >
         {copied ? (
-          <span className="text-sm text-green-400">Copied!</span>
+          <span className="text-sm text-green-400 font-sans">Copied!</span>
         ) : (
           <span>📋</span>
         )}
       </motion.button>
-    </>
+    </div>
   );
 }

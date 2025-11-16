@@ -1,6 +1,6 @@
 import ClearIcon from "@mui/icons-material/Clear";
 import { Tooltip } from "@mui/material";
-export default function User({
+export default function UserComponent({
   id,
   username,
   handleDeleteUser,
@@ -15,7 +15,7 @@ export default function User({
       className="flex bg-gray-900 text-gray-200 rounded-lg h-8 my-1 mx-1 px-1 py-1  border-black border-l-1 border-r-1 shadow-md shadow-black"
     >
       <Tooltip title={username}>
-        <span className="flex mx-auto overflow-hidden text-ellipsis whitespace-nowrap">
+        <span className="flex mx-auto overflow-hidden text-ellipsis whitespace-nowrap font-sans">
           {username}
         </span>
       </Tooltip>
