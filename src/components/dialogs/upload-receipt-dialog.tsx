@@ -104,6 +104,15 @@ export default function UploadReceiptDialog(props: DialogProps) {
     setExtractedItems(updatedItems);
   };
 
+  function extractJSONArray(input: string) {
+    // Remove code fences like ``` or ```json
+    const noFences = input.replace(/```[\s\S]*?\n|```/g, "");
+
+    // Extract content between the first [ and the last ]
+    const match = noFences.match(/\[[\s\S]*\]/);
+
+    return match ? match[0] : null;
+  }
   //TODO: export to new api pipeline
   //Assuming receipts usually have this pattern: quantity, item name, price
   const processOCRResponse = async (data: { result: Item[] }) => {
@@ -116,10 +125,13 @@ export default function UploadReceiptDialog(props: DialogProps) {
       if (!res.ok) {
         throw new Error("Failed to extract text from image");
       }
-
       const result = await res.json();
+      const extractedText = extractJSONArray(result);
+      if (!extractedText) {
+        throw new Error("No valid JSON array found in OCR response");
+      }
       const items: Item[] = [];
-      for (const _ of JSON.parse(result) as Item[]) {
+      for (const _ of JSON.parse(extractedText) as Item[]) {
         const quantity = isNaN(Number(_.quantity)) ? 1 : Number(_.quantity);
         const price = isNaN(Number(_.price)) ? 0 : Number(_.price);
         items.push({
