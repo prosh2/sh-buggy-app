@@ -51,9 +51,11 @@ export default function UploadReceipt(props: Props) {
         ) : (
           <>
             <Skeleton
+              sx={{
+                width: { xs: "80vw", sm: "30vw", md: "30vw" },
+                height: { xs: "45vw", sm: "30vh", md: "30vh" },
+              }}
               variant="rectangular"
-              width={420}
-              height={236}
               animation={false}
             />
             <IconButton

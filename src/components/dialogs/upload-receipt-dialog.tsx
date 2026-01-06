@@ -224,7 +224,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
     <AnimatePresence>
       {openDialog && (
         <motion.div
-          className="flex flex-col absolute bg-white text-gray-200 w-[90vw] rounded-lg"
+          className="flex flex-col absolute bg-white text-gray-200 w-[90vw] md:w-[50vw] md:h-[50vh] rounded-lg"
           initial={{ transform: "translateY(100vh)" }}
           animate={{ transform: "translateY(0px)" }}
           transition={{ type: "spring", stiffness: 100, damping: 20 }}
