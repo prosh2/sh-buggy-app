@@ -26,28 +26,26 @@ export default function ExtractedItemsTable({
 
   return (
     <Fragment>
-      <div className="grid grid-cols-[50px_minmax(80px,1fr)_60px_30px] gap-2 font-mono font-bold p-1">
+      <div className="flex flex-col gap-2 font-mono font-bold p-1">
         {showItemized(items)}
       </div>
 
-      <div>
-        <Button
-          style={{ backgroundColor: "var(--color-gray-700)" }}
-          variant="contained"
-          fullWidth
-          onClick={() => {
-            const newItem: Item = {
-              id: uuidv4(),
-              name: "New Item",
-              quantity: 1,
-              price: 0,
-            };
-            setExtractedItems([...items, newItem]);
-          }}
-        >
-          <AddIcon />
-        </Button>
-      </div>
+      <Button
+        style={{ backgroundColor: "var(--color-gray-700)" }}
+        variant="contained"
+        fullWidth
+        onClick={() => {
+          const newItem: Item = {
+            id: uuidv4(),
+            name: "New Item",
+            quantity: 1,
+            price: 0,
+          };
+          setExtractedItems([...items, newItem]);
+        }}
+      >
+        <AddIcon />
+      </Button>
       <SubtotalComponent subtotal={subtotal} />
     </Fragment>
   );

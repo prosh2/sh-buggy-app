@@ -44,7 +44,20 @@ function CustomTabPanel(props: TabPanelProps) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ px: 1, py: 2 }}>{children}</Box>}
+      {value === index && (
+        <Box
+          sx={{
+            position: "relative",
+            display: "flex",
+            flexDirection: "column",
+            minHeight: "40vh",
+            px: 1,
+            py: 2,
+          }}
+        >
+          {children}
+        </Box>
+      )}
     </div>
   );
 }
@@ -56,10 +69,16 @@ function a11yProps(index: number) {
   };
 }
 
+const DUMMY_ITEMS: Item[] = [
+  { id: uuidv4(), name: "Item 1", quantity: 2, price: 5.99 },
+  { id: uuidv4(), name: "Item 2", quantity: 1, price: 3.49 },
+  { id: uuidv4(), name: "Item 3", quantity: 4, price: 2.0 },
+];
+
 export default function UploadReceiptDialog(props: DialogProps) {
   const { onClose, handleCreateSession, open: openDialog } = props;
   const [selectedTab, setSelectedTab] = useState<number>(0);
-  const [extractedItems, setExtractedItems] = useState<Item[]>([]);
+  const [extractedItems, setExtractedItems] = useState<Item[]>(DUMMY_ITEMS);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [sbState, setSBState] = useState<SnackBarState>({
     open: false,
@@ -185,7 +204,10 @@ export default function UploadReceiptDialog(props: DialogProps) {
   const showItemized = (items: Item[]) => {
     try {
       return items.map((item: Item, idx) => (
-        <Fragment key={"item-row-" + idx}>
+        <div
+          key={"item-row-" + idx}
+          className="grid grid-cols-[50px_minmax(80px,1fr)_60px_8px] gap-2 font-mono font-bold p-1"
+        >
           <TextField
             id="item-quantity-input"
             key={"item-quantity-input-" + idx}
@@ -213,14 +235,14 @@ export default function UploadReceiptDialog(props: DialogProps) {
           />
           <Button
             key={"item-delete-button-" + idx}
-            variant="contained"
+            variant="text"
             color="error"
-            style={{ minWidth: "24px" }}
+            style={{ minWidth: "8px" }}
             onClick={() => handleDeleteItem(item)}
           >
             <ClearIcon />
           </Button>
-        </Fragment>
+        </div>
       ));
     } catch (error) {
       return "Error parsing extracted text." + error;
@@ -237,7 +259,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
     <AnimatePresence>
       {openDialog && (
         <motion.div
-          className="flex flex-col absolute bg-white text-gray-200 w-[90vw] md:w-[50vw] md:min-h-[50vh] rounded-lg"
+          className="absolute bg-white text-gray-200 w-[90vw] md:w-[50vw] md:min-h-[50vh] rounded-lg"
           initial={{ transform: "translateY(100vh)" }}
           animate={{ transform: "translateY(0px)" }}
           transition={{ type: "spring", stiffness: 100, damping: 20 }}
@@ -286,8 +308,8 @@ export default function UploadReceiptDialog(props: DialogProps) {
               />
             </CustomTabPanel>
             <CustomTabPanel value={selectedTab} index={1}>
-              <div className="flex flex-col items-center justify-center w-full h-full p-0 gap-4 overflow-hidden">
-                <div className="w-full h-64 p-2 rounded overflow-auto bg- text-center">
+              <div className="flex flex-col flex-1 justify-between items-center h-full p-0 gap-4 overflow-hidden">
+                <div className="flex-1 w-full max-h-[30vh] p-2 rounded overflow-auto text-center bg-gray-50 shadow-inner border border-gray-200">
                   <ExtractedItemsTable
                     items={extractedItems}
                     showItemized={showItemized}
@@ -296,8 +318,8 @@ export default function UploadReceiptDialog(props: DialogProps) {
                   />
                 </div>
                 <Button
-                  className="bg-blue-500 font-sans"
-                  variant="contained"
+                  className="font-sans"
+                  variant="text"
                   onClick={createSession}
                 >
                   New Session
