@@ -122,7 +122,7 @@ export default function Home() {
         >
           <motion.h1 className="text-3xl sm:text-4xl font-bold text-center sm:text-left tracking-tight mb-10 ">
             <motion.div
-              className="font-typewriter mb-2 text-3xl sm:text-4xl text-center"
+              className="mb-2 text-3xl sm:text-4xl text-center"
               initial={{ opacity: 0, x: 200 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
@@ -130,7 +130,7 @@ export default function Home() {
               Buggy
             </motion.div>
             <motion.div
-              className="font-typewriter text-2xl sm:text-3xl"
+              className="text-2xl sm:text-3xl"
               initial={{ opacity: 0, y: 200 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}

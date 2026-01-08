@@ -252,8 +252,12 @@ export default function UploadReceiptDialog(props: DialogProps) {
             }
           />
           <DialogTitle
-            className="bg-gray-800 text-gray-200 text-center"
-            style={{ fontFamily: "monospace" }}
+            className="bg-black bg-radial from-black-400 to-gray-800 text-center"
+            style={{
+              fontFamily: "sans-serif",
+              fontSize: "1.5rem",
+              fontWeight: "bold",
+            }}
           >
             Upload Receipt
           </DialogTitle>
