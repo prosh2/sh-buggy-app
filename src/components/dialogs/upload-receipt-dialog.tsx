@@ -11,9 +11,10 @@ import {
 } from "@mui/material";
 import DialogTitle from "@mui/material/DialogTitle";
 import { AnimatePresence, motion } from "motion/react";
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import ExtractedItemsTable from "../receipt/extracted-items-table";
 import UploadReceipt from "../receipt/upload-receipt";
+import { v4 as uuidv4 } from "uuid";
 
 interface DialogProps {
   open: boolean;
@@ -135,7 +136,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
         const quantity = isNaN(Number(_.quantity)) ? 1 : Number(_.quantity);
         const price = isNaN(Number(_.price)) ? 0 : Number(_.price);
         items.push({
-          id: crypto.randomUUID(),
+          id: uuidv4(),
           quantity,
           name: _.name,
           price,
@@ -236,7 +237,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
     <AnimatePresence>
       {openDialog && (
         <motion.div
-          className="flex flex-col absolute bg-white text-gray-200 w-[90vw] md:w-[50vw] md:h-[50vh] rounded-lg"
+          className="flex flex-col absolute bg-white text-gray-200 w-[90vw] md:w-[50vw] md:min-h-[50vh] rounded-lg"
           initial={{ transform: "translateY(100vh)" }}
           animate={{ transform: "translateY(0px)" }}
           transition={{ type: "spring", stiffness: 100, damping: 20 }}
@@ -295,11 +296,11 @@ export default function UploadReceiptDialog(props: DialogProps) {
                   />
                 </div>
                 <Button
+                  className="bg-blue-500 font-sans"
                   variant="contained"
-                  style={{ backgroundColor: "var(--color-gray-900)" }}
                   onClick={createSession}
                 >
-                  Create Session
+                  New Session
                 </Button>
               </div>
             </CustomTabPanel>
