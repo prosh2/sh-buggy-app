@@ -32,7 +32,7 @@ export default function UploadReceipt(props: Props) {
               />
             )}
             <Image
-              className="w-full sm:w-[420px] max-h-[300px] object-contain border-gray-300 border py-1"
+              className="w-full sm:w-[420px] max-h-[300px] object-contain bg-gray-100 rounded mt-2 py-4"
               alt="not found"
               src={URL.createObjectURL(selectedImage)}
               width={420}
@@ -78,7 +78,7 @@ export default function UploadReceipt(props: Props) {
       {selectedImage && (
         <div className="flex items-center justify-center">
           <button
-            className=" bg-green-500 hover:bg-green-300 text-white py-2 px-2 rounded text-sm font-mono cursor-pointer"
+            className="font-sans font-semibold bg-blue-500 text-white py-2 px-3 rounded text-sm cursor-pointer"
             onClick={handleTextExtraction}
           >
             Extract Text
