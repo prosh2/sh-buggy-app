@@ -20,9 +20,9 @@ export default function UploadReceipt(props: Props) {
   };
   return (
     <>
-      <div className="flex flex-col items-center justify-center w-full h-full p-4 overflow-hidden">
+      <div className="flex flex-col items-center justify-center p-4 overflow-hidden">
         {selectedImage ? (
-          <div className="w-full h-full sm:w-[420px] flex items-center justify-center relative">
+          <div className="sm:w-[420px] flex items-center justify-center relative">
             {status === "loading" && (
               <CircularProgress
                 style={{

@@ -24,9 +24,7 @@ const UserContainer: React.FC<UserListContainerProps> = ({
           />
         ))}
       </div>
-    )) || (
-      <p className="text-gray-400 mb-2 font-sans">No users in session yet.</p>
-    )
+    )) || <p className="text-gray-400 mb-2 font-sans">No users added yet.</p>
   );
 };
 
@@ -67,7 +65,7 @@ export default function UserListContainer() {
       />
       <input
         type="text"
-        placeholder="Enter your name to join..."
+        placeholder="Enter name to split the bill"
         className="w-full mt-3 px-4 py-2 rounded-xl bg-gray-900 text-gray-200 focus:ring-1 focus:ring-gray-500 outline-none font-sans"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
@@ -82,7 +80,7 @@ export default function UserListContainer() {
         onClick={handleAddUser}
         disabled={!username.trim()}
       >
-        Join
+        Add this guy
       </button>
     </div>
   );

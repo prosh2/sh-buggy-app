@@ -25,10 +25,10 @@ export default function SessionPage() {
   }, []);
 
   const whatsappShareUrl = `https://wa.me/?text=${encodeURIComponent(
-    `Join my session: ${url}`
+    `Join my session: ${url}`,
   )}`;
   const telegramShareUrl = `https://t.me/share/url?url=${encodeURIComponent(
-    url
+    url,
   )}&text=${encodeURIComponent("Join my session")}`;
 
   const handleUsersUpdate = useCallback(
@@ -40,7 +40,7 @@ export default function SessionPage() {
       }));
       // console.log("Users updated:", users);
     },
-    [setSession]
+    [setSession],
   );
   const handleItemsUpdate = useCallback(
     (items: Item[]) => {
@@ -51,7 +51,7 @@ export default function SessionPage() {
       }));
       // console.log("Items updated:", items);
     },
-    [setSession]
+    [setSession],
   );
   const handleReadyClick = () => {
     if (session.users.length === 0) {
@@ -67,18 +67,20 @@ export default function SessionPage() {
     <div className="min-h-screen bg-gradient-to-b from-[#0e1117] to-[#1f2937] text-gray-200 flex flex-col items-center p-4">
       {showAlert && (
         <Alert
-          className="absolute top-4 right-4 z-10"
+          className="absolute top-4 left-10 z-10"
           severity="warning"
           onClose={() => {
             setShowAlert(false);
             // console.log("Alert closed");
           }}
         >
-          Session must contain at least 1 user!
+          At least 1 person must be added!
         </Alert>
       )}
       <header className="flex flex-col items-center space-y-6 w-full max-w-md">
-        <h1 className="text-2xl font-semibold mb-1 ">Users in Session</h1>
+        <h1 className="text-2xl font-semibold mb-1 ">
+          Buggy&apos;s Chopping Board
+        </h1>
         <p className="text-sm text-gray-400 font-sans">
           Total users: {session.users.length}
         </p>
@@ -93,7 +95,7 @@ export default function SessionPage() {
         <UserListContainer />
       </main>
 
-      <footer className="fixed bottom-10">
+      <footer className="fixed bottom-0">
         <motion.button
           className="flex justify-center items-center w-[100vw] h-10 shadow-lg border-black border-r-1 shadow-black bg-gray-900 font-sans"
           style={{

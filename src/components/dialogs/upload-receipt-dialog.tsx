@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import DialogTitle from "@mui/material/DialogTitle";
 import { AnimatePresence, motion } from "motion/react";
-import { Fragment, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import ExtractedItemsTable from "../receipt/extracted-items-table";
 import UploadReceipt from "../receipt/upload-receipt";
 import { v4 as uuidv4 } from "uuid";
@@ -42,17 +42,22 @@ function CustomTabPanel(props: TabPanelProps) {
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        flex: 2,
+      }}
       {...other}
     >
       {value === index && (
         <Box
           sx={{
-            position: "relative",
             display: "flex",
             flexDirection: "column",
-            minHeight: "40vh",
-            px: 1,
-            py: 2,
+            flex: 1,
+            p: 3,
+            height: "100%",
           }}
         >
           {children}
@@ -104,14 +109,14 @@ export default function UploadReceiptDialog(props: DialogProps) {
   const handleQuantityChange = (item: Item, newQuantity: string) => {
     if (isNaN(Number(newQuantity))) return;
     const updatedItems = extractedItems.map((it: Item) =>
-      it === item ? { ...it, quantity: Number(newQuantity) } : it
+      it === item ? { ...it, quantity: Number(newQuantity) } : it,
     );
     setExtractedItems(updatedItems);
   };
 
   const handleNameChange = (item: Item, newName: string) => {
     const updatedItems = extractedItems.map((it: Item) =>
-      it === item ? { ...it, name: newName } : it
+      it === item ? { ...it, name: newName } : it,
     );
     setExtractedItems(updatedItems);
   };
@@ -119,7 +124,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
   const handlePriceChange = (item: Item, newPrice: string) => {
     if (isNaN(Number(newPrice))) return;
     const updatedItems = extractedItems.map((it: Item) =>
-      it === item ? { ...it, price: Number(newPrice) } : it
+      it === item ? { ...it, price: Number(newPrice) } : it,
     );
     setExtractedItems(updatedItems);
   };
@@ -134,7 +139,6 @@ export default function UploadReceiptDialog(props: DialogProps) {
     return match ? match[0] : null;
   }
   //TODO: export to new api pipeline
-  //Assuming receipts usually have this pattern: quantity, item name, price
   const processOCRResponse = async (data: { result: Item[] }) => {
     try {
       const res = await fetch("/api/chat", {
@@ -252,14 +256,14 @@ export default function UploadReceiptDialog(props: DialogProps) {
   const subtotal = useMemo(
     () =>
       extractedItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
-    [extractedItems]
+    [extractedItems],
   );
 
   return (
     <AnimatePresence>
       {openDialog && (
         <motion.div
-          className="absolute bg-white text-gray-200 w-[90vw] md:w-[50vw] md:min-h-[50vh] rounded-lg"
+          className="absolute flex flex-col justify-center bg-white text-gray-200 w-[90vw] md:w-[50vw] md:min-h-[50vh] rounded-lg"
           initial={{ transform: "translateY(100vh)" }}
           animate={{ transform: "translateY(0px)" }}
           transition={{ type: "spring", stiffness: 100, damping: 20 }}
@@ -284,8 +288,16 @@ export default function UploadReceiptDialog(props: DialogProps) {
           >
             Upload Receipt
           </DialogTitle>
-          <Box sx={{ width: "100%" }}>
-            <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <Box
+            sx={{
+              width: "100%",
+              height: "100%",
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <Box sx={{ flex: 1, borderBottom: 1, borderColor: "divider" }}>
               <Tabs
                 value={selectedTab}
                 onChange={handleTabChange}
@@ -308,8 +320,8 @@ export default function UploadReceiptDialog(props: DialogProps) {
               />
             </CustomTabPanel>
             <CustomTabPanel value={selectedTab} index={1}>
-              <div className="flex flex-col flex-1 justify-between items-center h-full p-0 gap-4 overflow-hidden">
-                <div className="flex-1 w-full max-h-[30vh] p-2 rounded overflow-auto text-center bg-gray-50 shadow-inner border border-gray-200">
+              <div className="flex flex-col flex-1 justify-between items-center p-0 gap-4 overflow-hidden">
+                <div className="flex flex-col flex-1 w-full h-full  max-h-[30vh] p-2 rounded overflow-auto text-center bg-gray-50 shadow-inner border border-gray-200">
                   <ExtractedItemsTable
                     items={extractedItems}
                     showItemized={showItemized}
@@ -319,8 +331,13 @@ export default function UploadReceiptDialog(props: DialogProps) {
                 </div>
                 <Button
                   className="font-sans"
-                  variant="text"
+                  variant="contained"
                   onClick={createSession}
+                  size="large"
+                  sx={{
+                    color: "var(--color-white)",
+                    backgroundColor: "var(--color-green-400)",
+                  }}
                 >
                   New Session
                 </Button>

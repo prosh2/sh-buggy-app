@@ -58,7 +58,7 @@ export default function SplitPage() {
       // console.log("Users updated:", users);
       // You can add logic here to proceed with the splitting process
     },
-    [setSession]
+    [setSession],
   );
   const handleItemsUpdate = useCallback(
     (items: Item[]) => {
@@ -69,7 +69,7 @@ export default function SplitPage() {
       }));
       // console.log("Items updated:", items);
     },
-    [setSession]
+    [setSession],
   );
 
   useSessionUsers(sessionID ? sessionID.toString() : "", handleUsersUpdate);
@@ -119,14 +119,17 @@ export default function SplitPage() {
       {/* Additional content can be added here */}
 
       <BillContainer
-        isHidden={showBillSummary}
+        isHidden={!showBillSummary}
         users={session.users}
         itemSelectionCounts={itemSelectionCounts}
-        goBack={() => setShowBillSummary(false)}
+        goBack={() => {
+          setReadyToSplit(false);
+          setShowBillSummary(false);
+        }}
       />
 
       <AllocationContainer
-        isHidden={!showBillSummary}
+        isHidden={showBillSummary}
         users={session.users}
         items={session.items}
         readyToSplit={readyToSplit}

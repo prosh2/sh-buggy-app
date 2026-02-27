@@ -110,9 +110,9 @@ export default function Home() {
   return (
     <div className="bg-radial from-black-400 to-gray-900 font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <header className="flex items-center justify-between w-full max-w-3xl" />
-      <main className="w-full h-full flex flex-col justify-center items-center rounded-lg shadow-lg p-8 sm:p-12 gap-6">
+      <main className="w-full h-full flex flex-col justify-center items-center rounded-lg p-8 sm:p-12 gap-6">
         <motion.div
-          className="flex flex-col items-center justify-center w-full h-full bg-radial from-black-400 to-gray-900 backdrop-blur-md preserve-3d bg-white/3 shadow-2xl"
+          className="flex flex-col items-center justify-center w-full h-full bg-radial from-black-400 to-gray-900 backdrop-blur-md preserve-3d bg-white/3"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -148,8 +148,8 @@ export default function Home() {
                 status === "success"
                   ? "#29d869ff"
                   : status === "error"
-                  ? "#ff0000ff"
-                  : "inherit",
+                    ? "#ff0000ff"
+                    : "inherit",
               transition: { duration: 0.4 },
             }}
             transition={{ type: "spring", restDelta: 0.5 }}

@@ -32,7 +32,7 @@ export default function AllocationContainer({
 }: Props) {
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [selectedItems, setSelectedItems] = useState<Record<string, string[]>>(
-    {}
+    {},
   );
   const [isReadyMap, setIsReadyMap] = useState<Record<string, boolean>>({});
   const userRefs = useRef<Record<string, HTMLButtonElement | null>>({});
@@ -54,7 +54,7 @@ export default function AllocationContainer({
   const patchSelectedItems = async () => {
     if (!selectedUser) return;
     const allocatedItems = items?.filter((item) =>
-      selectedItems[selectedUser].includes(item.id)
+      selectedItems[selectedUser].includes(item.id),
     );
     await fetch(`/api/sessions/${sessionID}/users/${selectedUser}`, {
       method: "PATCH",
@@ -111,7 +111,7 @@ export default function AllocationContainer({
 
   return (
     <>
-      {isHidden && (
+      {!isHidden && (
         <div className="rounded shadow-lg flex flex-col items-center p-4 h-full">
           {/* User Selection */}
           <div className="flex flex-col w-full h-50 justify-center">
@@ -142,7 +142,7 @@ export default function AllocationContainer({
             </motion.div>
           )}
 
-          <footer className="fixed bottom-10">
+          <footer className="fixed bottom-0 flex items-center space-x-4">
             {/* Ready Button */}
             {selectedUser && (
               <motion.button
@@ -154,7 +154,7 @@ export default function AllocationContainer({
                 className={
                   selectedItems[selectedUser]?.length <= 0
                     ? "bg-gray-900 mt-8 px-6 py-3 text-gray-800 font-bold rounded shadow-lg mouse-not-allowed cursor-not-allowed w-[100vw] h-10 flex justify-center items-center font-sans"
-                    : "bg-green-500 mt-8 px-6 py-3 text-white font-bold rounded shadow-lg w-[100vw] h-10 flex justify-center items-center font-sans"
+                    : "bg-green-500 mt-8 px-6 py-3 text-white font-bold rounded shadow-lg w-[50vw] h-10 flex justify-center items-center font-sans"
                 }
                 hidden={isReadyMap[selectedUser]}
                 disabled={selectedItems[selectedUser]?.length <= 0}
@@ -168,7 +168,7 @@ export default function AllocationContainer({
                 whileTap={{ scale: 0.95 }}
                 whileHover={{ scale: 1.02 }}
                 onClick={() => handlePlayerIsReady(false)}
-                className="mt-8 px-6 py-3 bg-red-500 text-white font-bold rounded shadow-lg w-[100vw] h-10 flex justify-center items-center font-sans"
+                className="mt-8 px-6 py-3 bg-red-500 text-white font-bold rounded shadow-lg w-[40vw] h-10 flex justify-center items-center font-sans"
                 hidden={!isReadyMap[selectedUser]}
               >
                 Not Ready
@@ -181,7 +181,7 @@ export default function AllocationContainer({
                 whileTap={{ scale: 0.95 }}
                 whileHover={{ scale: 1.02 }}
                 onClick={onBillSVP}
-                className="mt-8 px-6 py-3 bg-green-500 text-white font-bold rounded shadow-lg w-[100vw] h-10 flex justify-center items-center font-sans"
+                className="mt-8 px-6 py-3 bg-green-500 text-white font-bold rounded shadow-lg w-[40vw] h-10 flex justify-center items-center font-sans"
               >
                 Proceed to Split Bill
               </motion.button>

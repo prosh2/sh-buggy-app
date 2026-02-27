@@ -1,7 +1,6 @@
 import { Item } from "@/app/context/session-context";
 import AddIcon from "@mui/icons-material/Add";
 import { Button } from "@mui/material";
-import { Fragment } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 export default function ExtractedItemsTable({
@@ -23,30 +22,33 @@ export default function ExtractedItemsTable({
       </div>
     );
   }
-
+  const addItem = () => {
+    const newItem: Item = {
+      id: uuidv4(),
+      name: "New Item",
+      quantity: 1,
+      price: 0,
+    };
+    setExtractedItems([...items, newItem]);
+  };
   return (
-    <Fragment>
+    <div className="flex flex-col h-full flex-1">
       <div className="flex flex-col gap-2 font-mono font-bold p-1">
         {showItemized(items)}
       </div>
-
+      <SubtotalComponent subtotal={subtotal} />
       <Button
-        style={{ backgroundColor: "var(--color-gray-700)" }}
+        style={{
+          marginTop: "auto",
+          color: "white",
+          backgroundColor: "var(--color-gray-700)",
+        }}
         variant="contained"
         fullWidth
-        onClick={() => {
-          const newItem: Item = {
-            id: uuidv4(),
-            name: "New Item",
-            quantity: 1,
-            price: 0,
-          };
-          setExtractedItems([...items, newItem]);
-        }}
+        onClick={addItem}
       >
         <AddIcon />
       </Button>
-      <SubtotalComponent subtotal={subtotal} />
-    </Fragment>
+    </div>
   );
 }
