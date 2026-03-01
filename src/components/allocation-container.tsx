@@ -112,7 +112,7 @@ export default function AllocationContainer({
   return (
     <>
       {!isHidden && (
-        <div className="rounded shadow-lg flex flex-col items-center p-4 h-full">
+        <div className="rounded shadow-lg flex flex-col items-center p-4 h-full overflow-hidden no-scrollbar">
           {/* User Selection */}
           <div className="flex flex-col w-full h-50 justify-center">
             <UserSelection

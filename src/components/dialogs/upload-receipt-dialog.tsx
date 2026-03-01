@@ -302,6 +302,9 @@ export default function UploadReceiptDialog(props: DialogProps) {
                 value={selectedTab}
                 onChange={handleTabChange}
                 aria-label="basic tabs example"
+                centered
+                textColor="primary"
+                indicatorColor="secondary"
               >
                 <Tab label="Receipt" {...a11yProps(0)} />
                 <Tab
@@ -334,10 +337,10 @@ export default function UploadReceiptDialog(props: DialogProps) {
                   variant="contained"
                   onClick={createSession}
                   size="large"
-                  sx={{
-                    color: "var(--color-white)",
-                    backgroundColor: "var(--color-green-400)",
-                  }}
+                  // sx={{
+                  //   color: "var(--color-white)",
+                  //   backgroundColor: "var(--color-green-400)",
+                  // }}
                 >
                   New Session
                 </Button>

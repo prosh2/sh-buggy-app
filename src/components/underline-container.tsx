@@ -1,4 +1,4 @@
-import { motion } from "motion/react"
+import { motion } from "motion/react";
 import {
   ReactNode,
   RefObject,
@@ -80,7 +80,10 @@ export default function UnderlineContainer({
 
   return (
     <div ref={containerRef} className="relative overflow-hidden">
-      <div ref={scrollRef} className="flex gap-3 overflow-x-auto no-scrollbar">
+      <div
+        ref={scrollRef}
+        className="flex justify-center gap-3 overflow-x-auto no-scrollbar"
+      >
         {children}
       </div>
       <motion.div

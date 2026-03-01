@@ -2,14 +2,20 @@
 import { EyeCatchingButton } from "@/components/buttons/eye-catching-btn";
 import UploadReceiptDialog from "@/components/dialogs/upload-receipt-dialog";
 import { TypingEffect } from "@/components/typing-effect";
-import { LinearProgress } from "@mui/material";
+import { createTheme, LinearProgress, ThemeProvider } from "@mui/material/";
+import { blue, lightBlue } from "@mui/material/colors";
 import { motion } from "motion/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { Item, useSession } from "./context/session-context";
-
+import { Item } from "./context/session-context";
+const theme = createTheme({
+  palette: {
+    primary: blue,
+    secondary: lightBlue,
+  },
+});
 export default function Home() {
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
@@ -108,91 +114,93 @@ export default function Home() {
   }, [status]);
 
   return (
-    <div className="bg-radial from-black-400 to-gray-900 font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <header className="flex items-center justify-between w-full max-w-3xl" />
-      <main className="w-full h-full flex flex-col justify-center items-center rounded-lg p-8 sm:p-12 gap-6">
-        <motion.div
-          className="flex flex-col items-center justify-center w-full h-full bg-radial from-black-400 to-gray-900 backdrop-blur-md preserve-3d bg-white/3"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          style={{
-            perspective: 1000, // Required for 3D effect
-          }}
-        >
-          <motion.h1 className="text-3xl sm:text-4xl font-bold text-center sm:text-left tracking-tight mb-10 ">
-            <motion.div
-              className="mb-2 text-3xl sm:text-4xl text-center"
-              initial={{ opacity: 0, x: 200 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              Buggy
-            </motion.div>
-            <motion.div
-              className="text-2xl sm:text-3xl"
-              initial={{ opacity: 0, y: 200 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-            >
-              Split your bills easy
-            </motion.div>
-          </motion.h1>
+    <ThemeProvider theme={theme}>
+      <div className="bg-radial from-black-400 to-gray-900 font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
+        <header className="flex items-center justify-between w-full max-w-3xl" />
+        <main className="w-full h-full flex flex-col justify-center items-center rounded-lg p-8 sm:p-12 gap-6">
           <motion.div
-            className="rounded-full transition-colors flex flex-col items-center justify-center gap-2 font-medium text-sm sm:text-base h-12 sm:h-14 sm:w-auto dark:hover:bg-white dark:hover:border-1"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            animate={{
-              rotate: 360,
-              borderColor:
-                status === "success"
-                  ? "#29d869ff"
-                  : status === "error"
-                    ? "#ff0000ff"
-                    : "inherit",
-              transition: { duration: 0.4 },
+            className="flex flex-col items-center justify-center w-full h-full bg-radial from-black-400 to-gray-900 backdrop-blur-md preserve-3d bg-white/3"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            style={{
+              perspective: 1000, // Required for 3D effect
             }}
-            transition={{ type: "spring", restDelta: 0.5 }}
           >
-            <EyeCatchingButton
-              className="flex flex-col items-center justify-center w-full h-full px-4"
-              onClick={handleUploadReceipt}
-            >
-              <motion.div className="flex h-12 w-full items-center justify-center gap-2">
-                <Image
-                  src="/vercel.svg"
-                  alt="Vercel logomark"
-                  width={20}
-                  height={20}
-                />
-                {status === "loading" && <TypingEffect text="Uploading..." />}
-                {status === "idle" && <TypingEffect text="Upload Receipt" />}
-                {status === "success" && <TypingEffect text="Success!" />}
-                {status === "error" && <TypingEffect text="Error!" />}
+            <motion.h1 className="text-3xl sm:text-4xl font-bold text-center sm:text-left tracking-tight mb-10 ">
+              <motion.div
+                className="mb-2 text-3xl sm:text-4xl text-center"
+                initial={{ opacity: 0, x: 200 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                Buggy
               </motion.div>
               <motion.div
-                className="w-full h-full"
-                animate={{
-                  display: status === "loading" ? "block" : "none",
-                  transition: { duration: 0.4 },
-                }}
+                className="text-2xl sm:text-3xl"
+                initial={{ opacity: 0, y: 200 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
               >
-                <LinearProgress
-                  variant="buffer"
-                  value={progress}
-                  valueBuffer={buffer}
-                />
+                Split your bills easy
               </motion.div>
-            </EyeCatchingButton>
+            </motion.h1>
+            <motion.div
+              className="rounded-full transition-colors flex flex-col items-center justify-center gap-2 font-medium text-sm sm:text-base h-12 sm:h-14 sm:w-auto dark:hover:bg-white dark:hover:border-1"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              animate={{
+                rotate: 360,
+                borderColor:
+                  status === "success"
+                    ? "#29d869ff"
+                    : status === "error"
+                      ? "#ff0000ff"
+                      : "inherit",
+                transition: { duration: 0.4 },
+              }}
+              transition={{ type: "spring", restDelta: 0.5 }}
+            >
+              <EyeCatchingButton
+                className="flex flex-col items-center justify-center w-full h-full px-4"
+                onClick={handleUploadReceipt}
+              >
+                <motion.div className="flex h-12 w-full items-center justify-center gap-2">
+                  <Image
+                    src="/vercel.svg"
+                    alt="Vercel logomark"
+                    width={20}
+                    height={20}
+                  />
+                  {status === "loading" && <TypingEffect text="Uploading..." />}
+                  {status === "idle" && <TypingEffect text="Upload Receipt" />}
+                  {status === "success" && <TypingEffect text="Success!" />}
+                  {status === "error" && <TypingEffect text="Error!" />}
+                </motion.div>
+                <motion.div
+                  className="w-full h-full"
+                  animate={{
+                    display: status === "loading" ? "block" : "none",
+                    transition: { duration: 0.4 },
+                  }}
+                >
+                  <LinearProgress
+                    variant="buffer"
+                    value={progress}
+                    valueBuffer={buffer}
+                  />
+                </motion.div>
+              </EyeCatchingButton>
+            </motion.div>
+            <UploadReceiptDialog
+              open={openUploadDialog}
+              onClose={handleCloseUploadDialog}
+              handleCreateSession={handleCreateSession}
+            />
           </motion.div>
-          <UploadReceiptDialog
-            open={openUploadDialog}
-            onClose={handleCloseUploadDialog}
-            handleCreateSession={handleCreateSession}
-          />
-        </motion.div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center" />
-    </div>
+        </main>
+        <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center" />
+      </div>
+    </ThemeProvider>
   );
 }
