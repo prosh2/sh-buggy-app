@@ -38,7 +38,7 @@ export default function UserSelection({
                 selectedUser === user.id ? "none" : "1px solid #ddd",
             }}
             transition={{ duration: 0.2 }}
-            className="px-4 py-2 rounded-xl font-medium shadow"
+            className="px-4 py-2 rounded-md font-medium shadow"
           >
             {user.name}
           </motion.button>

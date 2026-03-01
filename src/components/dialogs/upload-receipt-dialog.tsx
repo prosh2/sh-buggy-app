@@ -11,9 +11,10 @@ import {
 } from "@mui/material";
 import DialogTitle from "@mui/material/DialogTitle";
 import { AnimatePresence, motion } from "motion/react";
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import ExtractedItemsTable from "../receipt/extracted-items-table";
 import UploadReceipt from "../receipt/upload-receipt";
+import { v4 as uuidv4 } from "uuid";
 
 interface DialogProps {
   open: boolean;
@@ -41,9 +42,27 @@ function CustomTabPanel(props: TabPanelProps) {
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        flex: 2,
+      }}
       {...other}
     >
-      {value === index && <Box sx={{ px: 1, py: 2 }}>{children}</Box>}
+      {value === index && (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            flex: 1,
+            p: 3,
+            height: "100%",
+          }}
+        >
+          {children}
+        </Box>
+      )}
     </div>
   );
 }
@@ -55,10 +74,16 @@ function a11yProps(index: number) {
   };
 }
 
+const DUMMY_ITEMS: Item[] = [
+  { id: uuidv4(), name: "Item 1", quantity: 2, price: 5.99 },
+  { id: uuidv4(), name: "Item 2", quantity: 1, price: 3.49 },
+  { id: uuidv4(), name: "Item 3", quantity: 4, price: 2.0 },
+];
+
 export default function UploadReceiptDialog(props: DialogProps) {
   const { onClose, handleCreateSession, open: openDialog } = props;
   const [selectedTab, setSelectedTab] = useState<number>(0);
-  const [extractedItems, setExtractedItems] = useState<Item[]>([]);
+  const [extractedItems, setExtractedItems] = useState<Item[]>(DUMMY_ITEMS);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [sbState, setSBState] = useState<SnackBarState>({
     open: false,
@@ -84,14 +109,14 @@ export default function UploadReceiptDialog(props: DialogProps) {
   const handleQuantityChange = (item: Item, newQuantity: string) => {
     if (isNaN(Number(newQuantity))) return;
     const updatedItems = extractedItems.map((it: Item) =>
-      it === item ? { ...it, quantity: Number(newQuantity) } : it
+      it === item ? { ...it, quantity: Number(newQuantity) } : it,
     );
     setExtractedItems(updatedItems);
   };
 
   const handleNameChange = (item: Item, newName: string) => {
     const updatedItems = extractedItems.map((it: Item) =>
-      it === item ? { ...it, name: newName } : it
+      it === item ? { ...it, name: newName } : it,
     );
     setExtractedItems(updatedItems);
   };
@@ -99,7 +124,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
   const handlePriceChange = (item: Item, newPrice: string) => {
     if (isNaN(Number(newPrice))) return;
     const updatedItems = extractedItems.map((it: Item) =>
-      it === item ? { ...it, price: Number(newPrice) } : it
+      it === item ? { ...it, price: Number(newPrice) } : it,
     );
     setExtractedItems(updatedItems);
   };
@@ -114,7 +139,6 @@ export default function UploadReceiptDialog(props: DialogProps) {
     return match ? match[0] : null;
   }
   //TODO: export to new api pipeline
-  //Assuming receipts usually have this pattern: quantity, item name, price
   const processOCRResponse = async (data: { result: Item[] }) => {
     try {
       const res = await fetch("/api/chat", {
@@ -135,7 +159,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
         const quantity = isNaN(Number(_.quantity)) ? 1 : Number(_.quantity);
         const price = isNaN(Number(_.price)) ? 0 : Number(_.price);
         items.push({
-          id: crypto.randomUUID(),
+          id: uuidv4(),
           quantity,
           name: _.name,
           price,
@@ -184,7 +208,10 @@ export default function UploadReceiptDialog(props: DialogProps) {
   const showItemized = (items: Item[]) => {
     try {
       return items.map((item: Item, idx) => (
-        <Fragment key={"item-row-" + idx}>
+        <div
+          key={"item-row-" + idx}
+          className="grid grid-cols-[50px_minmax(80px,1fr)_60px_8px] gap-2 font-mono font-bold p-1"
+        >
           <TextField
             id="item-quantity-input"
             key={"item-quantity-input-" + idx}
@@ -212,14 +239,14 @@ export default function UploadReceiptDialog(props: DialogProps) {
           />
           <Button
             key={"item-delete-button-" + idx}
-            variant="contained"
+            variant="text"
             color="error"
-            style={{ minWidth: "24px" }}
+            style={{ minWidth: "8px" }}
             onClick={() => handleDeleteItem(item)}
           >
             <ClearIcon />
           </Button>
-        </Fragment>
+        </div>
       ));
     } catch (error) {
       return "Error parsing extracted text." + error;
@@ -229,14 +256,14 @@ export default function UploadReceiptDialog(props: DialogProps) {
   const subtotal = useMemo(
     () =>
       extractedItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
-    [extractedItems]
+    [extractedItems],
   );
 
   return (
     <AnimatePresence>
       {openDialog && (
         <motion.div
-          className="flex flex-col absolute bg-white text-gray-200 w-[90vw] md:w-[50vw] md:h-[50vh] rounded-lg"
+          className="absolute flex flex-col justify-center bg-white text-gray-200 w-[90vw] md:w-[50vw] md:min-h-[50vh] rounded-lg"
           initial={{ transform: "translateY(100vh)" }}
           animate={{ transform: "translateY(0px)" }}
           transition={{ type: "spring", stiffness: 100, damping: 20 }}
@@ -252,17 +279,32 @@ export default function UploadReceiptDialog(props: DialogProps) {
             }
           />
           <DialogTitle
-            className="bg-gray-800 text-gray-200 text-center"
-            style={{ fontFamily: "monospace" }}
+            className="bg-black bg-radial from-black-400 to-gray-800 text-center"
+            style={{
+              fontFamily: "sans-serif",
+              fontSize: "1.5rem",
+              fontWeight: "bold",
+            }}
           >
             Upload Receipt
           </DialogTitle>
-          <Box sx={{ width: "100%" }}>
-            <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <Box
+            sx={{
+              width: "100%",
+              height: "100%",
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <Box sx={{ flex: 1, borderBottom: 1, borderColor: "divider" }}>
               <Tabs
                 value={selectedTab}
                 onChange={handleTabChange}
                 aria-label="basic tabs example"
+                centered
+                textColor="primary"
+                indicatorColor="secondary"
               >
                 <Tab label="Receipt" {...a11yProps(0)} />
                 <Tab
@@ -281,8 +323,8 @@ export default function UploadReceiptDialog(props: DialogProps) {
               />
             </CustomTabPanel>
             <CustomTabPanel value={selectedTab} index={1}>
-              <div className="flex flex-col items-center justify-center w-full h-full p-0 gap-4 overflow-hidden">
-                <div className="w-full h-64 p-2 rounded overflow-auto bg- text-center">
+              <div className="flex flex-col flex-1 justify-between items-center p-0 gap-4 overflow-hidden">
+                <div className="flex flex-col flex-1 w-full h-full  max-h-[30vh] p-2 rounded overflow-auto text-center bg-gray-50 shadow-inner border border-gray-200">
                   <ExtractedItemsTable
                     items={extractedItems}
                     showItemized={showItemized}
@@ -291,11 +333,16 @@ export default function UploadReceiptDialog(props: DialogProps) {
                   />
                 </div>
                 <Button
+                  className="font-sans"
                   variant="contained"
-                  style={{ backgroundColor: "var(--color-gray-900)" }}
                   onClick={createSession}
+                  size="large"
+                  // sx={{
+                  //   color: "var(--color-white)",
+                  //   backgroundColor: "var(--color-green-400)",
+                  // }}
                 >
-                  Create Session
+                  New Session
                 </Button>
               </div>
             </CustomTabPanel>

@@ -1,7 +1,7 @@
 import { Item } from "@/app/context/session-context";
-import { Button } from "@mui/material";
-import { Fragment } from "react";
 import AddIcon from "@mui/icons-material/Add";
+import { Button } from "@mui/material";
+import { v4 as uuidv4 } from "uuid";
 
 export default function ExtractedItemsTable({
   items,
@@ -16,38 +16,39 @@ export default function ExtractedItemsTable({
 }) {
   function SubtotalComponent({ subtotal }: { subtotal: number }) {
     return (
-      <div className="flex justify-end items-center gap-2 font-bold pt-2 border-t col-span-4 text-black">
+      <div className="flex justify-end items-center gap-2 font-bold pt-2 col-span-4 text-black">
         <span>Subtotal:</span>
         <span>{subtotal.toFixed(2)}</span>
       </div>
     );
   }
-
+  const addItem = () => {
+    const newItem: Item = {
+      id: uuidv4(),
+      name: "New Item",
+      quantity: 1,
+      price: 0,
+    };
+    setExtractedItems([...items, newItem]);
+  };
   return (
-    <Fragment>
-      <div className="grid grid-cols-[50px_minmax(80px,1fr)_50px_30px] gap-2 font-mono font-bold p-1">
+    <div className="flex flex-col h-full flex-1">
+      <div className="flex flex-col gap-2 font-mono font-bold p-1">
         {showItemized(items)}
       </div>
-
-      <div>
-        <Button
-          variant="contained"
-          color="primary"
-          fullWidth
-          onClick={() => {
-            const newItem: Item = {
-              id: crypto.randomUUID(),
-              name: "New Item",
-              quantity: 1,
-              price: 0,
-            };
-            setExtractedItems([...items, newItem]);
-          }}
-        >
-          <AddIcon />
-        </Button>
-      </div>
       <SubtotalComponent subtotal={subtotal} />
-    </Fragment>
+      <Button
+        style={{
+          marginTop: "auto",
+          color: "white",
+          backgroundColor: "var(--color-gray-700)",
+        }}
+        variant="contained"
+        fullWidth
+        onClick={addItem}
+      >
+        <AddIcon />
+      </Button>
+    </div>
   );
 }

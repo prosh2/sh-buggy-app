@@ -25,7 +25,7 @@ export default function BillContainer({
       (acc, item) =>
         acc +
         ((item.price * item.quantity) / itemSelectionCounts[item.id] || 1),
-      0
+      0,
     );
 
     return amount?.toFixed(2);
@@ -33,7 +33,7 @@ export default function BillContainer({
 
   return (
     <>
-      {isHidden && (
+      {!isHidden && (
         <div className="rounded shadow-lg flex flex-col items-center p-4 h-full">
           <motion.button
             className="absolute right-0 top-0 m-4 bg-gray-800 shadow-black shadow-lg border-black border-r-2 border-l-2 px-4 py-2 rounded-xl text-xs font-mono shadow"
