@@ -1,5 +1,5 @@
 import { User } from "@/app/context/session-context";
-import { motion } from "motion/react"
+import { motion } from "motion/react";
 export default function Receipt({
   users,
   selectedUser,
@@ -10,7 +10,7 @@ export default function Receipt({
   itemCounts: Record<string, number>;
 }) {
   return (
-    <div className="flex flex-col w-full shadow-md shadow-black border-black border-l-2 border-r-2 border-t-1 py-5">
+    <div className="flex flex-col w-full bg-gray-900 shadow-md shadow-black border-black border-l-2 border-r-2 border-t-1 py-5 rounded">
       <div className="flex justify-around h-8 py-1 font-bold mb-2">
         <span className="flex items-center justify-center w-full">Name</span>
         <span className="flex items-center justify-center w-full">Qty</span>

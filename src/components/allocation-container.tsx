@@ -142,7 +142,7 @@ export default function AllocationContainer({
             </motion.div>
           )}
 
-          <footer className="fixed bottom-0 flex items-center space-x-4">
+          <footer className="fixed bottom-0 flex items-center justify-center space-x-4 w-full">
             {/* Ready Button */}
             {selectedUser && (
               <motion.button
@@ -168,7 +168,7 @@ export default function AllocationContainer({
                 whileTap={{ scale: 0.95 }}
                 whileHover={{ scale: 1.02 }}
                 onClick={() => handlePlayerIsReady(false)}
-                className="mt-8 px-6 py-3 bg-red-500 text-white font-bold rounded shadow-lg w-[40vw] h-10 flex justify-center items-center font-sans"
+                className="mt-8 px-6 py bg-red-500 text-white font-bold rounded shadow-lg w-[25%] h-12 flex justify-center items-center font-sans"
                 hidden={!isReadyMap[selectedUser]}
               >
                 Not Ready
@@ -181,9 +181,9 @@ export default function AllocationContainer({
                 whileTap={{ scale: 0.95 }}
                 whileHover={{ scale: 1.02 }}
                 onClick={onBillSVP}
-                className="mt-8 px-6 py-3 bg-green-500 text-white font-bold rounded shadow-lg w-[40vw] h-10 flex justify-center items-center font-sans"
+                className="mt-8 px-6 py-3 bg-green-500 text-white font-bold rounded shadow-lg w-[25%] h-12 flex justify-center items-center font-sans"
               >
-                Proceed to Split Bill
+                Split Bill
               </motion.button>
             )}
           </footer>
