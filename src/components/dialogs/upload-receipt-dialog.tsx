@@ -139,23 +139,23 @@ export default function UploadReceiptDialog(props: DialogProps) {
     return match ? match[0] : null;
   }
   //TODO: export to new api pipeline
-  const processOCRResponse = async (data: { result: Item[] }) => {
+  const processOCRResponse = async (data: object) => {
     try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (!res.ok) {
-        throw new Error("Failed to extract text from image");
-      }
-      const result = await res.json();
-      const extractedText = extractJSONArray(result);
-      if (!extractedText) {
-        throw new Error("No valid JSON array found in OCR response");
-      }
+      // const res = await fetch("/api/chat", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify(data),
+      // });
+      // if (!res.ok) {
+      //   throw new Error("Failed to extract text from image");
+      // }
+      // const result = await res.json();
+      // const extractedText = extractJSONArray(result);
+      // if (!extractedText) {
+      //   throw new Error("No valid JSON array found in OCR response");
+      // }
       const items: Item[] = [];
-      for (const _ of JSON.parse(extractedText) as Item[]) {
+      for (const _ of data as Item[]) {
         const quantity = isNaN(Number(_.quantity)) ? 1 : Number(_.quantity);
         const price = isNaN(Number(_.price)) ? 0 : Number(_.price);
         items.push({
@@ -187,7 +187,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
       }
 
       const result = await res.json();
-      const extractedItems = await processOCRResponse(result);
+      const extractedItems = await processOCRResponse(result.result);
       setStatus("success");
       setExtractedItems(extractedItems);
       setSBState({ open: true, message: "Text extracted successfully" });

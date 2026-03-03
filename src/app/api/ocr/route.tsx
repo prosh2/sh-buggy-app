@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
-    const API_URL = process.env.OCR_API_URL + "/paddle";
+    const API_URL = process.env.OCR_API_URL + "/qwen-ocr";
+    const BUGGY_API_KEY = process.env.BUGGY_API_KEY;
     if (!API_URL) {
       return NextResponse.json(
         { error: "API_URL not configured" },
-        { status: 500 }
+        { status: 500 },
       );
     }
     // Parse form data (for multipart/form-data)
@@ -25,6 +26,9 @@ export async function POST(request: NextRequest) {
     const response = await fetch(API_URL, {
       method: "POST",
       body: externalForm,
+      headers: {
+        "x-api-key": BUGGY_API_KEY || "",
+      },
     });
 
     if (!response.ok) {
