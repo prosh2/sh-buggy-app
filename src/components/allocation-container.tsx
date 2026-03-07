@@ -134,7 +134,7 @@ export default function AllocationContainer({
               className="w-full"
             >
               <h2 className="flex justify-center text-lg font-bold mb-3">
-                What did you get?
+                What did {users.find((u) => u.id === selectedUser)?.name} get?
               </h2>
               <ItemListContainer
                 items={items}

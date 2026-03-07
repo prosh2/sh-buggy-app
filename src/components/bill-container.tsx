@@ -1,9 +1,6 @@
 import { User } from "@/app/context/session-context";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import { Chip, IconButton } from "@mui/material";
 import { motion } from "motion/react";
-import Image from "next/image";
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Receipt from "./receipt/receipt";
 import UserSelection from "./user/user-selection";
 
@@ -20,57 +17,6 @@ export default function BillContainer({
 }) {
   const userRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
-
-  const getAmountPayable = useMemo(() => {
-    const user = users.find((user) => user.id === selectedUser);
-    const amount = user?.allocatedItems.reduce(
-      (acc, item) =>
-        acc +
-        ((item.price * item.quantity) / itemSelectionCounts[item.id] || 1),
-      0,
-    );
-    return amount?.toFixed(2);
-  }, [selectedUser, users, itemSelectionCounts]);
-
-  // const copyToClipboard = async () => {
-  //   if (!getAmountPayable) return;
-
-  //   if (navigator.clipboard && window.isSecureContext) {
-  //     try {
-  //       await navigator.clipboard.writeText(getAmountPayable);
-  //       showCopied();
-  //       return;
-  //     } catch {
-  //       // fall through to iOS fallback
-  //     }
-  //   }
-
-  //   // iOS fallback
-  //   try {
-  //     const textarea = document.createElement("textarea");
-  //     textarea.value = getAmountPayable;
-  //     textarea.style.position = "fixed";
-  //     textarea.style.opacity = "0";
-  //     textarea.style.left = "-9999px";
-  //     document.body.appendChild(textarea);
-
-  //     textarea.focus();
-  //     textarea.select();
-
-  //     document.execCommand("copy");
-  //     document.body.removeChild(textarea);
-
-  //     showCopied();
-  //   } catch (err) {
-  //     console.error("Copy failed:", err);
-  //   }
-  // };
-
-  // const showCopied = () => {
-  //   setCopied(true);
-  //   setTimeout(() => setCopied(false), 2000);
-  // };
 
   return (
     <>
