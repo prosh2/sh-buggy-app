@@ -46,7 +46,7 @@ export default function ItemListContainer({
                 {item.name}
               </span>
 
-              <span className="text-lg font-bold">
+              <span className="text-lg font-bold text-black">
                 ${item.price}
               </span>
             </div>
