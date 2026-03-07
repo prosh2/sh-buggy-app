@@ -24,7 +24,7 @@ export default function UserSelection({
             animate={{
               scale: selected ? 1.1 : 1,
               borderColor: selected ? "#2563EB" : "#e5e7eb",
-              backgroundColor: selected ? "var(--color-blue-600)" : "var(--color-gray-200)",
+              backgroundColor: selected ? "var(--color-blue-600)" : "var(--color-gray-100)",
               color: selected ? "#fff" : "var(--color-gray-700)",
             }}
             onClick={() => setSelectedUser(user.id)}
