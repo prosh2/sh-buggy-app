@@ -31,46 +31,46 @@ export default function BillContainer({
       0,
     );
     return amount?.toFixed(2);
-  }, [selectedUser]);
+  }, [selectedUser, users, itemSelectionCounts]);
 
-  const copyToClipboard = async () => {
-    if (!getAmountPayable) return;
+  // const copyToClipboard = async () => {
+  //   if (!getAmountPayable) return;
 
-    if (navigator.clipboard && window.isSecureContext) {
-      try {
-        await navigator.clipboard.writeText(getAmountPayable);
-        showCopied();
-        return;
-      } catch {
-        // fall through to iOS fallback
-      }
-    }
+  //   if (navigator.clipboard && window.isSecureContext) {
+  //     try {
+  //       await navigator.clipboard.writeText(getAmountPayable);
+  //       showCopied();
+  //       return;
+  //     } catch {
+  //       // fall through to iOS fallback
+  //     }
+  //   }
 
-    // iOS fallback
-    try {
-      const textarea = document.createElement("textarea");
-      textarea.value = getAmountPayable;
-      textarea.style.position = "fixed";
-      textarea.style.opacity = "0";
-      textarea.style.left = "-9999px";
-      document.body.appendChild(textarea);
+  //   // iOS fallback
+  //   try {
+  //     const textarea = document.createElement("textarea");
+  //     textarea.value = getAmountPayable;
+  //     textarea.style.position = "fixed";
+  //     textarea.style.opacity = "0";
+  //     textarea.style.left = "-9999px";
+  //     document.body.appendChild(textarea);
 
-      textarea.focus();
-      textarea.select();
+  //     textarea.focus();
+  //     textarea.select();
 
-      document.execCommand("copy");
-      document.body.removeChild(textarea);
+  //     document.execCommand("copy");
+  //     document.body.removeChild(textarea);
 
-      showCopied();
-    } catch (err) {
-      console.error("Copy failed:", err);
-    }
-  };
+  //     showCopied();
+  //   } catch (err) {
+  //     console.error("Copy failed:", err);
+  //   }
+  // };
 
-  const showCopied = () => {
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  // const showCopied = () => {
+  //   setCopied(true);
+  //   setTimeout(() => setCopied(false), 2000);
+  // };
 
   return (
     <>
@@ -104,34 +104,6 @@ export default function BillContainer({
                   key={selectedUser}
                   className="px-2 p-8 flex h-full justify-center items-center"
                 >
-                  <div className="flex flex-col justify-center gap-2 items-center bg-gray-900 px-4 py-2 rounded mb-4 break-words text-gray-100 w-[300px] shadow-lg border-black border-r-1 shadow-black">
-                    <div className="text-gray-100">
-                      {users.find((user) => user.id === selectedUser)?.name}{" "}
-                      owes
-                    </div>
-                    <div>
-                      <Chip
-                        label={copied ? "Copied!" : getAmountPayable}
-                        icon={<ContentCopyIcon />}
-                        clickable
-                        onClick={copyToClipboard}
-                        color={copied ? "success" : "default"}
-                        sx={{ color: "white", fontSize: "1.0rem" }}
-                        variant="outlined"
-                      />
-                    </div>
-                    <div>Pay with the following:</div>
-                    <IconButton
-                      onClick={() => (window.location.href = "dbspaylah://")}
-                    >
-                      <Image
-                        src="/dbspaylah.png"
-                        alt="dbspaylah"
-                        width={50}
-                        height={50}
-                      />
-                    </IconButton>
-                  </div>
                 </div>
               </div>
             </div>

@@ -58,7 +58,7 @@ export default function SplitPage() {
       // console.log("Users updated:", users);
       // You can add logic here to proceed with the splitting process
     },
-    [setSession],
+    [setSession, sessionID],
   );
   const handleItemsUpdate = useCallback(
     (items: Item[]) => {
@@ -69,7 +69,7 @@ export default function SplitPage() {
       }));
       // console.log("Items updated:", items);
     },
-    [setSession],
+    [setSession, sessionID],
   );
 
   useSessionUsers(sessionID ? sessionID.toString() : "", handleUsersUpdate);
@@ -122,10 +122,7 @@ export default function SplitPage() {
         isHidden={!showBillSummary}
         users={session.users}
         itemSelectionCounts={itemSelectionCounts}
-        goBack={() => {
-          setReadyToSplit(false);
-          setShowBillSummary(false);
-        }}
+        goBack={() => setShowBillSummary(false)}
       />
 
       <AllocationContainer

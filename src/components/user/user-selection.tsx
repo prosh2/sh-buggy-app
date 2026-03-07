@@ -15,9 +15,6 @@ export default function UserSelection({
 }) {
   return (
     <div className="flex flex-col w-full">
-      <h2 className="flex justify-center text-lg font-bold mb-5">
-        Select Your Name
-      </h2>
       <UnderlineContainer
         itemRefs={userRefs}
         selectedItem={selectedUser ? selectedUser : ""}

@@ -130,7 +130,7 @@ export default function AllocationContainer({
               className="w-full"
             >
               <h2 className="flex justify-center text-lg font-bold mb-3">
-                Select Items
+                What did you get?
               </h2>
               <ItemListContainer
                 items={items}
