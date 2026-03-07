@@ -24,55 +24,47 @@ export default function ItemListContainer({
       </p>
     );
   return (
-    <div className="flex flex-wrap gap-4 h-[50vh] justify-center overflow-y-scroll no-scrollbar">
-      {items?.map((item) => (
-        <motion.div
-          key={item.id}
-          whileTap={{ scale: 0.95 }}
-          animate={{
-            borderColor: selectedItems[selectedUser]?.includes(item.id)
-              ? "#2563EB"
-              : "#000000",
-            backgroundColor: selectedItems[selectedUser]?.includes(item.id)
-              ? "#DBEAFE"
-              : "#fff",
-          }}
-          transition={{ duration: 0.2 }}
-          onClick={() => toggleItem(item.id)}
-          className="grid grid-rows-3 h-[150px] gap-4 p-4 border-2 rounded-xl shadow-sm cursor-pointer select-none"
-        >
-          <div className="flex text-gray-700 font-medium justify-center">
-            <Chip
-              color="primary"
-              variant="filled"
-              label={item.name}
-              className="font-bold"
-            />
-          </div>
-          <div className="grid grid-cols-3 text-sm text-gray-500 space-x-2 justify-between">
-            <Chip variant="filled" label={"Price"} className="font-bold" />
-            <Chip variant="filled" label={"Quantity"} className="font-bold" />
-            <Chip variant="filled" label={"Shares"} className="font-bold" />
-          </div>
-          <div className="grid grid-cols-3 text-sm text-gray-500 space-x-2 justify-between">
-            <Chip
-              variant="outlined"
-              label={"$" + item.price}
-              className="font-bold"
-            />
-            <Chip
-              variant="outlined"
-              label={item.quantity}
-              className="font-bold"
-            />
-            <Chip
-              variant="outlined"
-              label={itemSelectionCounts[item.id] || 0}
-              className="font-bold"
-            />
-          </div>
-        </motion.div>
-      ))}
+    <div className="flex flex-col gap-3 h-[50vh] overflow-y-scroll no-scrollbar px-2">
+      {items?.map((item) => {
+        const selected = selectedItems[selectedUser]?.includes(item.id);
+        return (
+          <motion.div
+            key={item.id}
+            whileTap={{ scale: 0.96 }}
+            animate={{
+              borderColor: selected ? "#2563EB" : "#e5e7eb",
+              backgroundColor: selected ? "#eff6ff" : "#ffffff",
+              color: selected ? "#2563EB" : "#000000",
+            }}
+            transition={{ duration: 0.15 }}
+            onClick={() => toggleItem(item.id)}
+            className="flex flex-col gap-3 p-4 border rounded-2xl shadow-sm cursor-pointer"
+          >
+            {/* Top row */}
+            <div className="flex justify-between items-center">
+              <span className="text-lg font-semibold">
+                {item.name}
+              </span>
+
+              <span className="text-lg font-bold">
+                ${item.price}
+              </span>
+            </div>
+
+            {/* Bottom info */}
+            <div className="flex justify-between text-sm text-gray-500">
+              <span>Qty: {item.quantity}</span>
+
+              <span>
+                Shares:{" "}
+                <span className="font-semibold text-gray-700">
+                  {itemSelectionCounts[item.id] || 0}
+                </span>
+              </span>
+            </div>
+          </motion.div>
+        );
+      })}
     </div>
   );
 }

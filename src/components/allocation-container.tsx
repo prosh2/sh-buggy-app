@@ -1,6 +1,6 @@
 import { Item, User } from "@/app/context/session-context";
 import { motion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import UserSelection from "./user/user-selection";
 import ItemListContainer from "./item-list-container";
 
@@ -51,7 +51,7 @@ export default function AllocationContainer({
     });
   };
 
-  const patchSelectedItems = async () => {
+  const patchSelectedItems = useCallback(async () => {
     if (!selectedUser) return;
     const allocatedItems = items?.filter((item) =>
       selectedItems[selectedUser].includes(item.id),
@@ -61,7 +61,7 @@ export default function AllocationContainer({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ allocatedItems }),
     });
-  };
+  }, [items, selectedItems, selectedUser, sessionID]);
 
   const updateItemSelectionCount = () => {
     const counts: Record<string, number> = {};
@@ -83,8 +83,12 @@ export default function AllocationContainer({
   };
 
   useEffect(() => {
-    patchSelectedItems();
-  }, [selectedItems]);
+    const timer = setTimeout(() => {
+      patchSelectedItems();
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [patchSelectedItems]);
 
   useEffect(() => {
     if (!selectedUser) return;
