@@ -324,7 +324,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
             </CustomTabPanel>
             <CustomTabPanel value={selectedTab} index={1}>
               <div className="flex flex-col flex-1 justify-between items-center p-0 gap-4 overflow-hidden">
-                <div className="flex flex-col flex-1 w-full h-full  max-h-[30vh] p-2 rounded overflow-auto text-center bg-gray-50 shadow-inner border border-gray-200">
+                <div className="flex flex-col flex-1 w-full h-full  max-h-[30vh] p-2 rounded overflow-auto no-scrollbar text-center bg-gray-50 shadow-inner border border-gray-200">
                   <ExtractedItemsTable
                     items={extractedItems}
                     showItemized={showItemized}
@@ -337,10 +337,10 @@ export default function UploadReceiptDialog(props: DialogProps) {
                   variant="contained"
                   onClick={createSession}
                   size="large"
-                  // sx={{
-                  //   color: "var(--color-white)",
-                  //   backgroundColor: "var(--color-green-400)",
-                  // }}
+                // sx={{
+                //   color: "var(--color-white)",
+                //   backgroundColor: "var(--color-green-400)",
+                // }}
                 >
                   New Session
                 </Button>
