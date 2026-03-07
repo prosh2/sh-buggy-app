@@ -6,12 +6,10 @@ import UserSelection from "./user/user-selection";
 
 export default function BillContainer({
   users,
-  itemSelectionCounts,
   isHidden,
   goBack,
 }: {
   users: User[];
-  itemSelectionCounts: Record<string, number>;
   isHidden: boolean;
   goBack: () => void;
 }) {
@@ -32,7 +30,6 @@ export default function BillContainer({
           </motion.button>
           <div className="flex flex-col w-full h-50 justify-center">
             <UserSelection
-              userRefs={userRefs}
               users={users}
               selectedUser={selectedUser || ""}
               setSelectedUser={setSelectedUser}
@@ -49,8 +46,9 @@ export default function BillContainer({
               </div>
             </div>
           )}
-        </div>
-      )}
+        </div >
+      )
+      }
     </>
   );
 }

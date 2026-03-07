@@ -120,7 +120,6 @@ export default function AllocationContainer({
           {/* User Selection */}
           <div className="flex flex-col w-full h-50 justify-center">
             <UserSelection
-              userRefs={userRefs}
               users={users}
               selectedUser={selectedUser || ""}
               setSelectedUser={setSelectedUser}

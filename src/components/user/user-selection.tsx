@@ -1,14 +1,10 @@
-import { RefObject } from "react";
-import UnderlineContainer from "../underline-container";
-import { motion } from "motion/react";
 import { User } from "@/app/context/session-context";
+import { motion } from "motion/react";
 export default function UserSelection({
-  userRefs,
   users,
   selectedUser,
   setSelectedUser,
 }: {
-  userRefs: RefObject<Record<string, HTMLButtonElement | null>>;
   users: User[];
   selectedUser: string;
   setSelectedUser: React.Dispatch<React.SetStateAction<string | null>>;
