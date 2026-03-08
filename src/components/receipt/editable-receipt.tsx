@@ -39,15 +39,15 @@ export default function EditableItemsTable(props: EditableItemsTableProps) {
   function renderReceiptMisc() {
     return (
       <>
-        <div className="flex justify-between align-center font-normal text-sm mb-2 pb-2">
+        <div className="flex justify-between align-center font-normal text-sm mb-1 pb-1">
           <span className="text-gray-400">GST(9%)</span>
           <span>${receiptMisc.gst}</span>
         </div>
-        <div className="flex justify-between align-center font-normal text-sm mb-2 pb-2">
+        <div className="flex justify-between align-center font-normal text-sm mb-1 pb-1">
           <span className="text-gray-400">Service Charge</span>
           <span>${receiptMisc.service_charge}</span>
         </div>
-        <div className="flex justify-between align-center font-normal text-sm border-b border-gray-400 mb-2 pb-2">
+        <div className="flex justify-between align-center font-normal text-sm border-b border-gray-400 mb-1 pb-1">
           <span className="text-gray-400">Tips</span>
           <span>NA</span>
         </div>
@@ -56,7 +56,7 @@ export default function EditableItemsTable(props: EditableItemsTableProps) {
   }
 
   return (
-    <Paper className="relative p-4 bg-[#fffef8] shadow-md max-h-[100%]">
+    <Paper className="relative p-4 bg-[#fffef8] shadow-md">
       {/* Edit Toggle */}
       <IconButton
         className="!absolute top-2 right-0"
@@ -104,11 +104,11 @@ function Itemized(props: ItemizedProps) {
   } = props;
 
   return (
-    <div className="border-b border-gray-400 pb-2 mb-2 max-h-[60%] overflow-y-scroll no-scrollbar">
+    <div className="border-b border-gray-400 pb-2 mb-2 max-h-[20vh] overflow-y-scroll overflow-x-hidden no-scrollbar">
       {items.map((item: Item, idx) => (
         <div
           key={"item-row-" + idx}
-          className="grid grid-cols-[40px_1fr_70px_24px] items-center gap-2  py-1 text-sm"
+          className="grid grid-cols-[30px_1fr_50px_24px] items-center gap-2 py-1 pr-4 text-sm"
         >
           {/* Quantity */}
           {isEditing ? (
@@ -153,7 +153,6 @@ function Itemized(props: ItemizedProps) {
               color="error"
               size="small"
               onClick={() => handleDeleteItem(item)}
-              sx={{ pr: 5 }}
             >
               <ClearIcon fontSize="small" />
             </Button>

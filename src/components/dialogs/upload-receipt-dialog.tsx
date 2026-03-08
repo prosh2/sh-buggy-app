@@ -55,10 +55,11 @@ function CustomTabPanel(props: TabPanelProps) {
       {value === index && (
         <Box
           sx={{
+            bgcolor: "white",
             display: "flex",
             flexDirection: "column",
             flex: 1,
-            p: 3,
+            p: 1,
             height: "100%",
           }}
         >
@@ -194,7 +195,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
     <AnimatePresence>
       {openDialog && (
         <motion.div
-          className="absolute flex flex-col justify-center bg-white text-gray-200 w-[90vw] w-[50vw] h-[90vh] rounded-lg"
+          className="absolute flex flex-col justify-center bg-white text-gray-200 w-[90vw] h-[90vh] rounded-lg"
           initial={{ transform: "translateY(100vh)" }}
           animate={{ transform: "translateY(0px)" }}
           transition={{ type: "spring", stiffness: 100, damping: 20 }}
@@ -254,8 +255,8 @@ export default function UploadReceiptDialog(props: DialogProps) {
               />
             </CustomTabPanel>
             <CustomTabPanel value={selectedTab} index={1}>
-              <div className="flex flex-col flex-1 justify-between items-center p-0 gap-4 overflow-hidden">
-                <div className="flex flex-col flex-1 w-full h-full rounded overflow-hidden text-center">
+              <div className="flex flex-col h-full justify-between items-center gap-2 overflow-hidden">
+                <div className="flex flex-col w-full h-full rounded overflow-hidden text-center">
                   <ExtractedItemsTable
                     receiptMisc={receiptMisc}
                     items={extractedItems}

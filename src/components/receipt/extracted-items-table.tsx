@@ -51,8 +51,8 @@ export default function ExtractedItemsTable({
     setExtractedItems([...items, newItem]);
   };
   return (
-    <div className="flex flex-col h-full flex-1">
-      <div className="flex flex-col gap-2 font-mono font-bold p-1 max-h-[65vh]">
+    <div className="flex flex-col h-full">
+      <div className="flex flex-col gap-2 font-mono font-bold p-1 mb-2 h-full">
         <EditableItemsTable
           items={items}
           receiptMisc={receiptMisc}
