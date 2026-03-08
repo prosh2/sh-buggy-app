@@ -1,4 +1,4 @@
-import { Item } from "@/app/context/session-context";
+import { Item, ReceiptMisc } from "@/app/context/session-context";
 import ClearIcon from "@mui/icons-material/Clear";
 import {
   Box,
@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import DialogTitle from "@mui/material/DialogTitle";
 import { AnimatePresence, motion } from "motion/react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import ExtractedItemsTable from "../receipt/extracted-items-table";
 import UploadReceipt from "../receipt/upload-receipt";
 import { v4 as uuidv4 } from "uuid";
@@ -19,7 +19,10 @@ import { v4 as uuidv4 } from "uuid";
 interface DialogProps {
   open: boolean;
   onClose: () => void;
-  handleCreateSession: (items: Item[]) => Promise<void>;
+  handleCreateSession: (
+    items: Item[],
+    receiptMisc: ReceiptMisc,
+  ) => Promise<void>;
 }
 
 interface TabPanelProps {
@@ -83,6 +86,14 @@ export default function UploadReceiptDialog(props: DialogProps) {
   const { onClose, handleCreateSession, open: openDialog } = props;
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [extractedItems, setExtractedItems] = useState<Item[]>(DUMMY_ITEMS);
+  const [receiptMisc, setReceiptMisc] = useState<ReceiptMisc>({
+    merchant_name: "",
+    service_charge: 0,
+    currency_symbol: "",
+    subtotal: 0,
+    gst: 0,
+    date: new Date().toDateString(),
+  });
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [sbState, setSBState] = useState<SnackBarState>({
     open: false,
@@ -98,38 +109,15 @@ export default function UploadReceiptDialog(props: DialogProps) {
 
   const createSession = () => {
     onClose();
-    handleCreateSession(extractedItems);
+    handleCreateSession(extractedItems, receiptMisc);
   };
 
   const handleCloseSB = () => {
     setSBState({ ...sbState, open: false });
   };
 
-  function extractJSONArray(input: string) {
-    // Remove code fences like ``` or ```json
-    const noFences = input.replace(/```[\s\S]*?\n|```/g, "");
-
-    // Extract content between the first [ and the last ]
-    const match = noFences.match(/\[[\s\S]*\]/);
-
-    return match ? match[0] : null;
-  }
-  //TODO: export to new api pipeline
   const processOCRResponse = async (data: object) => {
     try {
-      // const res = await fetch("/api/chat", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(data),
-      // });
-      // if (!res.ok) {
-      //   throw new Error("Failed to extract text from image");
-      // }
-      // const result = await res.json();
-      // const extractedText = extractJSONArray(result);
-      // if (!extractedText) {
-      //   throw new Error("No valid JSON array found in OCR response");
-      // }
       const items: Item[] = [];
       for (const _ of data as Item[]) {
         const quantity = isNaN(Number(_.quantity)) ? 1 : Number(_.quantity);
@@ -162,8 +150,34 @@ export default function UploadReceiptDialog(props: DialogProps) {
         throw new Error("Failed to extract text from image");
       }
 
-      const result = await res.json();
-      const extractedItems = await processOCRResponse(result.result);
+      const data = await res.json();
+      const {
+        result: ocr_items,
+        gst,
+        service_fee,
+        merchant_name,
+        currency_symbol,
+        total_price,
+        date,
+      }: {
+        result: Item[];
+        gst: number;
+        service_fee: number;
+        merchant_name: string;
+        currency_symbol: string;
+        total_price: number;
+        date: string;
+      } = data;
+
+      setReceiptMisc({
+        merchant_name,
+        service_charge: service_fee,
+        currency_symbol,
+        subtotal: total_price,
+        gst,
+        date,
+      });
+      const extractedItems = await processOCRResponse(ocr_items);
       setStatus("success");
       setExtractedItems(extractedItems);
       setSBState({ open: true, message: "Text extracted successfully" });
@@ -175,54 +189,6 @@ export default function UploadReceiptDialog(props: DialogProps) {
       }
     }
   };
-
-  // const showItemized = (items: Item[]) => {
-  //   try {
-  //     return items.map((item: Item, idx) => (
-  //       <div
-  //         key={"item-row-" + idx}
-  //         className="grid grid-cols-[50px_minmax(80px,1fr)_60px_8px] gap-2 font-mono font-bold p-1"
-  //       >
-  //         <TextField
-  //           id="item-quantity-input"
-  //           key={"item-quantity-input-" + idx}
-  //           label="Qty"
-  //           variant="filled"
-  //           value={item.quantity}
-  //           onChange={(e) => handleQuantityChange(item, e.target.value)}
-  //           style={{ width: "5ch" }}
-  //         />
-  //         <TextField
-  //           id="item-name-input"
-  //           key={"item-name-input-" + idx}
-  //           label="Name"
-  //           variant="filled"
-  //           value={item.name}
-  //           onChange={(e) => handleNameChange(item, e.target.value)}
-  //         />
-  //         <TextField
-  //           id="item-price-input"
-  //           key={"item-price-input-" + idx}
-  //           label="$"
-  //           variant="filled"
-  //           value={item.price}
-  //           onChange={(e) => handlePriceChange(item, e.target.value)}
-  //         />
-  //         <Button
-  //           key={"item-delete-button-" + idx}
-  //           variant="text"
-  //           color="error"
-  //           style={{ minWidth: "8px" }}
-  //           onClick={() => handleDeleteItem(item)}
-  //         >
-  //           <ClearIcon />
-  //         </Button>
-  //       </div>
-  //     ));
-  //   } catch (error) {
-  //     return "Error parsing extracted text." + error;
-  //   }
-  // };
 
   return (
     <AnimatePresence>
@@ -291,6 +257,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
               <div className="flex flex-col flex-1 justify-between items-center p-0 gap-4 overflow-hidden">
                 <div className="flex flex-col flex-1 w-full h-full rounded overflow-hidden text-center">
                   <ExtractedItemsTable
+                    receiptMisc={receiptMisc}
                     items={extractedItems}
                     setExtractedItems={setExtractedItems}
                   />

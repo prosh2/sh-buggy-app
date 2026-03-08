@@ -1,4 +1,4 @@
-import { Item } from "@/app/context/session-context";
+import { Item, ReceiptMisc } from "@/app/context/session-context";
 import {
   Button,
   IconButton,
@@ -23,6 +23,7 @@ function SubtotalComponent({ subtotal }: { subtotal: number }) {
 export default function EditableItemsTable(props: EditableItemsTableProps) {
   const {
     items,
+    receiptMisc,
     handleQuantityChange,
     handleNameChange,
     handleDeleteItem,
@@ -34,6 +35,26 @@ export default function EditableItemsTable(props: EditableItemsTableProps) {
     () => items.reduce((acc, item) => acc + item.price * item.quantity, 0),
     [items],
   );
+
+  function renderReceiptMisc() {
+    return (
+      <>
+        <div className="flex justify-between align-center font-normal text-sm mb-2 pb-2">
+          <span className="text-gray-400">GST(9%)</span>
+          <span>${receiptMisc.gst}</span>
+        </div>
+        <div className="flex justify-between align-center font-normal text-sm mb-2 pb-2">
+          <span className="text-gray-400">Service Charge</span>
+          <span>${receiptMisc.service_charge}</span>
+        </div>
+        <div className="flex justify-between align-center font-normal text-sm border-b border-gray-400 mb-2 pb-2">
+          <span className="text-gray-400">Tips</span>
+          <span>NA</span>
+        </div>
+      </>
+    );
+  }
+
   return (
     <Paper className="relative p-4 bg-[#fffef8] shadow-md">
       {/* Edit Toggle */}
@@ -51,11 +72,11 @@ export default function EditableItemsTable(props: EditableItemsTableProps) {
 
       <div className="flex justify-between text-sm mb-2">
         <span className="text-gray-400 font-normal">Merchant Name</span>
-        <span>Warehouse Food</span>
+        <span>{receiptMisc.merchant_name}</span>
       </div>
       <div className="flex justify-between align-center text-sm border-b border-gray-400 mb-2 pb-2">
         <span className="text-gray-400 font-normal">Date</span>
-        <span>9 September 2025</span>
+        <span>{receiptMisc.date}</span>
       </div>
 
       <Itemized
@@ -66,27 +87,9 @@ export default function EditableItemsTable(props: EditableItemsTableProps) {
         handleDeleteItem={handleDeleteItem}
         handlePriceChange={handlePriceChange}
       />
-      <MiscItems />
+      {renderReceiptMisc()}
       <SubtotalComponent subtotal={subtotal} />
     </Paper>
-  );
-}
-function MiscItems() {
-  return (
-    <>
-      <div className="flex justify-between align-center font-normal text-sm mb-2 pb-2">
-        <span className="text-gray-400">GST(9%)</span>
-        <span>$3.20</span>
-      </div>
-      <div className="flex justify-between align-center font-normal text-sm mb-2 pb-2">
-        <span className="text-gray-400">Service Charge</span>
-        <span>NA</span>
-      </div>
-      <div className="flex justify-between align-center font-normal text-sm border-b border-gray-400 mb-2 pb-2">
-        <span className="text-gray-400">Tips</span>
-        <span>NA</span>
-      </div>
-    </>
   );
 }
 
@@ -172,6 +175,7 @@ interface ItemizedProps {
 
 interface EditableItemsTableProps {
   items: Item[];
+  receiptMisc: ReceiptMisc;
   handleQuantityChange: (item: Item, quantity: string) => void;
   handleNameChange: (item: Item, name: string) => void;
   handlePriceChange: (item: Item, price: string) => void;

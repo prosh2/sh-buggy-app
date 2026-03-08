@@ -9,7 +9,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { Item } from "./context/session-context";
+import { Item, ReceiptMisc } from "./context/session-context";
 
 const theme = createTheme({
   palette: {
@@ -36,7 +36,7 @@ export default function Home() {
     // console.log("Dialog closed");
     setOpenUploadDialog(false);
   };
-  const handleCreateSession = async (items: Item[]) => {
+  const handleCreateSession = async (items: Item[], misc: ReceiptMisc) => {
     try {
       if (items.length === 0) {
         throw new Error("No items to create session");
@@ -61,7 +61,7 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ items }),
+        body: JSON.stringify({ items, misc }),
       });
 
       if (!res2.ok) {

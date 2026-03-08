@@ -5,6 +5,7 @@ export type SessionData = {
   id: string;
   users: User[];
   items: Item[];
+  misc: ReceiptMisc;
 };
 
 export type User = {
@@ -19,6 +20,15 @@ export type Item = {
   name: string;
   price: number;
   quantity: number;
+};
+
+export type ReceiptMisc = {
+  merchant_name: string;
+  service_charge: number;
+  currency_symbol: string;
+  subtotal: number;
+  gst: number;
+  date: string;
 };
 
 // Define the shape of your context data
@@ -40,6 +50,14 @@ export function SessionProvider({ children }: SessionProviderProps) {
     id: "",
     users: [],
     items: [],
+    misc: {
+      merchant_name: "",
+      service_charge: 0,
+      currency_symbol: "",
+      subtotal: 0,
+      gst: 0,
+      date: new Date().toDateString(),
+    },
   });
 
   return (

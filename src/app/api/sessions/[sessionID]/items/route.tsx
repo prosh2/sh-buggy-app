@@ -4,24 +4,24 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: Promise<{ sessionID: string }> }
+  { params }: { params: Promise<{ sessionID: string }> },
 ) {
   try {
-    const { items } = await req.json();
+    const { items, misc } = await req.json();
     const { sessionID } = await params;
 
     if (!Array.isArray(items)) {
       return NextResponse.json(
         { error: "Items array required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const docRef = doc(db, "sessions", sessionID);
     await setDoc(
       docRef,
-      { items }, // single field in one doc
-      { merge: true } // merge to preserve other fields in session doc
+      { items, misc }, // single field in one doc
+      { merge: true }, // merge to preserve other fields in session doc
     );
 
     return NextResponse.json({ updated: true }, { status: 200 });
@@ -29,7 +29,7 @@ export async function POST(
     console.error(error);
     return NextResponse.json(
       { error: "Failed to save items" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,4 +1,4 @@
-import { Item } from "@/app/context/session-context";
+import { Item, ReceiptMisc } from "@/app/context/session-context";
 import AddIcon from "@mui/icons-material/Add";
 import { Button } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
@@ -6,9 +6,11 @@ import EditableItemsTable from "./editable-receipt";
 
 export default function ExtractedItemsTable({
   items,
+  receiptMisc,
   setExtractedItems,
 }: {
   items: Item[];
+  receiptMisc: ReceiptMisc;
   setExtractedItems: React.Dispatch<React.SetStateAction<Item[]>>;
 }) {
   const handleQuantityChange = (item: Item, newQuantity: string) => {
@@ -53,6 +55,7 @@ export default function ExtractedItemsTable({
       <div className="flex flex-col gap-2 font-mono font-bold p-1 max-h-[60vh] overflow-y-auto no-scrollbar">
         <EditableItemsTable
           items={items}
+          receiptMisc={receiptMisc}
           handleDeleteItem={handleDeleteItem}
           handleNameChange={handleNameChange}
           handlePriceChange={handlePriceChange}
