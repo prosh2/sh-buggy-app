@@ -56,7 +56,7 @@ export default function EditableItemsTable(props: EditableItemsTableProps) {
   }
 
   return (
-    <Paper className="relative p-4 bg-[#fffef8] shadow-md">
+    <Paper className="relative p-4 bg-[#fffef8] shadow-md max-h-[100%]">
       {/* Edit Toggle */}
       <IconButton
         className="!absolute top-2 right-0"
@@ -104,7 +104,7 @@ function Itemized(props: ItemizedProps) {
   } = props;
 
   return (
-    <div className="border-b border-gray-400 pb-2 mb-2 overflow-y-scroll">
+    <div className="border-b border-gray-400 pb-2 mb-2 max-h-[60%] overflow-y-scroll no-scrollbar">
       {items.map((item: Item, idx) => (
         <div
           key={"item-row-" + idx}
