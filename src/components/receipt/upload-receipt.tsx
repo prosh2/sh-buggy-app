@@ -20,7 +20,7 @@ export default function UploadReceipt(props: Props) {
   };
   return (
     <>
-      <div className="flex flex-col items-center justify-center p-4 overflow-hidden">
+      <div className="flex flex-col h-full items-center justify-center p-4 overflow-hidden">
         {selectedImage ? (
           <div className="sm:w-[420px] flex items-center justify-center relative">
             {status === "loading" && (

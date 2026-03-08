@@ -46,7 +46,6 @@ function CustomTabPanel(props: TabPanelProps) {
         display: "flex",
         flexDirection: "column",
         height: "100%",
-        flex: 2,
       }}
       {...other}
     >
@@ -104,29 +103,6 @@ export default function UploadReceiptDialog(props: DialogProps) {
 
   const handleCloseSB = () => {
     setSBState({ ...sbState, open: false });
-  };
-
-  const handleQuantityChange = (item: Item, newQuantity: string) => {
-    if (isNaN(Number(newQuantity))) return;
-    const updatedItems = extractedItems.map((it: Item) =>
-      it === item ? { ...it, quantity: Number(newQuantity) } : it,
-    );
-    setExtractedItems(updatedItems);
-  };
-
-  const handleNameChange = (item: Item, newName: string) => {
-    const updatedItems = extractedItems.map((it: Item) =>
-      it === item ? { ...it, name: newName } : it,
-    );
-    setExtractedItems(updatedItems);
-  };
-
-  const handlePriceChange = (item: Item, newPrice: string) => {
-    if (isNaN(Number(newPrice))) return;
-    const updatedItems = extractedItems.map((it: Item) =>
-      it === item ? { ...it, price: Number(newPrice) } : it,
-    );
-    setExtractedItems(updatedItems);
   };
 
   function extractJSONArray(input: string) {
@@ -200,70 +176,59 @@ export default function UploadReceiptDialog(props: DialogProps) {
     }
   };
 
-  const handleDeleteItem = (item: Item) => {
-    const updatedItems = extractedItems.filter((it: Item) => it !== item);
-    setExtractedItems(updatedItems);
-  };
-
-  const showItemized = (items: Item[]) => {
-    try {
-      return items.map((item: Item, idx) => (
-        <div
-          key={"item-row-" + idx}
-          className="grid grid-cols-[50px_minmax(80px,1fr)_60px_8px] gap-2 font-mono font-bold p-1"
-        >
-          <TextField
-            id="item-quantity-input"
-            key={"item-quantity-input-" + idx}
-            label="Qty"
-            variant="filled"
-            value={item.quantity}
-            onChange={(e) => handleQuantityChange(item, e.target.value)}
-            style={{ width: "5ch" }}
-          />
-          <TextField
-            id="item-name-input"
-            key={"item-name-input-" + idx}
-            label="Name"
-            variant="filled"
-            value={item.name}
-            onChange={(e) => handleNameChange(item, e.target.value)}
-          />
-          <TextField
-            id="item-price-input"
-            key={"item-price-input-" + idx}
-            label="$"
-            variant="filled"
-            value={item.price}
-            onChange={(e) => handlePriceChange(item, e.target.value)}
-          />
-          <Button
-            key={"item-delete-button-" + idx}
-            variant="text"
-            color="error"
-            style={{ minWidth: "8px" }}
-            onClick={() => handleDeleteItem(item)}
-          >
-            <ClearIcon />
-          </Button>
-        </div>
-      ));
-    } catch (error) {
-      return "Error parsing extracted text." + error;
-    }
-  };
-
-  const subtotal = useMemo(
-    () =>
-      extractedItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
-    [extractedItems],
-  );
+  // const showItemized = (items: Item[]) => {
+  //   try {
+  //     return items.map((item: Item, idx) => (
+  //       <div
+  //         key={"item-row-" + idx}
+  //         className="grid grid-cols-[50px_minmax(80px,1fr)_60px_8px] gap-2 font-mono font-bold p-1"
+  //       >
+  //         <TextField
+  //           id="item-quantity-input"
+  //           key={"item-quantity-input-" + idx}
+  //           label="Qty"
+  //           variant="filled"
+  //           value={item.quantity}
+  //           onChange={(e) => handleQuantityChange(item, e.target.value)}
+  //           style={{ width: "5ch" }}
+  //         />
+  //         <TextField
+  //           id="item-name-input"
+  //           key={"item-name-input-" + idx}
+  //           label="Name"
+  //           variant="filled"
+  //           value={item.name}
+  //           onChange={(e) => handleNameChange(item, e.target.value)}
+  //         />
+  //         <TextField
+  //           id="item-price-input"
+  //           key={"item-price-input-" + idx}
+  //           label="$"
+  //           variant="filled"
+  //           value={item.price}
+  //           onChange={(e) => handlePriceChange(item, e.target.value)}
+  //         />
+  //         <Button
+  //           key={"item-delete-button-" + idx}
+  //           variant="text"
+  //           color="error"
+  //           style={{ minWidth: "8px" }}
+  //           onClick={() => handleDeleteItem(item)}
+  //         >
+  //           <ClearIcon />
+  //         </Button>
+  //       </div>
+  //     ));
+  //   } catch (error) {
+  //     return "Error parsing extracted text." + error;
+  //   }
+  // };
 
   return (
     <AnimatePresence>
       {openDialog && (
         <motion.div
-          className="absolute flex flex-col justify-center bg-white text-gray-200 w-[90vw] md:w-[50vw] md:min-h-[50vh] rounded-lg"
+          className="absolute flex flex-col justify-center bg-white text-gray-200 w-[90vw] w-[50vw] h-[90vh] rounded-lg"
           initial={{ transform: "translateY(100vh)" }}
           animate={{ transform: "translateY(0px)" }}
           transition={{ type: "spring", stiffness: 100, damping: 20 }}
@@ -286,7 +251,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
               fontWeight: "bold",
             }}
           >
-            Upload Receipt
+            Receipt
           </DialogTitle>
           <Box
             sx={{
@@ -306,9 +271,9 @@ export default function UploadReceiptDialog(props: DialogProps) {
                 textColor="primary"
                 indicatorColor="secondary"
               >
-                <Tab label="Receipt" {...a11yProps(0)} />
+                <Tab label="Image" {...a11yProps(0)} />
                 <Tab
-                  label="Items"
+                  label="Breakdown"
                   {...a11yProps(1)}
                   disabled={extractedItems.length === 0}
                 />
@@ -324,11 +289,9 @@ export default function UploadReceiptDialog(props: DialogProps) {
             </CustomTabPanel>
             <CustomTabPanel value={selectedTab} index={1}>
               <div className="flex flex-col flex-1 justify-between items-center p-0 gap-4 overflow-hidden">
-                <div className="flex flex-col flex-1 w-full h-full  max-h-[30vh] p-2 rounded overflow-auto no-scrollbar text-center bg-gray-50 shadow-inner border border-gray-200">
+                <div className="flex flex-col flex-1 w-full h-full rounded overflow-hidden text-center">
                   <ExtractedItemsTable
                     items={extractedItems}
-                    showItemized={showItemized}
-                    subtotal={subtotal}
                     setExtractedItems={setExtractedItems}
                   />
                 </div>
@@ -337,22 +300,22 @@ export default function UploadReceiptDialog(props: DialogProps) {
                   variant="contained"
                   onClick={createSession}
                   size="large"
-                // sx={{
-                //   color: "var(--color-white)",
-                //   backgroundColor: "var(--color-green-400)",
-                // }}
+                  // sx={{
+                  //   color: "var(--color-white)",
+                  //   backgroundColor: "var(--color-green-400)",
+                  // }}
                 >
                   New Session
                 </Button>
               </div>
+              <button
+                onClick={() => onClose()}
+                className="absolute left-2 top-6 h-[24px] text-blue-500 font-semibold cursor-pointer"
+              >
+                Cancel
+              </button>
             </CustomTabPanel>
           </Box>
-          <button
-            onClick={() => onClose()}
-            className="absolute right-0 top-0 w-[24px] h-[24px] bg-red-500 text-white rounded hover:bg-red-300 cursor-pointer"
-          >
-            <ClearIcon />
-          </button>
         </motion.div>
       )}
     </AnimatePresence>
