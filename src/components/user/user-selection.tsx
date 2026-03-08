@@ -14,36 +14,26 @@ export default function UserSelection({
   setSelectedUser: React.Dispatch<React.SetStateAction<string | null>>;
 }) {
   return (
-    <div className="flex flex-col w-full">
-      <h2 className="flex justify-center text-lg font-bold mb-5">
-        Select Your Name
-      </h2>
-      <UnderlineContainer
-        itemRefs={userRefs}
-        selectedItem={selectedUser ? selectedUser : ""}
-      >
-        {users.map((user) => (
+    <div className="flex gap-2 overflow-x-auto no-scrollbar px-2 py-4">
+      {users.map((user) => {
+        const selected = selectedUser === user?.id;
+        return (
           <motion.button
-            key={user.id}
-            ref={(el) => {
-              userRefs.current[user.id] = el;
-            }}
-            onClick={() => setSelectedUser(user.id)}
+            key={user.id || "nouser"}
             whileTap={{ scale: 0.95 }}
             animate={{
-              backgroundColor:
-                selectedUser === user.id ? "#0b58ccff" : "#E5E7EB",
-              color: selectedUser === user.id ? "#fff" : "#000",
-              borderBottom:
-                selectedUser === user.id ? "none" : "1px solid #ddd",
+              scale: selected ? 1.1 : 1,
+              borderColor: selected ? "#2563EB" : "#e5e7eb",
+              backgroundColor: selected ? "var(--color-blue-600)" : "var(--color-gray-100)",
+              color: selected ? "#fff" : "var(--color-gray-700)",
             }}
-            transition={{ duration: 0.2 }}
-            className="px-4 py-2 rounded-md font-medium shadow"
+            onClick={() => setSelectedUser(user.id)}
+            className={`px-4 py-2 rounded-full text-sm font-medium border whitespace-nowrap`}
           >
             {user.name}
           </motion.button>
-        ))}
-      </UnderlineContainer>
+        );
+      })}
     </div>
   );
 }

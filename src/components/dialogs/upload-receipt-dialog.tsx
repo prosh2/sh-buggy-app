@@ -1,4 +1,4 @@
-import { Item } from "@/app/context/session-context";
+import { Item, ReceiptMisc } from "@/app/context/session-context";
 import ClearIcon from "@mui/icons-material/Clear";
 import {
   Box,
@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import DialogTitle from "@mui/material/DialogTitle";
 import { AnimatePresence, motion } from "motion/react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import ExtractedItemsTable from "../receipt/extracted-items-table";
 import UploadReceipt from "../receipt/upload-receipt";
 import { v4 as uuidv4 } from "uuid";
@@ -19,7 +19,10 @@ import { v4 as uuidv4 } from "uuid";
 interface DialogProps {
   open: boolean;
   onClose: () => void;
-  handleCreateSession: (items: Item[]) => Promise<void>;
+  handleCreateSession: (
+    items: Item[],
+    receiptMisc: ReceiptMisc,
+  ) => Promise<void>;
 }
 
 interface TabPanelProps {
@@ -46,7 +49,6 @@ function CustomTabPanel(props: TabPanelProps) {
         display: "flex",
         flexDirection: "column",
         height: "100%",
-        flex: 2,
       }}
       {...other}
     >
@@ -84,6 +86,14 @@ export default function UploadReceiptDialog(props: DialogProps) {
   const { onClose, handleCreateSession, open: openDialog } = props;
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [extractedItems, setExtractedItems] = useState<Item[]>(DUMMY_ITEMS);
+  const [receiptMisc, setReceiptMisc] = useState<ReceiptMisc>({
+    merchant_name: "",
+    service_charge: 0,
+    currency_symbol: "",
+    subtotal: 0,
+    gst: 0,
+    date: new Date().toDateString(),
+  });
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [sbState, setSBState] = useState<SnackBarState>({
     open: false,
@@ -99,61 +109,15 @@ export default function UploadReceiptDialog(props: DialogProps) {
 
   const createSession = () => {
     onClose();
-    handleCreateSession(extractedItems);
+    handleCreateSession(extractedItems, receiptMisc);
   };
 
   const handleCloseSB = () => {
     setSBState({ ...sbState, open: false });
   };
 
-  const handleQuantityChange = (item: Item, newQuantity: string) => {
-    if (isNaN(Number(newQuantity))) return;
-    const updatedItems = extractedItems.map((it: Item) =>
-      it === item ? { ...it, quantity: Number(newQuantity) } : it,
-    );
-    setExtractedItems(updatedItems);
-  };
-
-  const handleNameChange = (item: Item, newName: string) => {
-    const updatedItems = extractedItems.map((it: Item) =>
-      it === item ? { ...it, name: newName } : it,
-    );
-    setExtractedItems(updatedItems);
-  };
-
-  const handlePriceChange = (item: Item, newPrice: string) => {
-    if (isNaN(Number(newPrice))) return;
-    const updatedItems = extractedItems.map((it: Item) =>
-      it === item ? { ...it, price: Number(newPrice) } : it,
-    );
-    setExtractedItems(updatedItems);
-  };
-
-  function extractJSONArray(input: string) {
-    // Remove code fences like ``` or ```json
-    const noFences = input.replace(/```[\s\S]*?\n|```/g, "");
-
-    // Extract content between the first [ and the last ]
-    const match = noFences.match(/\[[\s\S]*\]/);
-
-    return match ? match[0] : null;
-  }
-  //TODO: export to new api pipeline
   const processOCRResponse = async (data: object) => {
     try {
-      // const res = await fetch("/api/chat", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(data),
-      // });
-      // if (!res.ok) {
-      //   throw new Error("Failed to extract text from image");
-      // }
-      // const result = await res.json();
-      // const extractedText = extractJSONArray(result);
-      // if (!extractedText) {
-      //   throw new Error("No valid JSON array found in OCR response");
-      // }
       const items: Item[] = [];
       for (const _ of data as Item[]) {
         const quantity = isNaN(Number(_.quantity)) ? 1 : Number(_.quantity);
@@ -186,8 +150,34 @@ export default function UploadReceiptDialog(props: DialogProps) {
         throw new Error("Failed to extract text from image");
       }
 
-      const result = await res.json();
-      const extractedItems = await processOCRResponse(result.result);
+      const data = await res.json();
+      const {
+        result: ocr_items,
+        gst,
+        service_fee,
+        merchant_name,
+        currency_symbol,
+        total_price,
+        date,
+      }: {
+        result: Item[];
+        gst: number;
+        service_fee: number;
+        merchant_name: string;
+        currency_symbol: string;
+        total_price: number;
+        date: string;
+      } = data;
+
+      setReceiptMisc({
+        merchant_name,
+        service_charge: service_fee,
+        currency_symbol,
+        subtotal: total_price,
+        gst,
+        date,
+      });
+      const extractedItems = await processOCRResponse(ocr_items);
       setStatus("success");
       setExtractedItems(extractedItems);
       setSBState({ open: true, message: "Text extracted successfully" });
@@ -200,70 +190,11 @@ export default function UploadReceiptDialog(props: DialogProps) {
     }
   };
 
-  const handleDeleteItem = (item: Item) => {
-    const updatedItems = extractedItems.filter((it: Item) => it !== item);
-    setExtractedItems(updatedItems);
-  };
-
-  const showItemized = (items: Item[]) => {
-    try {
-      return items.map((item: Item, idx) => (
-        <div
-          key={"item-row-" + idx}
-          className="grid grid-cols-[50px_minmax(80px,1fr)_60px_8px] gap-2 font-mono font-bold p-1"
-        >
-          <TextField
-            id="item-quantity-input"
-            key={"item-quantity-input-" + idx}
-            label="Qty"
-            variant="filled"
-            value={item.quantity}
-            onChange={(e) => handleQuantityChange(item, e.target.value)}
-            style={{ width: "5ch" }}
-          />
-          <TextField
-            id="item-name-input"
-            key={"item-name-input-" + idx}
-            label="Name"
-            variant="filled"
-            value={item.name}
-            onChange={(e) => handleNameChange(item, e.target.value)}
-          />
-          <TextField
-            id="item-price-input"
-            key={"item-price-input-" + idx}
-            label="$"
-            variant="filled"
-            value={item.price}
-            onChange={(e) => handlePriceChange(item, e.target.value)}
-          />
-          <Button
-            key={"item-delete-button-" + idx}
-            variant="text"
-            color="error"
-            style={{ minWidth: "8px" }}
-            onClick={() => handleDeleteItem(item)}
-          >
-            <ClearIcon />
-          </Button>
-        </div>
-      ));
-    } catch (error) {
-      return "Error parsing extracted text." + error;
-    }
-  };
-
-  const subtotal = useMemo(
-    () =>
-      extractedItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
-    [extractedItems],
-  );
-
   return (
     <AnimatePresence>
       {openDialog && (
         <motion.div
-          className="absolute flex flex-col justify-center bg-white text-gray-200 w-[90vw] md:w-[50vw] md:min-h-[50vh] rounded-lg"
+          className="absolute flex flex-col justify-center bg-white text-gray-200 w-[90vw] w-[50vw] h-[90vh] rounded-lg"
           initial={{ transform: "translateY(100vh)" }}
           animate={{ transform: "translateY(0px)" }}
           transition={{ type: "spring", stiffness: 100, damping: 20 }}
@@ -286,7 +217,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
               fontWeight: "bold",
             }}
           >
-            Upload Receipt
+            Receipt
           </DialogTitle>
           <Box
             sx={{
@@ -306,9 +237,9 @@ export default function UploadReceiptDialog(props: DialogProps) {
                 textColor="primary"
                 indicatorColor="secondary"
               >
-                <Tab label="Receipt" {...a11yProps(0)} />
+                <Tab label="Image" {...a11yProps(0)} />
                 <Tab
-                  label="Items"
+                  label="Breakdown"
                   {...a11yProps(1)}
                   disabled={extractedItems.length === 0}
                 />
@@ -324,11 +255,10 @@ export default function UploadReceiptDialog(props: DialogProps) {
             </CustomTabPanel>
             <CustomTabPanel value={selectedTab} index={1}>
               <div className="flex flex-col flex-1 justify-between items-center p-0 gap-4 overflow-hidden">
-                <div className="flex flex-col flex-1 w-full h-full  max-h-[30vh] p-2 rounded overflow-auto text-center bg-gray-50 shadow-inner border border-gray-200">
+                <div className="flex flex-col flex-1 w-full h-full rounded overflow-hidden text-center">
                   <ExtractedItemsTable
+                    receiptMisc={receiptMisc}
                     items={extractedItems}
-                    showItemized={showItemized}
-                    subtotal={subtotal}
                     setExtractedItems={setExtractedItems}
                   />
                 </div>
@@ -345,14 +275,14 @@ export default function UploadReceiptDialog(props: DialogProps) {
                   New Session
                 </Button>
               </div>
+              <button
+                onClick={() => onClose()}
+                className="absolute left-2 top-6 h-[24px] text-blue-500 font-semibold cursor-pointer"
+              >
+                Cancel
+              </button>
             </CustomTabPanel>
           </Box>
-          <button
-            onClick={() => onClose()}
-            className="absolute right-0 top-0 w-[24px] h-[24px] bg-red-500 text-white rounded hover:bg-red-300 cursor-pointer"
-          >
-            <ClearIcon />
-          </button>
         </motion.div>
       )}
     </AnimatePresence>

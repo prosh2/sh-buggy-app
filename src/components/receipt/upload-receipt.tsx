@@ -20,7 +20,7 @@ export default function UploadReceipt(props: Props) {
   };
   return (
     <>
-      <div className="flex flex-col items-center justify-center p-4 overflow-hidden">
+      <div className="flex flex-col h-full justify-center p-4 overflow-hidden">
         {selectedImage ? (
           <div className="sm:w-[420px] flex items-center justify-center relative">
             {status === "loading" && (
@@ -49,7 +49,7 @@ export default function UploadReceipt(props: Props) {
             )}
           </div>
         ) : (
-          <>
+          <div className="sm:w-[420px] flex items-center justify-center relative">
             <Skeleton
               sx={{
                 width: { xs: "80vw", sm: "30vw", md: "30vw" },
@@ -72,7 +72,7 @@ export default function UploadReceipt(props: Props) {
                 onChange={handleFileUpload}
               />
             </IconButton>
-          </>
+          </div>
         )}
       </div>
       {selectedImage && (
