@@ -41,15 +41,6 @@ export default function ExtractedItemsTable({
     setExtractedItems(updatedItems);
   };
 
-  const addItem = () => {
-    const newItem: Item = {
-      id: uuidv4(),
-      name: "New Item",
-      quantity: 1,
-      price: 0,
-    };
-    setExtractedItems([...items, newItem]);
-  };
   return (
     <div className="flex flex-col h-full">
       <div className="flex flex-col gap-2 font-mono font-bold p-1 mb-2 h-full">
@@ -62,18 +53,6 @@ export default function ExtractedItemsTable({
           handleQuantityChange={handleQuantityChange}
         />
       </div>
-      <Button
-        style={{
-          marginTop: "auto",
-          color: "white",
-          backgroundColor: "var(--color-black)",
-        }}
-        variant="contained"
-        fullWidth
-        onClick={addItem}
-      >
-        Add Item
-      </Button>
     </div>
   );
 }

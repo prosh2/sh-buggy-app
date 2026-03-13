@@ -15,6 +15,8 @@ import { useState } from "react";
 import ExtractedItemsTable from "../receipt/extracted-items-table";
 import UploadReceipt from "../receipt/upload-receipt";
 import { v4 as uuidv4 } from "uuid";
+import AddIcon from "@mui/icons-material/Add";
+import DragHandleIcon from "@mui/icons-material/DragHandle";
 
 interface DialogProps {
   open: boolean;
@@ -36,47 +38,6 @@ interface SnackBarState {
   message: string;
 }
 
-function CustomTabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100%",
-      }}
-      {...other}
-    >
-      {value === index && (
-        <Box
-          sx={{
-            bgcolor: "white",
-            display: "flex",
-            flexDirection: "column",
-            flex: 1,
-            p: 1,
-            height: "100%",
-          }}
-        >
-          {children}
-        </Box>
-      )}
-    </div>
-  );
-}
-
-function a11yProps(index: number) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
-}
-
 const DUMMY_ITEMS: Item[] = [
   { id: uuidv4(), name: "Item 1", quantity: 2, price: 5.99 },
   { id: uuidv4(), name: "Item 2", quantity: 1, price: 3.49 },
@@ -85,7 +46,6 @@ const DUMMY_ITEMS: Item[] = [
 
 export default function UploadReceiptDialog(props: DialogProps) {
   const { onClose, handleCreateSession, open: openDialog } = props;
-  const [selectedTab, setSelectedTab] = useState<number>(0);
   const [extractedItems, setExtractedItems] = useState<Item[]>(DUMMY_ITEMS);
   const [receiptMisc, setReceiptMisc] = useState<ReceiptMisc>({
     merchant_name: "",
@@ -103,10 +63,6 @@ export default function UploadReceiptDialog(props: DialogProps) {
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle");
-
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setSelectedTab(newValue);
-  };
 
   const createSession = () => {
     onClose();
@@ -135,7 +91,15 @@ export default function UploadReceiptDialog(props: DialogProps) {
       throw new Error("Error processing OCR response");
     }
   };
-
+  const addItem = () => {
+    const newItem: Item = {
+      id: uuidv4(),
+      name: "New Item",
+      quantity: 1,
+      price: 0,
+    };
+    setExtractedItems([...extractedItems, newItem]);
+  };
   const handleTextExtraction = async () => {
     try {
       setStatus("loading");
@@ -182,7 +146,6 @@ export default function UploadReceiptDialog(props: DialogProps) {
       setStatus("success");
       setExtractedItems(extractedItems);
       setSBState({ open: true, message: "Text extracted successfully" });
-      setSelectedTab(1);
     } catch (error: unknown) {
       if (error instanceof Error) {
         setStatus("error");
@@ -194,97 +157,135 @@ export default function UploadReceiptDialog(props: DialogProps) {
   return (
     <AnimatePresence>
       {openDialog && (
-        <motion.div
-          className="absolute flex flex-col justify-center bg-white text-gray-200 w-[90vw] h-[90vh] rounded-lg"
-          initial={{ transform: "translateY(100vh)" }}
-          animate={{ transform: "translateY(0px)" }}
-          transition={{ type: "spring", stiffness: 100, damping: 20 }}
-          exit={{ transform: "translateY(100vh)", opacity: 0.75 }}
-        >
-          <Snackbar
-            open={sbState.open}
-            autoHideDuration={3000}
-            onClose={handleCloseSB}
-            message={sbState.message}
-            anchorOrigin={
-              { vertical: "bottom", horizontal: "center" } as SnackbarOrigin
-            }
+        <>
+          {/* Backdrop */}
+          <motion.div
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
           />
-          <DialogTitle
-            className="bg-black bg-radial from-black-400 to-gray-800 text-center"
-            style={{
-              fontFamily: "sans-serif",
-              fontSize: "1.5rem",
-              fontWeight: "bold",
+
+          {/* Sheet */}
+          <motion.div
+            drag="y"
+            dragConstraints={{ top: 0 }}
+            dragElastic={0.2}
+            onDragEnd={(e, info) => {
+              if (info.offset.y > 150 || info.velocity.y > 800) {
+                onClose();
+              }
+            }}
+            onClick={(e) => e.stopPropagation()}
+            className="
+              fixed z-50
+              w-[90vw] md:max-w-[900px]
+              bottom-0 md:bottom-auto
+              top-[-60]
+              md:top-1/2
+              md:left-1/2
+              md:-translate-x-1/2 md:-translate-y-1/2
+              h-[92dvh] md:h-[88vh]
+              bg-white
+              rounded-t-2xl md:rounded-2xl
+              shadow-2xl
+              flex flex-col
+              overflow-y-scroll
+              touch-pan-y
+              "
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{
+              type: "spring",
+              stiffness: 260,
+              damping: 25,
             }}
           >
-            Receipt
-          </DialogTitle>
-          <Box
-            sx={{
-              width: "100%",
-              height: "100%",
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <Box sx={{ flex: 1, borderBottom: 1, borderColor: "divider" }}>
-              <Tabs
-                value={selectedTab}
-                onChange={handleTabChange}
-                aria-label="basic tabs example"
-                centered
-                textColor="primary"
-                indicatorColor="secondary"
-              >
-                <Tab label="Image" {...a11yProps(0)} />
-                <Tab
-                  label="Breakdown"
-                  {...a11yProps(1)}
-                  disabled={extractedItems.length === 0}
-                />
-              </Tabs>
-            </Box>
-            <CustomTabPanel value={selectedTab} index={0}>
-              <UploadReceipt
-                status={status}
-                selectedImage={selectedImage}
-                setSelectedImage={setSelectedImage}
-                handleTextExtraction={handleTextExtraction}
-              />
-            </CustomTabPanel>
-            <CustomTabPanel value={selectedTab} index={1}>
-              <div className="flex flex-col h-full justify-between items-center gap-2 overflow-hidden">
-                <div className="flex flex-col w-full h-full rounded overflow-hidden text-center">
-                  <ExtractedItemsTable
-                    receiptMisc={receiptMisc}
-                    items={extractedItems}
-                    setExtractedItems={setExtractedItems}
-                  />
-                </div>
-                <Button
-                  className="font-sans"
-                  variant="contained"
-                  onClick={createSession}
-                  size="large"
-                  // sx={{
-                  //   color: "var(--color-white)",
-                  //   backgroundColor: "var(--color-green-400)",
-                  // }}
-                >
-                  New Session
-                </Button>
-              </div>
+            {/* Drag Handle (mobile UX) */}
+            <div className="flex justify-center py-2 md:hidden">
+              <div className="w-10 h-1.5 bg-gray-300 rounded-full" />
+            </div>
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-3 border-b">
+              <h2 className="text-lg font-semibold text-gray-800">
+                Receipt Scanner
+              </h2>
+
               <button
-                onClick={() => onClose()}
-                className="absolute left-2 top-6 h-[24px] text-blue-500 font-semibold cursor-pointer"
+                onClick={onClose}
+                className="text-gray-500 hover:text-gray-800 text-sm"
               >
                 Cancel
               </button>
-            </CustomTabPanel>
-          </Box>
-        </motion.div>
+            </div>
+
+            {/* Content */}
+            <div className="flex flex-col md:flex-row flex-1">
+              {/* Left Side */}
+              <div className="flex flex-col items-center justify-center w-full md:w-[45%] md:border-r bg-gray-50 p-4">
+                <UploadReceipt
+                  status={status}
+                  selectedImage={selectedImage}
+                  setSelectedImage={setSelectedImage}
+                  handleTextExtraction={handleTextExtraction}
+                />
+              </div>
+
+              {/* DRAG HANDLE (mobile only) */}
+              <div className="flex justify-center py-1 md:hidden cursor-grab">
+                <DragHandleIcon className="text-gray-400" fontSize="small" />
+              </div>
+
+              {/* Right Side */}
+              <div className="flex flex-col flex-1 p-4 overflow-y-auto min-h-0">
+                {extractedItems.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-full text-gray-400 text-sm">
+                    Upload a receipt to extract items
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex-1 overflow-hidden">
+                      <ExtractedItemsTable
+                        receiptMisc={receiptMisc}
+                        items={extractedItems}
+                        setExtractedItems={setExtractedItems}
+                      />
+                    </div>
+
+                    <div className="flex justify-between mt-3">
+                      <Button
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        onClick={addItem}
+                        sx={{
+                          borderRadius: 3,
+                          px: 3,
+                          textTransform: "none",
+                        }}
+                      >
+                        Add Item
+                      </Button>
+                      <Button
+                        variant="contained"
+                        onClick={createSession}
+                        sx={{
+                          borderRadius: 3,
+                          px: 3,
+                          textTransform: "none",
+                        }}
+                      >
+                        New Session
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        </>
       )}
     </AnimatePresence>
   );
