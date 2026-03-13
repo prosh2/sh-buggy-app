@@ -192,7 +192,8 @@ export default function UploadReceiptDialog(props: DialogProps) {
               rounded-t-2xl md:rounded-2xl
               shadow-2xl
               flex flex-col
-              overflow-y-scroll
+              overflow-y-scroll md:overflow-hidden
+              no-scrollbar
               touch-pan-y
               "
             initial={{ y: "100%" }}
