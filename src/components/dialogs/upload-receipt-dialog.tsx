@@ -226,7 +226,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
               </div>
 
               {/* Right Side */}
-              <div className="flex flex-col flex-1 p-4 overflow-y-auto min-h-0">
+              <div className="flex flex-col flex-1 p-4 overflow-y-auto min-h-0 mb-4 md:mb-0">
                 {extractedItems.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full text-gray-400 text-sm">
                     Upload a receipt to extract items
