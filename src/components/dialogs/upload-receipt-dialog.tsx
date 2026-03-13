@@ -172,6 +172,7 @@ export default function UploadReceiptDialog(props: DialogProps) {
             drag="y"
             dragConstraints={{ top: 0 }}
             dragElastic={0.2}
+            dragMomentum={false}
             onDragEnd={(e, info) => {
               if (info.offset.y > 150 || info.velocity.y > 800) {
                 onClose();
@@ -180,9 +181,9 @@ export default function UploadReceiptDialog(props: DialogProps) {
             onClick={(e) => e.stopPropagation()}
             className="
               fixed z-50
-              w-[90vw] md:max-w-[900px]
+              w-[100vw] md:max-w-[900px]
               bottom-0 md:bottom-auto
-              top-[-60]
+              top-[-50]
               md:top-1/2
               md:left-1/2
               md:-translate-x-1/2 md:-translate-y-1/2
