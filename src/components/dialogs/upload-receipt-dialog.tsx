@@ -1,22 +1,12 @@
 import { Item, ReceiptMisc } from "@/app/context/session-context";
-import ClearIcon from "@mui/icons-material/Clear";
-import {
-  Box,
-  Button,
-  Snackbar,
-  SnackbarOrigin,
-  Tab,
-  Tabs,
-  TextField,
-} from "@mui/material";
-import DialogTitle from "@mui/material/DialogTitle";
-import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
-import ExtractedItemsTable from "../receipt/extracted-items-table";
-import UploadReceipt from "../receipt/upload-receipt";
-import { v4 as uuidv4 } from "uuid";
 import AddIcon from "@mui/icons-material/Add";
 import DragHandleIcon from "@mui/icons-material/DragHandle";
+import { Button } from "@mui/material";
+import { AnimatePresence, motion } from "motion/react";
+import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+import ExtractedItemsTable from "../receipt/extracted-items-table";
+import UploadReceipt from "../receipt/upload-receipt";
 
 interface DialogProps {
   open: boolean;
@@ -25,12 +15,6 @@ interface DialogProps {
     items: Item[],
     receiptMisc: ReceiptMisc,
   ) => Promise<void>;
-}
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
 }
 
 interface SnackBarState {

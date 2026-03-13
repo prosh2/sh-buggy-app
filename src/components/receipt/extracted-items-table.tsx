@@ -1,7 +1,4 @@
 import { Item, ReceiptMisc } from "@/app/context/session-context";
-import AddIcon from "@mui/icons-material/Add";
-import { Button } from "@mui/material";
-import { v4 as uuidv4 } from "uuid";
 import EditableItemsTable from "./editable-receipt";
 
 export default function ExtractedItemsTable({
