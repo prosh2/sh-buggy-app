@@ -1,6 +1,6 @@
 import { User } from "@/app/context/session-context";
 import { motion } from "motion/react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import Receipt from "./receipt/receipt";
 import UserSelection from "./user/user-selection";
 
@@ -13,7 +13,6 @@ export default function BillContainer({
   isHidden: boolean;
   goBack: () => void;
 }) {
-  const userRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
 
   return (
