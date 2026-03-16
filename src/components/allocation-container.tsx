@@ -1,8 +1,8 @@
 import { Item, User } from "@/app/context/session-context";
 import { motion } from "motion/react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import UserSelection from "./user/user-selection";
+import { useCallback, useEffect, useState } from "react";
 import ItemListContainer from "./item-list-container";
+import UserSelection from "./user/user-selection";
 
 interface Props {
   users: User[];
@@ -35,7 +35,6 @@ export default function AllocationContainer({
     {},
   );
   const [isReadyMap, setIsReadyMap] = useState<Record<string, boolean>>({});
-  const userRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   const toggleItem = (itemId: string) => {
     if (selectedUser === null) return;
@@ -120,7 +119,6 @@ export default function AllocationContainer({
           {/* User selector */}
           <div className="flex flex-col w-full h-50 justify-center">
             <UserSelection
-              userRefs={userRefs}
               users={users}
               selectedUser={selectedUser || ""}
               setSelectedUser={setSelectedUser}
