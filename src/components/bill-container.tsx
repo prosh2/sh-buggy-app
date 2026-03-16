@@ -18,7 +18,7 @@ export default function BillContainer({
   return (
     <>
       {!isHidden && (
-        <div className="rounded shadow-lg flex flex-col items-center p-4 h-full">
+        <div className="flex flex-col h-full bg-gray-900 text-gray-100">
           <motion.button
             className="absolute right-0 top-0 m-4 bg-red-600 shadow-black shadow-lg border-black border-r-2 border-l-2 px-4 py-2 rounded-xl text-xs font-mono shadow"
             onClick={goBack}

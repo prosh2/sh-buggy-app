@@ -1,8 +1,8 @@
 import { Item, User } from "@/app/context/session-context";
 import { motion } from "motion/react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import UserSelection from "./user/user-selection";
+import { useCallback, useEffect, useState } from "react";
 import ItemListContainer from "./item-list-container";
+import UserSelection from "./user/user-selection";
 
 interface Props {
   users: User[];
@@ -35,7 +35,6 @@ export default function AllocationContainer({
     {},
   );
   const [isReadyMap, setIsReadyMap] = useState<Record<string, boolean>>({});
-  const userRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   const toggleItem = (itemId: string) => {
     if (selectedUser === null) return;
@@ -116,8 +115,8 @@ export default function AllocationContainer({
   return (
     <>
       {!isHidden && (
-        <div className="rounded shadow-lg flex flex-col items-center p-4 h-full overflow-hidden no-scrollbar">
-          {/* User Selection */}
+        <div className="flex flex-col h-full bg-gray-900 text-gray-100 ">
+          {/* User selector */}
           <div className="flex flex-col w-full h-50 justify-center">
             <UserSelection
               users={users}
@@ -125,16 +124,22 @@ export default function AllocationContainer({
               setSelectedUser={setSelectedUser}
             />
           </div>
-          {/* Item Selection */}
+
+          {/* Item section */}
           {selectedUser && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="w-full"
+              className="flex flex-col flex-1 px-4 mt-4 overflow-hidden"
             >
-              <h2 className="flex justify-center text-lg font-bold mb-3">
-                What did {users.find((u) => u.id === selectedUser)?.name} get?
+              <h2 className="text-lg font-semibold text-center mb-4">
+                What did{" "}
+                <span className="text-blue-400">
+                  {users.find((u) => u.id === selectedUser)?.name}
+                </span>{" "}
+                get?
               </h2>
+
               <ItemListContainer
                 items={items}
                 selectedItems={selectedItems}
@@ -145,46 +150,43 @@ export default function AllocationContainer({
             </motion.div>
           )}
 
-          <footer className="fixed bottom-0 flex items-center justify-center space-x-4 w-full">
-            {/* Ready Button */}
+          {/* Action bar */}
+          <footer className="sticky bottom-0 bg-gray-900/90 backdrop-blur border-t border-gray-800 p-4 flex gap-3">
             {selectedUser && (
               <motion.button
-                whileTap={{ scale: 0.95 }}
+                whileTap={{ scale: 0.96 }}
                 whileHover={{ scale: 1.02 }}
                 onClick={() => handlePlayerIsReady(true)}
-                // className="flex justify-center items-center w-[100vw] h-10 shadow-lg border-black border-r-1 shadow-black bg-gray-900 font-sans"
-
-                className={
-                  selectedItems[selectedUser]?.length <= 0
-                    ? "bg-gray-900 mt-8 px-6 py-3 text-gray-800 font-bold rounded shadow-lg mouse-not-allowed cursor-not-allowed w-[100vw] h-10 flex justify-center items-center font-sans"
-                    : "bg-green-500 mt-8 px-6 py-3 text-white font-bold rounded shadow-lg w-[50vw] h-10 flex justify-center items-center font-sans"
-                }
-                hidden={isReadyMap[selectedUser]}
                 disabled={selectedItems[selectedUser]?.length <= 0}
+                className={`flex-1 py-3 rounded-xl font-semibold transition
+          ${
+            selectedItems[selectedUser]?.length <= 0
+              ? "bg-gray-800 text-gray-600 cursor-not-allowed"
+              : "bg-green-500 hover:bg-green-600 text-white"
+          }
+        `}
               >
                 Ready
               </motion.button>
             )}
 
-            {selectedUser && (
+            {selectedUser && isReadyMap[selectedUser] && (
               <motion.button
-                whileTap={{ scale: 0.95 }}
+                whileTap={{ scale: 0.96 }}
                 whileHover={{ scale: 1.02 }}
                 onClick={() => handlePlayerIsReady(false)}
-                className="mt-8 px-6 py bg-red-500 text-white font-bold rounded shadow-lg w-[25%] h-12 flex justify-center items-center font-sans"
-                hidden={!isReadyMap[selectedUser]}
+                className="px-5 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-semibold"
               >
-                Not Ready
+                Undo
               </motion.button>
             )}
 
-            {/* Proceed to split bill button */}
             {readyToSplit && (
               <motion.button
-                whileTap={{ scale: 0.95 }}
+                whileTap={{ scale: 0.96 }}
                 whileHover={{ scale: 1.02 }}
                 onClick={onBillSVP}
-                className="mt-8 px-6 py-3 bg-green-500 text-white font-bold rounded shadow-lg w-[25%] h-12 flex justify-center items-center font-sans"
+                className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-semibold"
               >
                 Split Bill
               </motion.button>

@@ -10,9 +10,9 @@ export default function ShareButtonContainer({
   telegramShareUrl,
 }: ShareButtonProps) {
   return (
-    <div className="flex justify-center gap-3 mt-4">
+    <div className="flex justify-center gap-4">
       <ShareButton
-        label="Share on WhatsApp"
+        label="WhatsApp"
         url={whatsappShareUrl}
         color="oklch(0.73 0.21 147.82)"
       >
@@ -28,7 +28,7 @@ export default function ShareButtonContainer({
       </ShareButton>
 
       <ShareButton
-        label="Share on Telegram"
+        label="Telegram"
         url={telegramShareUrl}
         color="oklch(0.62 0.21 259.24)"
       >
