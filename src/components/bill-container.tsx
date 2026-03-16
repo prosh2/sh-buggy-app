@@ -45,8 +45,9 @@ export default function BillContainer({
               </div>
             </div>
           )}
-        </div>
-      )}
+        </div >
+      )
+      }
     </>
   );
 }

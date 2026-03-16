@@ -1,6 +1,5 @@
 import { User } from "@/app/context/session-context";
 import { motion } from "motion/react";
-import { RefObject } from "react";
 export default function UserSelection({
   users,
   selectedUser,
