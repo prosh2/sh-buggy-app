@@ -1,27 +1,24 @@
 import { User } from "@/app/context/session-context";
 import { motion } from "motion/react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import Receipt from "./receipt/receipt";
 import UserSelection from "./user/user-selection";
 
 export default function BillContainer({
   users,
-  itemSelectionCounts,
   isHidden,
   goBack,
 }: {
   users: User[];
-  itemSelectionCounts: Record<string, number>;
   isHidden: boolean;
   goBack: () => void;
 }) {
-  const userRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
 
   return (
     <>
       {!isHidden && (
-        <div className="rounded shadow-lg flex flex-col items-center p-4 h-full">
+        <div className="flex flex-col h-full bg-gray-900 text-gray-100">
           <motion.button
             className="absolute right-0 top-0 m-4 bg-red-600 shadow-black shadow-lg border-black border-r-2 border-l-2 px-4 py-2 rounded-xl text-xs font-mono shadow"
             onClick={goBack}
@@ -32,7 +29,6 @@ export default function BillContainer({
           </motion.button>
           <div className="flex flex-col w-full h-50 justify-center">
             <UserSelection
-              userRefs={userRefs}
               users={users}
               selectedUser={selectedUser || ""}
               setSelectedUser={setSelectedUser}

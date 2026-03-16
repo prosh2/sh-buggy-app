@@ -1,5 +1,4 @@
 import { Item } from "@/app/context/session-context";
-import { Chip } from "@mui/material";
 import { motion } from "motion/react";
 
 interface ItemListContainerProps {
@@ -24,40 +23,36 @@ export default function ItemListContainer({
       </p>
     );
   return (
-    <div className="flex flex-col gap-3 h-[50vh] overflow-y-scroll no-scrollbar px-2">
-      {items?.map((item) => {
+    <div className="flex flex-col gap-3 overflow-y-auto pb-24">
+      {items.map((item) => {
         const selected = selectedItems[selectedUser]?.includes(item.id);
+
         return (
           <motion.div
             key={item.id}
-            whileTap={{ scale: 0.96 }}
-            animate={{
-              borderColor: selected ? "#2563EB" : "#e5e7eb",
-              backgroundColor: selected ? "#eff6ff" : "#ffffff",
-              color: selected ? "#2563EB" : "#000000",
-            }}
-            transition={{ duration: 0.15 }}
+            whileTap={{ scale: 0.97 }}
             onClick={() => toggleItem(item.id)}
-            className="flex flex-col gap-3 p-4 border rounded-2xl shadow-sm cursor-pointer"
+            className={`p-4 rounded-xl border transition cursor-pointer
+        ${
+          selected
+            ? "bg-blue-600/10 border-blue-500"
+            : "bg-gray-800 border-gray-700 hover:border-gray-600"
+        }`}
           >
-            {/* Top row */}
+            {/* top */}
             <div className="flex justify-between items-center">
-              <span className="text-lg font-semibold">
-                {item.name}
-              </span>
+              <span className="font-semibold text-base">{item.name}</span>
 
-              <span className="text-lg font-bold text-black">
-                ${item.price}
-              </span>
+              <span className="font-bold text-green-400">${item.price}</span>
             </div>
 
-            {/* Bottom info */}
-            <div className="flex justify-between text-sm text-gray-500">
-              <span>Qty: {item.quantity}</span>
+            {/* bottom */}
+            <div className="flex justify-between mt-2 text-sm text-gray-400">
+              <span>Qty {item.quantity}</span>
 
               <span>
-                Shares:{" "}
-                <span className="font-semibold text-gray-700">
+                Shared by{" "}
+                <span className="text-gray-200 font-semibold">
                   {itemSelectionCounts[item.id] || 0}
                 </span>
               </span>

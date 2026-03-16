@@ -48,18 +48,18 @@ export default function CopyToClipboardButton({
   };
 
   return (
-    <div className="flex items-center justify-center bg-gray-900 rounded-xl p-2">
-      <span className="truncate text-sm font-sans">{textToCopy}</span>
+    <div className="flex items-center justify-between gap-3 bg-gray-900/80 border border-gray-700 rounded-xl px-4 py-3">
+      <span className="truncate text-sm text-gray-300 font-mono">
+        {textToCopy}
+      </span>
+
       <motion.button
         onClick={copyToClipboard}
         whileTap={{ scale: 0.9 }}
-        whileHover={{ scale: 1.1 }}
+        whileHover={{ scale: 1.05 }}
+        className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1.5 rounded-lg transition"
       >
-        {copied ? (
-          <span className="text-sm text-green-400 font-sans">Copied!</span>
-        ) : (
-          <span>📋</span>
-        )}
+        {copied ? "✓ Copied" : "Copy"}
       </motion.button>
     </div>
   );
