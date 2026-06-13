@@ -139,6 +139,7 @@ function Itemized(props: ItemizedProps) {
             <TextField
               variant="standard"
               value={item.price}
+              type="number"
               onChange={(e) => handlePriceChange(item, e.target.value)}
               inputProps={{ style: { textAlign: "left" } }}
             />
