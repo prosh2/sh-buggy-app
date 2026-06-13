@@ -121,6 +121,7 @@ export default function SplitPage() {
       <BillContainer
         isHidden={!showBillSummary}
         users={session.users}
+        itemSelectionCounts={itemSelectionCounts}
         goBack={() => setShowBillSummary(false)}
       />
 

@@ -7,10 +7,12 @@ import UserSelection from "./user/user-selection";
 export default function BillContainer({
   users,
   isHidden,
+  itemSelectionCounts,
   goBack,
 }: {
   users: User[];
   isHidden: boolean;
+  itemSelectionCounts: Record<string, number>;
   goBack: () => void;
 }) {
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
@@ -37,7 +39,11 @@ export default function BillContainer({
           {selectedUser && (
             <div className="flex flex-col justify-center items-center h-100 w-full">
               <div className="flex flex-col h-full w-full items-center">
-                <Receipt users={users} selectedUser={selectedUser} />
+                <Receipt
+                  users={users}
+                  selectedUser={selectedUser}
+                  itemSelectionCounts={itemSelectionCounts}
+                />
                 <div
                   key={selectedUser}
                   className="px-2 p-8 flex h-full justify-center items-center"
@@ -45,9 +51,8 @@ export default function BillContainer({
               </div>
             </div>
           )}
-        </div >
-      )
-      }
+        </div>
+      )}
     </>
   );
 }

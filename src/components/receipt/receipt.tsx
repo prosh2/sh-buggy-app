@@ -6,20 +6,24 @@ import { useMemo } from "react";
 export default function Receipt({
   users,
   selectedUser,
+  itemSelectionCounts,
 }: {
   users: User[];
   selectedUser: string;
+  itemSelectionCounts: Record<string, number>;
 }) {
   const subTotal = useMemo(
     () =>
       users
         .find((user) => user.id === selectedUser)
         ?.allocatedItems.reduce(
-          (acc, item) => acc + item.price * item.quantity,
+          (acc, item) =>
+            acc +
+            (item.price * item.quantity) / (itemSelectionCounts[item.id] || 1),
           0,
         )
         .toFixed(2),
-    [users, selectedUser],
+    [users, selectedUser, itemSelectionCounts],
   );
 
   return (
